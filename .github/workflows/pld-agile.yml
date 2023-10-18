@@ -63,5 +63,5 @@ jobs:
           pipenv install --dev
       - name: Build
         run: |
-          .venv/bin/python -m pyinstaller --windowed --name "PLD Agile" --paths "." src/pld_agile/main.py
+          .venv/bin/pyinstaller --windowed --name "PLD Agile" --paths "." src/pld_agile/main.py
           ls dist
