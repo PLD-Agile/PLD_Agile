@@ -62,6 +62,12 @@ python --version
 
 3. Press `F5` to run the program or click `Run` button
 
+## Tests
+
+1. Go to tab `Testing` in VSCode (shortcut: `Ctrl + Shift + T`)
+
+2. Click `Run Tests` button
+
 ## Format code
 
 ```bash
