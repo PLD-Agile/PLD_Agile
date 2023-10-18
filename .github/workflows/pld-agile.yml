@@ -22,10 +22,10 @@ jobs:
           mkdir .venv
           python -m pip install pipenv
           pipenv install --dev
-      - name: Run tests
+      - name: Run lint
         run: |
-          .venv/bin/python -m black src/
-          .venv/bin/python -m isort src/
+          .venv/bin/python -m black --check src/
+          .venv/bin/python -m isort --check src/
 
   test:
     name: Test
