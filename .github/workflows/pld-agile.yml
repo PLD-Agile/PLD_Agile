@@ -7,72 +7,10 @@ on:
   pull_request:
 
 jobs:
-  # lint:
-  #   name: Lint
-  #   runs-on: ubuntu-latest
-  #   continue-on-error: true
-  #   steps:
-  #     - uses: actions/checkout@v4
-  #     - name: Set up Python
-  #       uses: actions/setup-python@v4
-  #       with:
-  #         python-version: '3.10'
-  #     - name: Install dependencies
-  #       run: |
-  #         mkdir .venv
-  #         python -m pip install pipenv
-  #         pipenv install --dev
-  #     - name: Run lint
-  #       run: |
-  #         .venv/bin/python -m black --check src/
-  #         .venv/bin/python -m isort --check src/
-
-  # test:
-  #   name: Test
-  #   runs-on: ubuntu-latest
-  #   steps:
-  #     - uses: actions/checkout@v4
-  #     - name: Set up Python
-  #       uses: actions/setup-python@v4
-  #       with:
-  #         python-version: '3.10'
-  #     - name: Install dependencies
-  #       run: |
-  #         mkdir .venv
-  #         python -m pip install pipenv
-  #         pipenv install --dev
-  #     - name: Run tests
-  #       run: .venv/bin/python -m pytest src/
-
-  # build_linux:
-  #   name: Build Linux
-  #   runs-on: ubuntu-latest
-  #   # if: startsWith(github.event.ref, 'refs/tags/')
-  #   # needs: [lint, test]
-  #   steps:
-  #     - uses: actions/checkout@v4
-  #     - name: Set up Python
-  #       uses: actions/setup-python@v4
-  #       with:
-  #         python-version: '3.10'
-  #     - name: Install dependencies
-  #       run: |
-  #         mkdir .venv
-  #         python -m pip install pipenv
-  #         pipenv install --dev
-  #     - name: Build
-  #       run: .venv/bin/pyinstaller --windowed --name "PLD Agile" --paths "." src/pld_agile/main.py
-  #     - name: Archive build
-  #       uses: actions/upload-artifact@v3
-  #       with:
-  #         name: pld-agile-linux
-  #         path: dist/PLD Agile
-
-  build_windows:
-    name: Build Windows
-    runs-on: windows-latest
-    # if: startsWith(github.event.ref, 'refs/tags/')
-    # needs: [lint, test]
+  lint:
+    name: Lint
+    runs-on: ubuntu-latest
+    continue-on-error: true
     steps:
       - uses: actions/checkout@v4
       - name: Set up Python
@@ -84,11 +22,48 @@ jobs:
           mkdir .venv
           python -m pip install pipenv
           pipenv install --dev
-          pipenv install pywin32-ctypes
+      - name: Run lint
+        run: |
+          .venv/bin/python -m black --check src/
+          .venv/bin/python -m isort --check src/
+
+  test:
+    name: Test
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v4
+      - name: Set up Python
+        uses: actions/setup-python@v4
+        with:
+          python-version: '3.10'
+      - name: Install dependencies
+        run: |
+          mkdir .venv
+          python -m pip install pipenv
+          pipenv install --dev
+      - name: Run tests
+        run: .venv/bin/python -m pytest src/
+
+  build_linux:
+    name: Build Linux
+    runs-on: ubuntu-latest
+    # if: startsWith(github.event.ref, 'refs/tags/')
+    needs: [lint, test]
+    steps:
+      - uses: actions/checkout@v4
+      - name: Set up Python
+        uses: actions/setup-python@v4
+        with:
+          python-version: '3.10'
+      - name: Install dependencies
+        run: |
+          mkdir .venv
+          python -m pip install pipenv
+          pipenv install --dev
       - name: Build
-        run: pipenv run pyinstaller --windowed --name "PLD Agile" --paths "." src/pld_agile/main.py
+        run: .venv/bin/pyinstaller --windowed --name "PLD Agile" --paths "." src/pld_agile/main.py
       - name: Archive build
         uses: actions/upload-artifact@v3
         with:
-          name: pld-agile-windows
-          path: dist/PLD Agile
+          name: pld-agile-linux
+          path: dist/*
