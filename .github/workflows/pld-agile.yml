@@ -49,6 +49,7 @@ jobs:
     name: Build Linux
     runs-on: ubuntu-latest
     # if: github.ref == 'refs/heads/master'
+    needs: [lint, test]
     steps:
       - uses: actions/checkout@v4
       - name: Set up Python
@@ -62,5 +63,5 @@ jobs:
           pipenv install --dev
       - name: Build
         run: |
-          pyinstaller --windowed --name "PLD Agile" --paths "." src/pld_agile/main.py
+          .venv/bin/python -m pyinstaller --windowed --name "PLD Agile" --paths "." src/pld_agile/main.py
           ls dist
