@@ -61,3 +61,12 @@ python --version
 2. Select `Python: Main` in dropdown
 
 3. Press `F5` to run the program or click `Run` button
+
+## Format code
+
+```bash
+# Format code
+black src/
+# Sort imports
+isort src/
+```
