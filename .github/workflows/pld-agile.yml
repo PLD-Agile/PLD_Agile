@@ -84,6 +84,7 @@ jobs:
           mkdir .venv
           python -m pip install pipenv
           pipenv install --dev
+          pipenv install pywin32-ctypes
       - name: Build
         run: pipenv run pyinstaller --windowed --name "PLD Agile" --paths "." src/pld_agile/main.py
       - name: Archive build
