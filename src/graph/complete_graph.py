@@ -7,18 +7,18 @@ MIN_COST = 10
 
 
 class CompleteGraph(Graph):
-    nbVertices: int
-    costs: List[List[int]]
+    __nbVertices: int
+    __costs: List[List[int]]
 
-    def complete_graph(self, nbVertices: int) -> None:
-        self.nbVertices = nbVertices
+    def __init__(self, nbVertices: int) -> None:
+        self.__nbVertices = nbVertices
+        self.__costs = [[-1] * nbVertices for _ in range(nbVertices)]
         iseed = 1
-        cost: List[List[int]] = []
 
         for i in range(nbVertices):
             for j in range(nbVertices):
                 if i == j:
-                    cost[i][j] = -1
+                    self.__costs[i][j] = -1
                 else:
                     it = 16807 * (iseed % 127773) - 2836 * (iseed / 127773)
 
@@ -27,16 +27,16 @@ class CompleteGraph(Graph):
                     else:
                         iseed = it + 2147483647
 
-                    cost[i][j] = MIN_COST + iseed % (MAX_COST - MIN_COST + 1)
+                    self.__costs[i][j] = MIN_COST + iseed % (MAX_COST - MIN_COST + 1)
 
     def get_nb_vertices(self) -> int:
-        return self.nbVertices
+        return self.__nbVertices
 
     def get_cost(self, i: int, j: int) -> int:
         if not self.are_valid_coordinates(i, j):
             return -1
 
-        return self.costs[i][j]
+        return self.__costs[i][j]
 
     def is_arc(self, i: int, j: int) -> bool:
         if not self.are_valid_coordinates(i, j):
@@ -45,4 +45,4 @@ class CompleteGraph(Graph):
         return i != j
 
     def are_valid_coordinates(self, i: int, j: int) -> bool:
-        return i < 0 or i >= self.nbVertices or j < 0 or j >= self.nbVertices
+        return i >= 0 and i < self.__nbVertices and j >= 0 and j < self.__nbVertices

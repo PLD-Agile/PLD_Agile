@@ -5,6 +5,8 @@ from src.graph.graph import Graph
 
 
 class SeqIter(Iterator[int]):
+    """Iterates over unvisited vertex in graph (excluding current vertex)"""
+
     __candidates: List[int]
 
     def __init__(self, unvisited: List[int], current_vertex: int, graph: Graph):
@@ -18,4 +20,7 @@ class SeqIter(Iterator[int]):
         return self
 
     def __next__(self) -> int:
-        return self.__candidates.pop()
+        try:
+            return self.__candidates.pop()
+        except IndexError:
+            raise StopIteration
