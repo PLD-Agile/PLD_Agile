@@ -1,6 +1,6 @@
 from abc import ABC, abstractmethod
 
-from src.graph.graph import Graph
+from src.models.graph import Graph
 
 
 class TSP(ABC):

@@ -4,8 +4,8 @@ from collections.abc import Iterator
 from time import time
 from typing import List, Optional
 
-from src.graph.graph import Graph
-from src.tsp.tsp import TSP
+from src.models.graph import Graph
+from src.models.tsp.tsp import TSP
 
 
 class TemplateTSP(TSP):

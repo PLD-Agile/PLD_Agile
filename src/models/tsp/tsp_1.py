@@ -2,8 +2,9 @@ from collections.abc import Iterator
 from typing import List
 
 from graph.graph import Graph
-from src.tsp.seq_iter import SeqIter
-from src.tsp.template_tsp import TemplateTSP
+
+from src.models.tsp.seq_iter import SeqIter
+from src.models.tsp.template_tsp import TemplateTSP
 
 
 class TSP1(TemplateTSP):
