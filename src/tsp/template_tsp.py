@@ -95,6 +95,7 @@ class TemplateTSP(TSP):
     def bound(self, current_vertex: int, unvisited: List[int]) -> int:
         pass
 
+    @abstractmethod
     def iterator(
         self, current_vertex: int, unvisited: List[int], graph: Graph
     ) -> Iterator[int]:
