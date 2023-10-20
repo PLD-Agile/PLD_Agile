@@ -1,6 +1,6 @@
 from typing import List
 
-from src.graph.graph import Graph
+from src.models.graph.graph import Graph
 
 MAX_COST = 40
 MIN_COST = 10

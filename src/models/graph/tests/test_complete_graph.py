@@ -1,6 +1,6 @@
 import pytest
 
-from src.graph.complete_graph import CompleteGraph
+from src.models.graph.complete_graph import CompleteGraph
 
 NB_VERTICES = 5
 

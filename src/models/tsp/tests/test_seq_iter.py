@@ -1,5 +1,5 @@
-from src.graph.complete_graph import CompleteGraph
-from src.tsp.seq_iter import SeqIter
+from src.models.graph import CompleteGraph
+from src.models.tsp.seq_iter import SeqIter
 
 
 class TestTspSeqIter:

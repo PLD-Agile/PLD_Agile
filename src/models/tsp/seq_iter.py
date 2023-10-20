@@ -1,7 +1,7 @@
 from collections.abc import Iterator
 from typing import List
 
-from src.graph.graph import Graph
+from src.models.graph import Graph
 
 
 class SeqIter(Iterator[int]):
