@@ -1,6 +1,6 @@
 from dataclasses import dataclass
-from typing import Type, TypeVar, Generic
 from enum import Enum
+from typing import Generic, Type, TypeVar
 
 from PyQt6.QtWidgets import QWidget
 

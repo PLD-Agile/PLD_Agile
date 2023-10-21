@@ -1,5 +1,5 @@
-from typing import List, Optional, Tuple, TypeVar, Generic
 from enum import Enum
+from typing import Generic, List, Optional, Tuple, TypeVar
 
 from PyQt6.QtWidgets import QLabel, QStackedWidget, QVBoxLayout, QWidget
 from reactivex import Observable
@@ -9,7 +9,6 @@ from reactivex.subject import BehaviorSubject
 from src.controllers.navigator.navigator_config import NavigatorConfig
 from src.controllers.navigator.page import Page
 from src.controllers.navigator.route import Route
-
 
 RouteName = TypeVar("RouteName", Enum, str)
 

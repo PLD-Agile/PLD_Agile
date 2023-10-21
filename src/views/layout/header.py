@@ -1,7 +1,6 @@
 from PyQt6.QtWidgets import QHBoxLayout, QLabel, QPushButton, QWidget
 
-from views.modules.app_navigation import (AppNavigationRoutes,
-                                               app_navigation)
+from views.modules.app_navigation import AppNavigationRoutes, app_navigation
 
 
 class Header(QWidget):
@@ -19,7 +18,7 @@ class Header(QWidget):
         delivery_button.clicked.connect(
             lambda: app_navigation.replace(AppNavigationRoutes.MANAGE_DELIVERY_MAIN)
         )
-        
+
         layout.addWidget(home_button)
         layout.addWidget(delivery_button)
 
