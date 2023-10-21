@@ -1,7 +1,7 @@
 from PyQt6.QtWidgets import QMainWindow, QPushButton, QVBoxLayout, QWidget
 
 from src.views.layout import Header
-from src.views.modules.main_navigation import main_navigation
+from views.modules.app_navigation import app_navigation
 
 
 class MainWindow(QMainWindow):
@@ -16,7 +16,7 @@ class MainWindow(QMainWindow):
         layout = QVBoxLayout()
 
         header = Header()
-        router_outlet = main_navigation.get_router_outlet()
+        router_outlet = app_navigation.get_router_outlet()
 
         widget.setLayout(layout)
         layout.addWidget(header)

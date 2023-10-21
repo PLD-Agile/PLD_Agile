@@ -6,18 +6,18 @@ from src.views.manage_delivery_man_page.manage_delivery_man_page import \
     ManageDeliveryManPage
 
 
-class MainNavigationRoutes(Enum):
+class AppNavigationRoutes(Enum):
     MAIN = "main"
     MANAGE_DELIVERY_MAIN = "manage_delivery_main"
 
 
-main_navigation = Navigator[MainNavigationRoutes](
+app_navigation = Navigator[AppNavigationRoutes](
     routes=[
-        Route(name=MainNavigationRoutes.MAIN, widget=MainPage),
+        Route(name=AppNavigationRoutes.MAIN, widget=MainPage),
         Route(
-            name=MainNavigationRoutes.MANAGE_DELIVERY_MAIN,
+            name=AppNavigationRoutes.MANAGE_DELIVERY_MAIN,
             widget=ManageDeliveryManPage,
         ),
     ],
-    default_name=MainNavigationRoutes.MAIN,
+    default_name=AppNavigationRoutes.MAIN,
 )
