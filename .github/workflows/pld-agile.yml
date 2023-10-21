@@ -25,7 +25,6 @@ jobs:
       - name: Run lint
         run: |
           .venv/bin/python -m black --check src/
-          .venv/bin/python -m isort --check src/
 
   test:
     name: Test

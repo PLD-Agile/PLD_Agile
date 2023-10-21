@@ -1,9 +1,10 @@
-from PyQt6.QtWidgets import (QHBoxLayout, QLabel, QPushButton, QVBoxLayout,
-                             QWidget)
+from PyQt6.QtWidgets import QHBoxLayout, QPushButton, QVBoxLayout, QWidget
 
 from src.controllers.navigator.page import Page
-from src.views.modules.main_page_navigation import (MainPageNavigationRoutes,
-                                                    main_page_navigation)
+from src.views.modules.main_page_navigation import (
+    MainPageNavigationRoutes,
+    main_page_navigation,
+)
 
 
 class MainPage(Page):

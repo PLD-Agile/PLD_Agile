@@ -2,7 +2,9 @@ from PyQt6.QtWidgets import QHBoxLayout, QPushButton, QVBoxLayout, QWidget
 
 from src.controllers.navigator.page import Page
 from src.views.modules.manage_delivery_man_navigation import (
-    ManageDeliveryManNavigationRoutes, manage_delivery_man_navigation)
+    ManageDeliveryManNavigationRoutes,
+    manage_delivery_man_navigation,
+)
 
 
 class ManageDeliveryManPage(Page):

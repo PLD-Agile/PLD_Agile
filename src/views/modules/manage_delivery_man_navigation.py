@@ -1,13 +1,16 @@
 from enum import Enum
 
 from src.controllers.navigator import Navigator, Route
-from src.views.manage_delivery_man_page.add_delivery_man_form_view import \
-    AddDeliveryManFormView
-from src.views.manage_delivery_man_page.delete_delivery_man_form_view import \
-    DeleteDeliveryManFormView
+from src.views.manage_delivery_man_page.add_delivery_man_form_view import (
+    AddDeliveryManFormView,
+)
+from src.views.manage_delivery_man_page.delete_delivery_man_form_view import (
+    DeleteDeliveryManFormView,
+)
 from src.views.manage_delivery_man_page.menu_view import MenuView
-from src.views.manage_delivery_man_page.modify_delivery_man_form_view import \
-    ModifyDeliveryManFormView
+from src.views.manage_delivery_man_page.modify_delivery_man_form_view import (
+    ModifyDeliveryManFormView,
+)
 
 
 class ManageDeliveryManNavigationRoutes(Enum):

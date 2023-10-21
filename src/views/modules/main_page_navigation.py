@@ -1,12 +1,9 @@
 from enum import Enum
 
 from src.controllers.navigator import Navigator, Route
-from src.views.main_page.add_delivery_address_page import \
-    AddDeliveryAddressPage
-from src.views.main_page.add_delivery_time_window_page import \
-    AddDeliveryTimeWindowPage
-from src.views.main_page.confirm_delivery_address_page import \
-    ConfirmDeliveryAddressPage
+from src.views.main_page.add_delivery_address_page import AddDeliveryAddressPage
+from src.views.main_page.add_delivery_time_window_page import AddDeliveryTimeWindowPage
+from src.views.main_page.confirm_delivery_address_page import ConfirmDeliveryAddressPage
 from src.views.main_page.current_tour_page import CurrentTourPage
 from src.views.main_page.select_delivery_man_page import SelectDeliveryManPage
 
