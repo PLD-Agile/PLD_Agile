@@ -2,49 +2,48 @@ from enum import Enum
 from typing import List, Tuple
 
 import pytest
-from PyQt6.QtWidgets import QWidget
 
 from src.controllers.navigator.navigator import Navigator
 from src.controllers.navigator.route import Route
 
 
-class TestWidget1(QWidget):
+class WidgetTest1:
     pass
 
 
-class TestWidget2(QWidget):
+class WidgetTest2:
     pass
 
 
-class TestWidget3(QWidget):
+class WidgetTest3:
     pass
 
 
-class NotFoundWidget(QWidget):
+class NotFoundWidget:
     pass
 
 
-class TestRoutes(Enum):
+class RoutesTest(Enum):
     route1 = "route1"
     route2 = "route2"
     route3 = "route3"
 
 
-DEFAULT_ROUTE_NAME = TestRoutes.route2
+DEFAULT_ROUTE_NAME = RoutesTest.route2
 
-ROUTES: List[Route[TestRoutes]] = [
-    Route(name=TestRoutes.route1, widget=TestWidget1),
-    Route(name=TestRoutes.route2, widget=TestWidget2),
-    Route(name=TestRoutes.route3, widget=TestWidget3),
+ROUTES: List[Route[RoutesTest]] = [
+    Route(name=RoutesTest.route1, widget=WidgetTest1),
+    Route(name=RoutesTest.route2, widget=WidgetTest2),
+    Route(name=RoutesTest.route3, widget=WidgetTest3),
 ]
 
 
 class TestNavigator:
-    navigator: Navigator[TestRoutes]
+    navigator: Navigator[RoutesTest]
 
     @pytest.fixture(autouse=True)
-    def init_navigator(self) -> Navigator[TestRoutes]:
-        self.navigator = Navigator[TestRoutes](
+    def init_navigator(self) -> Navigator[RoutesTest]:
+        self.navigator = Navigator[RoutesTest](
             routes=ROUTES,
             default_name=DEFAULT_ROUTE_NAME,
             not_found_widget=NotFoundWidget,
@@ -60,24 +59,24 @@ class TestNavigator:
         self.navigator.current_route_name.subscribe(on_next)
 
     def test_should_add_to_history_on_push(self):
-        self.navigator.push(TestRoutes.route1)
+        self.navigator.push(RoutesTest.route1)
 
         def on_next(history_stack):
-            assert history_stack == [DEFAULT_ROUTE_NAME, TestRoutes.route1]
+            assert history_stack == [DEFAULT_ROUTE_NAME, RoutesTest.route1]
 
         self.navigator.history_stack.subscribe(on_next)
 
     def test_should_replace_history_on_replace(self):
-        self.navigator.push(TestRoutes.route3)
-        self.navigator.replace(TestRoutes.route1)
+        self.navigator.push(RoutesTest.route3)
+        self.navigator.replace(RoutesTest.route1)
 
         def on_next(history_stack):
-            assert history_stack == [DEFAULT_ROUTE_NAME, TestRoutes.route1]
+            assert history_stack == [DEFAULT_ROUTE_NAME, RoutesTest.route1]
 
         self.navigator.history_stack.subscribe(on_next)
 
     def test_should_pop_history_on_pop(self):
-        self.navigator.push(TestRoutes.route1)
+        self.navigator.push(RoutesTest.route1)
         self.navigator.pop()
 
         def on_next(history_stack):
@@ -90,24 +89,24 @@ class TestNavigator:
             self.navigator.pop()
 
     def test_should_not_push_same_route(self):
-        self.navigator.push(TestRoutes.route1)
-        self.navigator.push(TestRoutes.route1)
+        self.navigator.push(RoutesTest.route1)
+        self.navigator.push(RoutesTest.route1)
 
         def on_next(history_stack):
-            assert history_stack == [DEFAULT_ROUTE_NAME, TestRoutes.route1]
+            assert history_stack == [DEFAULT_ROUTE_NAME, RoutesTest.route1]
 
         self.navigator.history_stack.subscribe(on_next)
 
     def test_should_resolve(self):
         def on_next(res: Tuple[int, Route]):
-            assert res[1].widget == TestWidget2
+            assert res[1].widget == WidgetTest2
 
         self.navigator.current_route.subscribe(on_next)
 
     def test_should_resolve_on_change(self):
-        self.navigator.push(TestRoutes.route1)
+        self.navigator.push(RoutesTest.route1)
 
         def on_next(res: Tuple[int, Route]):
-            assert res[1].widget == TestWidget1
+            assert res[1].widget == WidgetTest1
 
         self.navigator.current_route.subscribe(on_next)
