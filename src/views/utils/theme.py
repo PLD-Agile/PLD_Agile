@@ -21,5 +21,5 @@ class Theme:
         palette.setColor(widget.backgroundRole(), color)
         widget.setPalette(palette)
 
-    def set_background_color(widget: QWidget, color: Color):
-        Theme.set_background_color_qt(widget, QColor(color.value))
+    def set_background_color(widget: QWidget, color: Color | str):
+        Theme.set_background_color_qt(widget, QColor(color if isinstance(color, str) else color.value))

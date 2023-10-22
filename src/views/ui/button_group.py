@@ -15,15 +15,11 @@ class ButtonGroup(QWidget):
         self.setLayout(layout)
 
         for i, button in enumerate(buttons):
-            print(i, button)
             if i == 0:
-                print("LEFT")
                 button.setCorners(ButtonCorners.LEFT)
             elif i == len(buttons) - 1:
-                print("RIGHT")
                 button.setCorners(ButtonCorners.RIGHT)
             else:
-                print("NONE")
                 button.setCorners(ButtonCorners.NONE)
 
             layout.addWidget(button)
