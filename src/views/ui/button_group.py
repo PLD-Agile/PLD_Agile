@@ -1,6 +1,8 @@
 from typing import List
+
 from PyQt6 import QtCore
 from PyQt6.QtWidgets import QHBoxLayout, QWidget
+
 from src.views.ui.button import Button, ButtonCorners
 
 

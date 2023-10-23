@@ -1,8 +1,8 @@
-from PyQt6.QtWidgets import QMainWindow, QPushButton, QVBoxLayout, QWidget, QGridLayout
+from PyQt6.QtWidgets import QGridLayout, QMainWindow, QPushButton, QVBoxLayout, QWidget
 
 from src.views.layout import Header
+from src.views.utils.theme import Color, Theme
 from views.modules.app_navigation import app_navigation
-from src.views.utils.theme import Theme, Color
 
 
 class MainWindow(QMainWindow):

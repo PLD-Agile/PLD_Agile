@@ -1,9 +1,10 @@
-from typing import Optional
-from PyQt6.QtGui import QIcon
-from src.views.ui.button import Button, ButtonCorners
-from src.controllers.navigator.navigator import Navigator
 from enum import Enum
+from typing import Optional
 
+from PyQt6.QtGui import QIcon
+
+from src.controllers.navigator.navigator import Navigator
+from src.views.ui.button import Button, ButtonCorners
 
 NavigationButtonTarget = Enum("NavigationButtonTarget", ["REPLACE", "PUSH"])
 

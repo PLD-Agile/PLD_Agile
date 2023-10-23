@@ -1,8 +1,8 @@
 from PyQt6.QtWidgets import QHBoxLayout, QLabel, QPushButton, QWidget
 
-from views.modules.app_navigation import AppNavigationRoutes, app_navigation
-from src.views.ui.nav_button import NavigationButton
 from src.views.ui.button_group import ButtonGroup
+from src.views.ui.nav_button import NavigationButton
+from views.modules.app_navigation import AppNavigationRoutes, app_navigation
 
 
 class Header(QWidget):

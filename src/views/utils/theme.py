@@ -1,6 +1,7 @@
 from enum import Enum
-from PyQt6.QtWidgets import QWidget
+
 from PyQt6.QtGui import QColor
+from PyQt6.QtWidgets import QWidget
 
 
 class Color(Enum):

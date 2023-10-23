@@ -1,11 +1,11 @@
 from PyQt6.QtWidgets import QHBoxLayout, QPushButton, QVBoxLayout, QWidget
 
 from src.controllers.navigator.page import Page
+from src.views.main_page.map_view import MapView
 from src.views.modules.main_page_navigation import (
     MainPageNavigationRoutes,
     main_page_navigation,
 )
-from src.views.main_page.map_view import MapView
 from src.views.utils.theme import Theme
 
 
@@ -17,7 +17,7 @@ class MainPage(Page):
 
         layout.addWidget(MapView())
         layout.addWidget(main_page_navigation.get_router_outlet())
-        
+
         # layout = QVBoxLayout()
 
         # sub_layout_widget = QWidget()
