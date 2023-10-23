@@ -35,16 +35,16 @@ class MapView(QGraphicsView):
     MAX_SCALE = 8
     """Maximum scale factor for the map (1 = no zoom, 2 = 2x zoom, etc.)
     """
-    SCROLL_INTENSITY = 3
+    SCROLL_INTENSITY = 2
     """Intensity of the zoom when scrolling (higher = more zoom)
     """
     DEFAULT_ZOOM_ACTION = 1.25
     """Zoom factor when clicking on the zoom in/out buttons
     """
-    MARKER_BASE_SIZE = 0.003
-    """Size of a marker when zoom is 1
+    MARKER_INITIAL_SIZE = 0.045
+    """Marker size when zoom is 1 (1 = marker is same width as the map)
     """
-    MARKER_ZOOM_ADJUSTMENT = 1
+    MARKER_ZOOM_ADJUSTMENT = 0.35
     """Amount of zoom adjustment for the markers (1 = marker stays the same size, 0 = marker scales with the map)
     """
     MARKER_RESOLUTION_RESOLUTION = 250
@@ -63,6 +63,7 @@ class MapView(QGraphicsView):
     __on_map_click: Subject[Position] = Subject()
     __segments: List[QAbstractGraphicsShapeItem] = []
     __markers: List[Tuple[QAbstractGraphicsShapeItem, AlignBottom]] = []
+    __marker_size: Optional[int] = None
 
     def __init__(self, parent: Optional[QWidget] = None) -> None:
         super().__init__(parent)
@@ -93,6 +94,8 @@ class MapView(QGraphicsView):
 
         for segment in map.segments:
             self.__add_segment(segment)
+            
+        self.__marker_size = self.__scene.sceneRect().width() * self.MARKER_INITIAL_SIZE
 
         self.fit_map()
 
@@ -124,18 +127,18 @@ class MapView(QGraphicsView):
         icon_shape.setPos(
             QPointF(
                 # Longitude - half of the icon size (to center it)
-                position.longitude - self.MARKER_BASE_SIZE / 2,
+                position.longitude - self.__marker_size / 2,
                 # Latitude - icon size + 1% of the icon size (align it with the bottom of the icon which includes a little margin)
                 (
                     position.latitude
-                    - self.MARKER_BASE_SIZE
-                    + (self.MARKER_BASE_SIZE * 0.01)
+                    - self.__marker_size
+                    + (self.__marker_size * 0.01)
                 )
                 if align_bottom
-                else (position.latitude - self.MARKER_BASE_SIZE / 2),
+                else (position.latitude - self.__marker_size / 2),
             )
         )
-        icon_shape.setScale(self.MARKER_BASE_SIZE / self.MARKER_RESOLUTION_RESOLUTION)
+        icon_shape.setScale(self.__marker_size / self.MARKER_RESOLUTION_RESOLUTION)
 
         self.__adjust_marker(icon_shape, align_bottom)
 
@@ -234,10 +237,10 @@ class MapView(QGraphicsView):
         origin = marker.transformOriginPoint()
 
         translateX, translateY = (
-            origin.x() + self.MARKER_BASE_SIZE / 2,
-            (origin.y() + self.MARKER_BASE_SIZE)
+            origin.x() + self.__marker_size / 2,
+            (origin.y() + self.__marker_size)
             if align_bottom
-            else (origin.y() + self.MARKER_BASE_SIZE / 2),
+            else (origin.y() + self.__marker_size / 2),
         )
         scale_factor = 1 / (
             self.__scale_factor * self.MARKER_ZOOM_ADJUSTMENT
