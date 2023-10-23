@@ -1,17 +1,13 @@
-from typing import Optional, List, Literal, Tuple
-from PyQt6 import QtGui
+from typing import Optional, List, Tuple
 
-from PyQt6.QtCore import Qt, QPointF, QRectF
+from PyQt6.QtCore import Qt, QPointF
 from PyQt6.QtGui import (
     QBrush,
     QMouseEvent,
     QPen,
     QWheelEvent,
     QTransform,
-    QResizeEvent,
-    QPainter,
     QColor,
-    QPixmap,
 )
 from PyQt6.QtWidgets import (
     QFrame,
@@ -22,10 +18,10 @@ from PyQt6.QtWidgets import (
     QWidget,
 )
 from reactivex import Observable, Subject
-import qtawesome as qta
 
-from src.models.temporary_map_loader import Map, Position, TemporaryMapLoader
+from src.models.temporary_map_loader import Map, Position, Segment
 from src.views.utils.theme import Theme
+from src.views.utils.icon import get_icon_pixmap
 
 
 AlignBottom = bool
@@ -44,21 +40,17 @@ class MapView(QGraphicsView):
     __scene: Optional[QGraphicsScene] = None
     __map: Optional[Map] = None
     __scale_factor: int = 1
-    __on_click: Subject[Position] = Subject()
+    __on_map_click: Subject[Position] = Subject()
     __segments: List[QAbstractGraphicsShapeItem] = []
     __markers: List[Tuple[QAbstractGraphicsShapeItem, AlignBottom]] = []
 
     def __init__(self, parent: Optional[QWidget] = None) -> None:
         super().__init__(parent)
-
         self.__set_config()
 
-        map_loader = TemporaryMapLoader()
-        self.set_map(map_loader.load_map())
-
     @property
-    def on_click(self) -> Observable[Position]:
-        return self.__on_click
+    def on_map_click(self) -> Observable[Position]:
+        return self.__on_map_click
 
     def set_map(self, map: Map):
         self.__map = map
@@ -68,18 +60,12 @@ class MapView(QGraphicsView):
             map.max_longitude - map.min_longitude,
             map.max_latitude - map.min_latitude,
         )
+
         self.__scene.setBackgroundBrush(QBrush(Qt.GlobalColor.white))
         self.setScene(self.__scene)
 
         for segment in map.segments:
-            segmentLine = self.__scene.addLine(
-                segment.origin.longitude,
-                segment.origin.latitude,
-                segment.destination.longitude,
-                segment.destination.latitude,
-                QPen(QBrush(Qt.GlobalColor.black), self.__get_pen_size()),
-            )
-            self.__segments.append(segmentLine)
+            self.__add_segment(segment)
 
         self.fit_map()
 
@@ -95,21 +81,19 @@ class MapView(QGraphicsView):
         color: QColor = QColor("#f54242"),
         align_bottom: AlignBottom = True,
     ):
-        icon_pixmap = qta.icon(f"fa5s.{icon}").pixmap(
-            self.MARKER_RESOLUTION_RESOLUTION, self.MARKER_RESOLUTION_RESOLUTION
-        )
-        mask = icon_pixmap.createMaskFromColor(
-            Qt.GlobalColor.transparent, Qt.MaskMode.MaskInColor
-        )
-        icon_pixmap.fill(color)
-        icon_pixmap.setMask(mask)
+        icon_pixmap = get_icon_pixmap(icon, self.MARKER_RESOLUTION_RESOLUTION, color)
+
         icon_shape = self.__scene.addPixmap(icon_pixmap)
         icon_shape.setPos(
             QPointF(
                 # Longitude - half of the icon size (to center it)
                 position.longitude - self.MARKER_BASE_SIZE / 2,
                 # Latitude - icon size + 1% of the icon size (align it with the bottom of the icon which includes a little margin)
-                (position.latitude - self.MARKER_BASE_SIZE + (self.MARKER_BASE_SIZE * 0.01))
+                (
+                    position.latitude
+                    - self.MARKER_BASE_SIZE
+                    + (self.MARKER_BASE_SIZE * 0.01)
+                )
                 if align_bottom
                 else (position.latitude - self.MARKER_BASE_SIZE / 2),
             )
@@ -140,7 +124,19 @@ class MapView(QGraphicsView):
 
         self.add_marker(position)
 
-        self.__on_click.on_next(position)
+        self.__on_map_click.on_next(position)
+
+    def __add_segment(
+        self, segment: Segment, color: QColor = Qt.GlobalColor.black
+    ) -> None:
+        segmentLine = self.__scene.addLine(
+            segment.origin.longitude,
+            segment.origin.latitude,
+            segment.destination.longitude,
+            segment.destination.latitude,
+            QPen(QBrush(color), self.__get_pen_size()),
+        )
+        self.__segments.append(segmentLine)
 
     def __scale_map(self, factor: float):
         updated_scale = self.__scale_factor * factor
@@ -175,7 +171,10 @@ class MapView(QGraphicsView):
             if align_bottom
             else (origin.y() + self.MARKER_BASE_SIZE / 2),
         )
-        scale_factor = 1 / (self.__scale_factor * self.MARKER_ZOOM_ADJUSTMENT + (1 - self.MARKER_ZOOM_ADJUSTMENT))
+        scale_factor = 1 / (
+            self.__scale_factor * self.MARKER_ZOOM_ADJUSTMENT
+            + (1 - self.MARKER_ZOOM_ADJUSTMENT)
+        )
 
         marker.setTransform(
             QTransform()
@@ -184,8 +183,15 @@ class MapView(QGraphicsView):
             .translate(-translateX, -translateY)
         )
 
-    def __get_pen_size(self) -> float:
-        return self.SEGMENT_BASE_SIZE / (self.__scale_factor * self.SEGMENT_ZOOM_ADJUSTMENT + (1 - self.SEGMENT_ZOOM_ADJUSTMENT))
+    def __get_pen_size(self, scale: float = 1) -> float:
+        return (
+            self.SEGMENT_BASE_SIZE
+            / (
+                self.__scale_factor * self.SEGMENT_ZOOM_ADJUSTMENT
+                + (1 - self.SEGMENT_ZOOM_ADJUSTMENT)
+            )
+            * scale
+        )
 
     def __set_config(self):
         self.setTransformationAnchor(QGraphicsView.ViewportAnchor.AnchorUnderMouse)

@@ -19,6 +19,7 @@ from src.views.modules.main_page_navigation import (
 from src.views.utils.theme import Theme
 from src.views.ui.button import Button
 from src.views.ui.button_group import ButtonGroup
+from src.models.temporary_map_loader import TemporaryMapLoader
 
 
 class MainPage(Page):
@@ -52,6 +53,9 @@ class MainPage(Page):
     def __build_map_view(self) -> QLayout:
         map_layout = QVBoxLayout()
         map_view = MapView()
+        
+        # TODO: Remove this
+        map_view.set_map(TemporaryMapLoader().load_map())
 
         buttons_layout = QHBoxLayout()
 
