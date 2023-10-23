@@ -50,7 +50,7 @@ class MapView(QGraphicsView):
     MARKER_RESOLUTION_RESOLUTION = 250
     """Image resolution of the marker
     """
-    SEGMENT_BASE_SIZE = 0.00005
+    SEGMENT_INITIAL_SIZE = 0.00005
     """Size of a segment when zoom is 1
     """
     SEGMENT_ZOOM_ADJUSTMENT = 0.1
@@ -264,7 +264,7 @@ class MapView(QGraphicsView):
             float: Pen size
         """
         return (
-            self.SEGMENT_BASE_SIZE
+            self.SEGMENT_INITIAL_SIZE
             / (
                 self.__scale_factor * self.SEGMENT_ZOOM_ADJUSTMENT
                 + (1 - self.SEGMENT_ZOOM_ADJUSTMENT)
