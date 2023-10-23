@@ -22,4 +22,6 @@ class Theme:
         widget.setPalette(palette)
 
     def set_background_color(widget: QWidget, color: Color | str):
-        Theme.set_background_color_qt(widget, QColor(color if isinstance(color, str) else color.value))
+        Theme.set_background_color_qt(
+            widget, QColor(color if isinstance(color, str) else color.value)
+        )

@@ -6,17 +6,18 @@ from src.views.modules.main_page_navigation import (
     main_page_navigation,
 )
 from src.views.main_page.map_view import MapView
+from src.views.utils.theme import Theme
 
 
 class MainPage(Page):
     def __init__(self):
         super().__init__()
-        
+
         layout = QHBoxLayout()
-        
+
         layout.addWidget(MapView())
         layout.addWidget(main_page_navigation.get_router_outlet())
-
+        
         # layout = QVBoxLayout()
 
         # sub_layout_widget = QWidget()

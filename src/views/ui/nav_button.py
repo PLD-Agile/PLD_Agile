@@ -10,7 +10,7 @@ NavigationButtonTarget = Enum("NavigationButtonTarget", ["REPLACE", "PUSH"])
 
 class NavigationButton(Button):
     __active: bool = False
-    
+
     def __init__(
         self,
         text: str,
@@ -29,12 +29,14 @@ class NavigationButton(Button):
             else navigator.push(link)
         )
 
-        navigator.current_route_name.subscribe(lambda route_name: self.__update_active(route_name))
-        
+        navigator.current_route_name.subscribe(
+            lambda route_name: self.__update_active(route_name)
+        )
+
     def __update_active(self, route_name: str) -> None:
         self.__active = self.__link == route_name
         self.setDisabled(self.__active)
         self._update_style()
-        
+
     def active(self) -> bool:
         return self.__active
