@@ -71,7 +71,6 @@ class TemporaryMapLoader:
                     length=float(el.attrib['length'])
                 )
                 segments.append(segment)
-                print(segment)
                 
         return Map(intersections, segments, max_latitude, min_latitude, max_longitude, min_longitude)
         
