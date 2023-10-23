@@ -35,8 +35,11 @@ class MapView(QGraphicsView):
     MAX_SCALE = 8
     SCALE_INTENSITY = 3
     DEFAULT_SCALE = 1.25
-    ICON_SIZE = 0.003
-    ICON_RESOLUTION = 250
+    MARKER_BASE_SIZE = 0.003
+    MARKER_ZOOM_ADJUSTMENT = 0.5
+    MARKER_RESOLUTION_RESOLUTION = 250
+    SEGMENT_BASE_SIZE = 0.00005
+    SEGMENT_ZOOM_ADJUSTMENT = 0.1
 
     __scene: Optional[QGraphicsScene] = None
     __map: Optional[Map] = None
@@ -93,7 +96,7 @@ class MapView(QGraphicsView):
         align_bottom: AlignBottom = True,
     ):
         icon_pixmap = qta.icon(f"fa5s.{icon}").pixmap(
-            self.ICON_RESOLUTION, self.ICON_RESOLUTION
+            self.MARKER_RESOLUTION_RESOLUTION, self.MARKER_RESOLUTION_RESOLUTION
         )
         mask = icon_pixmap.createMaskFromColor(
             Qt.GlobalColor.transparent, Qt.MaskMode.MaskInColor
@@ -104,14 +107,14 @@ class MapView(QGraphicsView):
         icon_shape.setPos(
             QPointF(
                 # Longitude - half of the icon size (to center it)
-                position.longitude - self.ICON_SIZE / 2,
+                position.longitude - self.MARKER_BASE_SIZE / 2,
                 # Latitude - icon size + 1% of the icon size (align it with the bottom of the icon which includes a little margin)
-                (position.latitude - self.ICON_SIZE + (self.ICON_SIZE * 0.01))
+                (position.latitude - self.MARKER_BASE_SIZE + (self.MARKER_BASE_SIZE * 0.01))
                 if align_bottom
-                else (position.latitude - self.ICON_SIZE / 2),
+                else (position.latitude - self.MARKER_BASE_SIZE / 2),
             )
         )
-        icon_shape.setScale(self.ICON_SIZE / self.ICON_RESOLUTION)
+        icon_shape.setScale(self.MARKER_BASE_SIZE / self.MARKER_RESOLUTION_RESOLUTION)
 
         self.__adjust_marker(icon_shape, align_bottom)
 
@@ -165,15 +168,14 @@ class MapView(QGraphicsView):
         self, marker: QAbstractGraphicsShapeItem, align_bottom: AlignBottom
     ) -> None:
         origin = marker.transformOriginPoint()
-        scale_ratio = 0.75  # Intensity of the zoom on the marker (bigger means smaller icon on zoom)
 
         translateX, translateY = (
-            origin.x() + self.ICON_SIZE / 2,
-            (origin.y() + self.ICON_SIZE)
+            origin.x() + self.MARKER_BASE_SIZE / 2,
+            (origin.y() + self.MARKER_BASE_SIZE)
             if align_bottom
-            else (origin.y() + self.ICON_SIZE / 2),
+            else (origin.y() + self.MARKER_BASE_SIZE / 2),
         )
-        scale_factor = 1 / self.__scale_factor * scale_ratio + (1 - scale_ratio)
+        scale_factor = 1 / (self.__scale_factor * self.MARKER_ZOOM_ADJUSTMENT + (1 - self.MARKER_ZOOM_ADJUSTMENT))
 
         marker.setTransform(
             QTransform()
@@ -183,7 +185,7 @@ class MapView(QGraphicsView):
         )
 
     def __get_pen_size(self) -> float:
-        return 0.000035 + 0.000025 / self.__scale_factor
+        return self.SEGMENT_BASE_SIZE / (self.__scale_factor * self.SEGMENT_ZOOM_ADJUSTMENT + (1 - self.SEGMENT_ZOOM_ADJUSTMENT))
 
     def __set_config(self):
         self.setTransformationAnchor(QGraphicsView.ViewportAnchor.AnchorUnderMouse)
