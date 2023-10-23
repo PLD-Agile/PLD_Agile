@@ -1,12 +1,12 @@
 from enum import Enum
 from typing import Optional
 
+import qtawesome as qta
 from PyQt6.QtCore import Qt
 from PyQt6.QtGui import QCursor, QIcon
 from PyQt6.QtWidgets import QPushButton
 
 from src.views.utils.theme import Color, Theme
-import qtawesome as qta
 
 ButtonCorners = Enum("ButtonCorners", ["ALL", "LEFT", "RIGHT", "TOP", "BOTTOM", "NONE"])
 

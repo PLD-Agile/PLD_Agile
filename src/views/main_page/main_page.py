@@ -1,25 +1,25 @@
-from PyQt6.QtWidgets import (
-    QHBoxLayout,
-    QPushButton,
-    QVBoxLayout,
-    QWidget,
-    QLayout,
-    QSizePolicy,
-    QStyle,
-)
 from PyQt6.QtCore import Qt
 from PyQt6.QtGui import QIcon
+from PyQt6.QtWidgets import (
+    QHBoxLayout,
+    QLayout,
+    QPushButton,
+    QSizePolicy,
+    QStyle,
+    QVBoxLayout,
+    QWidget,
+)
 
 from src.controllers.navigator.page import Page
+from src.models.temporary_map_loader import TemporaryMapLoader
 from src.views.main_page.map_view import MapView
 from src.views.modules.main_page_navigation import (
     MainPageNavigationRoutes,
     main_page_navigation,
 )
-from src.views.utils.theme import Theme
 from src.views.ui.button import Button
 from src.views.ui.button_group import ButtonGroup
-from src.models.temporary_map_loader import TemporaryMapLoader
+from src.views.utils.theme import Theme
 
 
 class MainPage(Page):
@@ -36,7 +36,7 @@ class MainPage(Page):
     def __build_map_view(self) -> QLayout:
         map_layout = QVBoxLayout()
         map_view = MapView()
-        
+
         # TODO: Remove this
         map_view.set_map(TemporaryMapLoader().load_map())
 

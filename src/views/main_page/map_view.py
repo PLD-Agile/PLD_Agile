@@ -1,37 +1,35 @@
-from typing import Optional, List, Tuple
+from typing import List, Optional, Tuple
 
-from PyQt6.QtCore import Qt, QPointF
+from PyQt6.QtCore import QPointF, Qt
 from PyQt6.QtGui import (
     QBrush,
-    QMouseEvent,
-    QPen,
-    QWheelEvent,
-    QTransform,
     QColor,
     QIcon,
+    QMouseEvent,
+    QPen,
+    QTransform,
+    QWheelEvent,
 )
 from PyQt6.QtWidgets import (
+    QAbstractGraphicsShapeItem,
     QFrame,
     QGraphicsScene,
     QGraphicsView,
     QSizePolicy,
-    QAbstractGraphicsShapeItem,
     QWidget,
 )
 from reactivex import Observable, Subject
 
 from src.models.temporary_map_loader import Map, Position, Segment
-from src.views.utils.theme import Theme
 from src.views.utils.icon import get_icon_pixmap
-
+from src.views.utils.theme import Theme
 
 AlignBottom = bool
 
 
 class MapView(QGraphicsView):
-    """Widget to display a Map
-    """
-    
+    """Widget to display a Map"""
+
     MAX_SCALE = 8
     """Maximum scale factor for the map (1 = no zoom, 2 = 2x zoom, etc.)
     """
@@ -71,13 +69,12 @@ class MapView(QGraphicsView):
 
     @property
     def on_map_click(self) -> Observable[Position]:
-        """Subject that emit the position on the map when a user double clicks on it
-        """
+        """Subject that emit the position on the map when a user double clicks on it"""
         return self.__on_map_click
 
     def set_map(self, map: Map):
         """Set the map and initialize the view
-        
+
         Arguments:
             map (Map): Map to display
         """
@@ -94,14 +91,13 @@ class MapView(QGraphicsView):
 
         for segment in map.segments:
             self.__add_segment(segment)
-            
+
         self.__marker_size = self.__scene.sceneRect().width() * self.MARKER_INITIAL_SIZE
 
         self.fit_map()
 
     def fit_map(self):
-        """Adjust the view to fit the all map
-        """
+        """Adjust the view to fit the all map"""
         if self.__scene:
             self.fitInView(self.__scene.sceneRect(), Qt.AspectRatioMode.KeepAspectRatio)
             self.__scale_factor = 1
@@ -129,11 +125,7 @@ class MapView(QGraphicsView):
                 # Longitude - half of the icon size (to center it)
                 position.longitude - self.__marker_size / 2,
                 # Latitude - icon size + 1% of the icon size (align it with the bottom of the icon which includes a little margin)
-                (
-                    position.latitude
-                    - self.__marker_size
-                    + (self.__marker_size * 0.01)
-                )
+                (position.latitude - self.__marker_size + (self.__marker_size * 0.01))
                 if align_bottom
                 else (position.latitude - self.__marker_size / 2),
             )
@@ -145,18 +137,16 @@ class MapView(QGraphicsView):
         self.__markers.append((icon_shape, align_bottom))
 
     def zoom_in(self):
-        """Zoom in the map
-        """
+        """Zoom in the map"""
         self.__scale_map(self.DEFAULT_ZOOM_ACTION)
 
     def zoom_out(self):
-        """Zoom out the map
-        """
+        """Zoom out the map"""
         self.__scale_map(1 / self.DEFAULT_ZOOM_ACTION)
 
     def wheelEvent(self, event: QWheelEvent) -> None:
         """Method called when the user scrolls on the map
-        
+
         Zoom the map in/out depending on the scroll direction
         """
         if self.__scene and event.angleDelta().y() != 0:
@@ -217,8 +207,7 @@ class MapView(QGraphicsView):
         self.__adjust_map_graphics()
 
     def __adjust_map_graphics(self) -> None:
-        """Adjust map segments and markers to the current map scale
-        """
+        """Adjust map segments and markers to the current map scale"""
         for segment in self.__segments:
             segment.setPen(QPen(QBrush(Qt.GlobalColor.black), self.__get_pen_size()))
 
@@ -273,8 +262,7 @@ class MapView(QGraphicsView):
         )
 
     def __set_config(self):
-        """Initiate config for the view.
-        """
+        """Initiate config for the view."""
         self.setTransformationAnchor(QGraphicsView.ViewportAnchor.AnchorUnderMouse)
         self.setResizeAnchor(QGraphicsView.ViewportAnchor.AnchorUnderMouse)
         self.setHorizontalScrollBarPolicy(Qt.ScrollBarPolicy.ScrollBarAlwaysOff)

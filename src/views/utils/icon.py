@@ -1,7 +1,8 @@
-from PyQt6.QtGui import QIcon, QPixmap, QColor
-from PyQt6.QtCore import Qt
-import qtawesome as qta
 from typing import Optional
+
+import qtawesome as qta
+from PyQt6.QtCore import Qt
+from PyQt6.QtGui import QColor, QIcon, QPixmap
 
 
 def get_icon_pixmap(
