@@ -6,6 +6,7 @@ from PyQt6.QtGui import QCursor, QIcon
 from PyQt6.QtWidgets import QPushButton
 
 from src.views.utils.theme import Color, Theme
+import qtawesome as qta
 
 ButtonCorners = Enum("ButtonCorners", ["ALL", "LEFT", "RIGHT", "TOP", "BOTTOM", "NONE"])
 
@@ -16,12 +17,14 @@ class Button(QPushButton):
 
     def __init__(
         self,
-        text: str,
-        icon: Optional[QIcon] = None,
+        text: Optional[str] = None,
+        icon: Optional[QIcon | str] = None,
         corners: ButtonCorners = ButtonCorners.ALL,
     ):
         if icon:
-            super().__init__(icon, text)
+            super().__init__(
+                qta.icon(f"fa5s.{icon}") if isinstance(icon, str) else icon, text
+            )
         else:
             super().__init__(text)
 
@@ -46,6 +49,9 @@ class Button(QPushButton):
                 padding: 8px 16px;
                 font-weight: 500;
                 {self.__get_corners()}
+            }}
+            QPushButton:pressed {{
+                background-color: {Color.PRIMARY_DISABLED.value};
             }}
         """
         )

@@ -8,8 +8,8 @@ from typing import Dict, List
 
 @dataclass
 class Position:
-    latitude: float
     longitude: float
+    latitude: float
 
 
 @dataclass
