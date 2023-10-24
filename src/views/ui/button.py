@@ -4,7 +4,7 @@ from typing import Optional
 import qtawesome as qta
 from PyQt6.QtCore import Qt
 from PyQt6.QtGui import QCursor, QIcon
-from PyQt6.QtWidgets import QPushButton
+from PyQt6.QtWidgets import QPushButton, QWidget
 
 from src.views.utils.theme import Color, Theme
 
@@ -20,17 +20,25 @@ class Button(QPushButton):
         text: Optional[str] = None,
         icon: Optional[QIcon | str] = None,
         corners: ButtonCorners = ButtonCorners.ALL,
+        parent: Optional[QWidget] = None,
     ):
         if icon:
             super().__init__(
-                qta.icon(f"fa5s.{icon}") if isinstance(icon, str) else icon, text
+                icon=qta.icon(f"fa5s.{icon}") if isinstance(icon, str) else icon, 
+                text=text,
+                parent=parent,
             )
         else:
-            super().__init__(text)
+            super().__init__(text, parent)
 
         self.__corners = corners
 
         self._update_style()
+        
+    def setEnabled(self, enabled: bool) -> None:
+        self.__disabled = not enabled
+        self._update_style()
+        super().setDisabled(not enabled)
 
     def setDisabled(self, disabled: bool) -> None:
         self.__disabled = disabled
@@ -46,13 +54,13 @@ class Button(QPushButton):
             f"""
             QPushButton {{
                 background-color: {self.__get_background_color()};
-                color: {Color.PRIMARY_CONTRAST.value};
+                color: {self.__get_color()};
                 padding: 8px 16px;
                 font-weight: 500;
                 {self.__get_corners()}
             }}
             QPushButton:pressed {{
-                background-color: {Color.PRIMARY_DISABLED.value};
+                background-color: {"#80" + Color.PRIMARY.value[1:]};
             }}
         """
         )
@@ -60,9 +68,15 @@ class Button(QPushButton):
 
     def __get_background_color(self) -> str:
         if self.__disabled:
-            return Color.PRIMARY_DISABLED.value
+            return "#80" + Color.PRIMARY.value[1:]
         else:
             return Color.PRIMARY.value
+        
+    def __get_color(self) -> str:
+        if self.__disabled:
+            return "#80" + Color.PRIMARY_CONTRAST.value[1:]
+        else:
+            return Color.PRIMARY_CONTRAST.value
 
     def __get_corners(self) -> str:
         top_right, top_left, bottom_right, bottom_left = "0px", "0px", "0px", "0px"
