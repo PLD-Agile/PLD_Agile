@@ -46,6 +46,7 @@ class Button(QPushButton):
             f"""
             QPushButton {{
                 background-color: {self.__get_background_color()};
+                color: {Color.PRIMARY_CONTRAST.value};
                 padding: 8px 16px;
                 font-weight: 500;
                 {self.__get_corners()}

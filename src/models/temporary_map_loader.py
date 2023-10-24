@@ -49,7 +49,7 @@ class TemporaryMapLoader:
         max_longitude: float = sys.maxsize * -1
         min_longitude: float = sys.maxsize
 
-        tree = ET.parse("src/assets/smallMap.xml")
+        tree = ET.parse("src/assets/largeMap.xml")
 
         for el in tree.getroot():
             if el.tag == "intersection":
