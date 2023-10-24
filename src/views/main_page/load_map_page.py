@@ -24,7 +24,7 @@ class LoadMapPage(Page):
         layout.setAlignment(Qt.AlignmentFlag.AlignTop)
 
         load_map_button = Button("Load map")
-        load_map_button.clicked.connect(self.load_map)
+        load_map_button.clicked.connect(self.ask_user_for_map)
 
         default_buttons = []
 

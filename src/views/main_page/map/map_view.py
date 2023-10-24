@@ -204,7 +204,7 @@ class MapView(QGraphicsView):
 
         MapService.instance().add_marker(Marker(position))
 
-    def __on_markers_change(self, markers: List[Position]) -> None:
+    def __on_markers_change(self, markers: List[Marker]) -> None:
         for marker in self.__route_markers:
             self.__scene.removeItem(marker.shape)
 

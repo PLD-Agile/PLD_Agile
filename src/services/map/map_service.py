@@ -9,8 +9,12 @@ from src.services.singleton import Singleton
 
 
 class MapService(Singleton):
-    __map: BehaviorSubject[Optional[Map]] = BehaviorSubject(None)
-    __markers: BehaviorSubject[List[Marker]] = BehaviorSubject([])
+    __map: BehaviorSubject[Optional[Map]]
+    __markers: BehaviorSubject[List[Marker]]
+    
+    def __init__(self) -> None:
+        self.__map = BehaviorSubject(None)
+        self.__markers = BehaviorSubject([])
 
     @property
     def map(self) -> Observable[Optional[Map]]:
@@ -23,8 +27,12 @@ class MapService(Singleton):
     def markers(self) -> Observable[List[Marker]]:
         return self.__markers
 
-    def set_map(self, map: Optional[Map]) -> None:
+    def set_map(self, map: Map) -> None:
         self.__map.on_next(map)
+        
+    def clear_map(self) -> None:
+        self.__map.on_next(None)
+        self.__markers.on_next([])
 
     def add_marker(self, marker: Marker) -> None:
         self.__markers.on_next(self.__markers.value + [marker])
