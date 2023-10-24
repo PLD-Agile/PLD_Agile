@@ -5,6 +5,12 @@ from src.views.ui.button import Button
 from src.views.ui.button_group import ButtonGroup
 from src.services.map import MapLoaderService
 
+DEFAULT_BUTTONS = [
+    ("small", "src/assets/smallMap.xml"),
+    ("medium", "src/assets/mediumMap.xml"),
+    ("large", "src/assets/largeMap.xml")
+]
+
 
 class LoadMapPage(Page):
     def __init__(self):
@@ -15,14 +21,14 @@ class LoadMapPage(Page):
         load_map_button = Button("Load map")
         load_map_button.clicked.connect(self.load_map)
         
-        load_map_default_small_button = Button("Default small map")
-        load_map_default_small_button.clicked.connect(lambda: MapLoaderService.instance().load_map_from_xml("src/assets/smallMap.xml"))
-        load_map_default_medium_button = Button("Default medium map")
-        load_map_default_medium_button.clicked.connect(lambda: MapLoaderService.instance().load_map_from_xml("src/assets/mediumMap.xml"))
-        load_map_default_large_button = Button("Default large map")
-        load_map_default_large_button.clicked.connect(lambda: MapLoaderService.instance().load_map_from_xml("src/assets/largeMap.xml"))
+        default_buttons = []
         
-        load_map_default_button_group = ButtonGroup([load_map_default_small_button, load_map_default_medium_button, load_map_default_large_button])
+        for name, path in DEFAULT_BUTTONS:
+            button = Button(name)
+            button.clicked.connect(lambda _, path=path: MapLoaderService.instance().load_map_from_xml(path))
+            default_buttons.append(button)
+        
+        load_map_default_button_group = ButtonGroup(default_buttons)
 
         layout.addWidget(QLabel("LoadMapPage works!"))
         layout.addWidget(load_map_button)
