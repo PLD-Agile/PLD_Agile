@@ -41,8 +41,8 @@ class Position:
             Position: New position instance with the maximum values.
         """
         return Position(
-            max(self.longitude, p.longitude, *args),
-            max(self.latitude, p.latitude, *args),
+            max(self.longitude, p.longitude, *map(lambda p: p.longitude, args)),
+            max(self.latitude, p.latitude, *map(lambda p: p.latitude, args)),
         )
 
     def min(self, p: "Position", *args: List["Position"]) -> "Position":
@@ -55,6 +55,6 @@ class Position:
             Position: New position instance with the minimum values.
         """
         return Position(
-            min(self.longitude, p.longitude, *args),
-            min(self.latitude, p.latitude, *args),
+            min(self.longitude, p.longitude, *map(lambda p: p.longitude, args)),
+            min(self.latitude, p.latitude, *map(lambda p: p.latitude, args)),
         )
