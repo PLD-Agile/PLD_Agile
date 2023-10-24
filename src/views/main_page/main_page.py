@@ -11,7 +11,7 @@ from PyQt6.QtWidgets import (
 )
 
 from src.controllers.navigator.page import Page
-from src.models.temporary_map_loader import TemporaryMapLoader
+from src.models.map import MapLoaderService
 from src.views.main_page.map_view import MapView
 from src.views.modules.main_page_navigation import (
     MainPageNavigationRoutes,
@@ -38,7 +38,9 @@ class MainPage(Page):
         map_view = MapView()
 
         # TODO: Remove this
-        map_view.set_map(TemporaryMapLoader().load_map())
+        map_view.set_map(
+            MapLoaderService.instance().load_map_from_xml("src/assets/largeMap.xml")
+        )
 
         buttons_layout = QHBoxLayout()
 

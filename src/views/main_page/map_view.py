@@ -1,6 +1,6 @@
 from typing import List, Optional, Tuple
 
-from PyQt6.QtCore import QPointF, Qt
+from PyQt6.QtCore import QPointF, QRectF, Qt
 from PyQt6.QtGui import (
     QBrush,
     QColor,
@@ -20,7 +20,7 @@ from PyQt6.QtWidgets import (
 )
 from reactivex import Observable, Subject
 
-from src.models.temporary_map_loader import Map, Position, Segment
+from src.models.map import Map, Position, Segment
 from src.views.utils.icon import get_icon_pixmap
 from src.views.utils.theme import Theme
 
@@ -79,12 +79,19 @@ class MapView(QGraphicsView):
             map (Map): Map to display
         """
         self.__map = map
-        self.__scene = QGraphicsScene(
-            map.min_longitude,
-            map.min_latitude,
-            map.max_longitude - map.min_longitude,
-            map.max_latitude - map.min_latitude,
+
+        scene_rect = QRectF(
+            map.size.min.longitude,
+            map.size.min.latitude,
+            map.size.width,
+            map.size.height,
         )
+
+        if self.__scene:
+            self.reset()
+            self.__scene.setSceneRect(scene_rect)
+        else:
+            self.__scene = QGraphicsScene(scene_rect)
 
         self.__scene.setBackgroundBrush(QBrush(Qt.GlobalColor.white))
         self.setScene(self.__scene)
@@ -144,6 +151,16 @@ class MapView(QGraphicsView):
         """Zoom out the map"""
         self.__scale_map(1 / self.DEFAULT_ZOOM_ACTION)
 
+    def reset(self):
+        """Reset the map to its initial state"""
+        if self.__scene:
+            self.__scene.clear()
+        self.__segments = []
+        self.__markers = []
+        self.__scale_factor = 1
+        self.__marker_size = None
+        self.__map = None
+
     def wheelEvent(self, event: QWheelEvent) -> None:
         """Method called when the user scrolls on the map
 
@@ -152,7 +169,7 @@ class MapView(QGraphicsView):
         if self.__scene and event.angleDelta().y() != 0:
             self.__scale_map(
                 1
-                + (self.__map.get_size() * self.SCROLL_INTENSITY)
+                + (self.__map.size.area * self.SCROLL_INTENSITY)
                 * event.angleDelta().y()
             )
 
@@ -182,7 +199,12 @@ class MapView(QGraphicsView):
             segment.origin.latitude,
             segment.destination.longitude,
             segment.destination.latitude,
-            QPen(QBrush(color), self.__get_pen_size(), Qt.PenStyle.SolidLine, Qt.PenCapStyle.RoundCap),
+            QPen(
+                QBrush(color),
+                self.__get_pen_size(),
+                Qt.PenStyle.SolidLine,
+                Qt.PenCapStyle.RoundCap,
+            ),
         )
         self.__segments.append(segmentLine)
 
