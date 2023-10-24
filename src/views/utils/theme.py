@@ -7,7 +7,6 @@ from PyQt6.QtWidgets import QWidget
 class Color(Enum):
     PRIMARY = "#3875ff"
     PRIMARY_CONTRAST = "#ffffff"
-    PRIMARY_DISABLED = "#566ea3"
     BACKGROUND = "#2e3440"
     BACKGROUND_CONTRAST = "#ffffff"
 
