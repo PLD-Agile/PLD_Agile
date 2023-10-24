@@ -1,5 +1,7 @@
 from PyQt6.QtWidgets import QHBoxLayout, QLabel, QPushButton, QWidget
 
+from src.views.ui.button_group import ButtonGroup
+from src.views.ui.nav_button import NavigationButton
 from views.modules.app_navigation import AppNavigationRoutes, app_navigation
 
 
@@ -9,17 +11,22 @@ class Header(QWidget):
 
         layout = QHBoxLayout()
 
-        home_button = QPushButton("Home")
-        delivery_button = QPushButton("Delivery")
+        title = QLabel("PLD Agile")
 
-        home_button.clicked.connect(
-            lambda: app_navigation.replace(AppNavigationRoutes.MAIN)
+        home_button = NavigationButton(
+            text="Home",
+            link=AppNavigationRoutes.MAIN,
+            navigator=app_navigation,
         )
-        delivery_button.clicked.connect(
-            lambda: app_navigation.replace(AppNavigationRoutes.MANAGE_DELIVERY_MAIN)
+        delivery_button = NavigationButton(
+            text="Delivery",
+            link=AppNavigationRoutes.MANAGE_DELIVERY_MAIN,
+            navigator=app_navigation,
         )
 
-        layout.addWidget(home_button)
-        layout.addWidget(delivery_button)
+        button_group = ButtonGroup([home_button, delivery_button])
+
+        layout.addWidget(title)
+        layout.addWidget(button_group)
 
         self.setLayout(layout)
