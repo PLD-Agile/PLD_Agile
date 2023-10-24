@@ -1,4 +1,4 @@
-from typing import List, Optional, Tuple, Literal
+from typing import List, Literal, Optional, Tuple
 
 from PyQt6.QtCore import QPointF, QRectF, Qt
 from PyQt6.QtGui import (
@@ -21,11 +21,11 @@ from PyQt6.QtWidgets import (
 from reactivex import Observable
 from reactivex.subject import BehaviorSubject, Subject
 
-from src.models.map import Map, Position, Segment
+from src.models.map import Map, Marker, Position, Segment
+from src.services.map.map_service import MapService
+from src.views.main_page.map.map_marker import AlignBottom, MapMarker
 from src.views.utils.icon import get_icon_pixmap
 from src.views.utils.theme import Theme
-from src.views.main_page.map.map_marker import MapMarker, AlignBottom
-from src.services.map.map_service import MapService
 
 
 class MapView(QGraphicsView):
@@ -61,21 +61,19 @@ class MapView(QGraphicsView):
     __scale_factor: int = 1
     __segments: List[QAbstractGraphicsShapeItem] = []
     __markers: List[MapMarker] = []
+    __route_markers: List[MapMarker] = []
     __marker_size: Optional[int] = None
-    __on_map_click: Subject[Position] = Subject()
     __ready: BehaviorSubject[bool] = BehaviorSubject(False)
 
     def __init__(self, parent: Optional[QWidget] = None) -> None:
         super().__init__(parent)
         self.__set_config()
-        
-        MapService.instance().map.subscribe(lambda map: self.set_map(map) if map else self.reset())
 
-    @property
-    def on_map_click(self) -> Observable[Position]:
-        """Subject that emit the position on the map when a user double clicks on it"""
-        return self.__on_map_click
-    
+        MapService.instance().map.subscribe(
+            lambda map: self.set_map(map) if map else self.reset()
+        )
+        MapService.instance().markers().subscribe(self.__on_markers_change)
+
     @property
     def ready(self) -> Observable[bool]:
         """Subject that emit a boolean when the map is ready to be used"""
@@ -119,7 +117,7 @@ class MapView(QGraphicsView):
         )
 
         self.fit_map()
-        
+
         self.__ready.on_next(True)
 
     def fit_map(self):
@@ -136,7 +134,7 @@ class MapView(QGraphicsView):
         color: QColor = QColor("#f54242"),
         align_bottom: AlignBottom = True,
         scale: float = 1,
-    ):
+    ) -> MapMarker:
         """Add a marker on the map at a given position
 
         Args:
@@ -159,6 +157,8 @@ class MapView(QGraphicsView):
         self.__adjust_marker(marker)
 
         self.__markers.append(marker)
+
+        return marker
 
     def zoom_in(self):
         """Zoom in the map"""
@@ -198,13 +198,21 @@ class MapView(QGraphicsView):
         """
         if not self.__scene:
             return
-        
+
         position = self.mapToScene(event.pos())
         position = Position(position.x(), position.y())
 
-        self.add_marker(position)
+        MapService.instance().add_marker(Marker(position))
 
-        self.__on_map_click.on_next(position)
+    def __on_markers_change(self, markers: List[Position]) -> None:
+        for marker in self.__route_markers:
+            self.__scene.removeItem(marker.shape)
+
+        self.__route_markers = []
+
+        for marker in markers:
+            map_marker = self.add_marker(marker.position)
+            self.__route_markers.append(map_marker)
 
     def __add_segment(
         self, segment: Segment, color: QColor = QColor("#9c9c9c")
@@ -237,7 +245,7 @@ class MapView(QGraphicsView):
         """
         if not self.__scene:
             return
-        
+
         updated_scale = self.__scale_factor * factor
 
         if updated_scale < 1:
@@ -273,7 +281,9 @@ class MapView(QGraphicsView):
 
         marker_size = self.__marker_size * marker.scale
 
-        translate = self.__get_marker_position(origin, marker_size, marker.align_bottom, direction=-1)
+        translate = self.__get_marker_position(
+            origin, marker_size, marker.align_bottom, direction=-1
+        )
         scale_factor = 1 / (
             self.__scale_factor * self.MARKER_ZOOM_ADJUSTMENT
             + (1 - self.MARKER_ZOOM_ADJUSTMENT)
@@ -287,7 +297,11 @@ class MapView(QGraphicsView):
         )
 
     def __get_marker_position(
-        self, position: QPointF | Position, marker_size: float, align_bottom: bool, direction: Literal[1, -1] = 1
+        self,
+        position: QPointF | Position,
+        marker_size: float,
+        align_bottom: bool,
+        direction: Literal[1, -1] = 1,
     ) -> QPointF:
         x = position.x() if isinstance(position, QPointF) else position.x
         y = position.y() if isinstance(position, QPointF) else position.y

@@ -1,5 +1,6 @@
-from PyQt6.QtWidgets import QAbstractGraphicsShapeItem
 from dataclasses import dataclass
+
+from PyQt6.QtWidgets import QAbstractGraphicsShapeItem
 
 AlignBottom = bool
 

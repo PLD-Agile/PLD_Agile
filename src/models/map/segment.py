@@ -2,8 +2,8 @@ from dataclasses import dataclass
 from typing import Dict
 from xml.etree.ElementTree import Element
 
-from src.models.map.intersection import Intersection
 from src.models.map.errors import MapLoadingError
+from src.models.map.intersection import Intersection
 
 
 @dataclass

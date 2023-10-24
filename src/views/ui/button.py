@@ -24,7 +24,7 @@ class Button(QPushButton):
     ):
         if icon:
             super().__init__(
-                icon=qta.icon(f"fa5s.{icon}") if isinstance(icon, str) else icon, 
+                icon=qta.icon(f"fa5s.{icon}") if isinstance(icon, str) else icon,
                 text=text,
                 parent=parent,
             )
@@ -34,7 +34,7 @@ class Button(QPushButton):
         self.__corners = corners
 
         self._update_style()
-        
+
     def setEnabled(self, enabled: bool) -> None:
         self.__disabled = not enabled
         self._update_style()
@@ -71,7 +71,7 @@ class Button(QPushButton):
             return "#80" + Color.PRIMARY.value[1:]
         else:
             return Color.PRIMARY.value
-        
+
     def __get_color(self) -> str:
         if self.__disabled:
             return "#80" + Color.PRIMARY_CONTRAST.value[1:]

@@ -2,14 +2,14 @@ import xml.etree.ElementTree as ET
 from typing import Dict, List
 from xml.etree.ElementTree import Element
 
+from src.models.map.errors import MapLoadingError
 from src.models.map.intersection import Intersection
 from src.models.map.map import Map
 from src.models.map.map_size import MapSize
 from src.models.map.position import Position
 from src.models.map.segment import Segment
-from src.services.singleton import Singleton
 from src.services.map.map_service import MapService
-from src.models.map.errors import MapLoadingError
+from src.services.singleton import Singleton
 
 
 class MapLoaderService(Singleton):
@@ -51,9 +51,9 @@ class MapLoaderService(Singleton):
 
         if not warehouse:
             raise MapLoadingError("No warehouse found in the XML file")
-        
+
         map = Map(intersections, segments, warehouse, map_size)
-        
+
         MapService.instance().set_map(map)
 
         return map
