@@ -14,6 +14,10 @@ class Singleton(ABC):
             cls.__instance = cls()
 
         return cls.__instance
+    
+    @classmethod
+    def reset(cls: Type[T]) -> None:
+        cls.__instance = None
 
     def __init__(self) -> None:
         if self.__instance != None:
