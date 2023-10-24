@@ -12,7 +12,7 @@ from PyQt6.QtWidgets import (
 
 from src.controllers.navigator.page import Page
 from src.models.map import MapLoaderService
-from src.views.main_page.map_view import MapView
+from views.main_page.map.map_view import MapView
 from src.views.modules.main_page_navigation import (
     MainPageNavigationRoutes,
     main_page_navigation,

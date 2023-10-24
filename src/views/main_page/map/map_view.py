@@ -1,4 +1,4 @@
-from typing import List, Optional, Tuple
+from typing import List, Optional, Tuple, Literal
 
 from PyQt6.QtCore import QPointF, QRectF, Qt
 from PyQt6.QtGui import (
@@ -23,8 +23,7 @@ from reactivex import Observable, Subject
 from src.models.map import Map, Position, Segment
 from src.views.utils.icon import get_icon_pixmap
 from src.views.utils.theme import Theme
-
-AlignBottom = bool
+from src.views.main_page.map.map_marker import MapMarker, AlignBottom
 
 
 class MapView(QGraphicsView):
@@ -60,7 +59,7 @@ class MapView(QGraphicsView):
     __scale_factor: int = 1
     __on_map_click: Subject[Position] = Subject()
     __segments: List[QAbstractGraphicsShapeItem] = []
-    __markers: List[Tuple[QAbstractGraphicsShapeItem, AlignBottom]] = []
+    __markers: List[MapMarker] = []
     __marker_size: Optional[int] = None
 
     def __init__(self, parent: Optional[QWidget] = None) -> None:
@@ -101,6 +100,14 @@ class MapView(QGraphicsView):
 
         self.__marker_size = self.__scene.sceneRect().width() * self.MARKER_INITIAL_SIZE
 
+        self.add_marker(
+            position=map.warehouse,
+            icon="warehouse",
+            color=QColor("#1e8239"),
+            align_bottom=False,
+            scale=0.5,
+        )
+
         self.fit_map()
 
     def fit_map(self):
@@ -115,6 +122,7 @@ class MapView(QGraphicsView):
         icon: QIcon | str = "map-marker-alt",
         color: QColor = QColor("#f54242"),
         align_bottom: AlignBottom = True,
+        scale: float = 1,
     ):
         """Add a marker on the map at a given position
 
@@ -124,24 +132,20 @@ class MapView(QGraphicsView):
             color (QColor, optional): Color of the icon. Defaults to QColor("#f54242").
             align_bottom (AlignBottom, optional): Whether the icon should be aligned at the bottom (ex: for map pin). Set to false if is a normal icon like a X. Defaults to True.
         """
+        marker_size = self.__marker_size * scale
+
         icon_pixmap = get_icon_pixmap(icon, self.MARKER_RESOLUTION_RESOLUTION, color)
+        icon_position = self.__get_marker_position(position, marker_size, align_bottom)
 
         icon_shape = self.__scene.addPixmap(icon_pixmap)
-        icon_shape.setPos(
-            QPointF(
-                # Longitude - half of the icon size (to center it)
-                position.longitude - self.__marker_size / 2,
-                # Latitude - icon size + 1% of the icon size (align it with the bottom of the icon which includes a little margin)
-                (position.latitude - self.__marker_size + (self.__marker_size * 0.01))
-                if align_bottom
-                else (position.latitude - self.__marker_size / 2),
-            )
-        )
-        icon_shape.setScale(self.__marker_size / self.MARKER_RESOLUTION_RESOLUTION)
+        icon_shape.setPos(icon_position)
+        icon_shape.setScale(marker_size / self.MARKER_RESOLUTION_RESOLUTION)
 
-        self.__adjust_marker(icon_shape, align_bottom)
+        marker = MapMarker(icon_shape, align_bottom, scale)
 
-        self.__markers.append((icon_shape, align_bottom))
+        self.__adjust_marker(marker)
+
+        self.__markers.append(marker)
 
     def zoom_in(self):
         """Zoom in the map"""
@@ -235,36 +239,44 @@ class MapView(QGraphicsView):
             pen.setWidthF(self.__get_pen_size())
             segment.setPen(pen)
 
-        for marker, align_bottom in self.__markers:
-            self.__adjust_marker(marker, align_bottom)
+        for marker in self.__markers:
+            self.__adjust_marker(marker)
 
-    def __adjust_marker(
-        self, marker: QAbstractGraphicsShapeItem, align_bottom: AlignBottom
-    ) -> None:
+    def __adjust_marker(self, marker: MapMarker) -> None:
         """Adjust a marker to the current map scale
 
         Args:
             marker (QAbstractGraphicsShapeItem): Marker to adjust
             align_bottom (AlignBottom):  Whether the icon should be aligned at the bottom (ex: for map pin). Set to false if is a normal icon like a X. Defaults to True.
         """
-        origin = marker.transformOriginPoint()
+        origin = marker.shape.transformOriginPoint()
 
-        translateX, translateY = (
-            origin.x() + self.__marker_size / 2,
-            (origin.y() + self.__marker_size)
-            if align_bottom
-            else (origin.y() + self.__marker_size / 2),
-        )
+        marker_size = self.__marker_size * marker.scale
+
+        translate = self.__get_marker_position(origin, marker_size, marker.align_bottom, direction=-1)
         scale_factor = 1 / (
             self.__scale_factor * self.MARKER_ZOOM_ADJUSTMENT
             + (1 - self.MARKER_ZOOM_ADJUSTMENT)
         )
 
-        marker.setTransform(
+        marker.shape.setTransform(
             QTransform()
-            .translate(translateX, translateY)
+            .translate(translate.x(), translate.y())
             .scale(scale_factor, scale_factor)
-            .translate(-translateX, -translateY)
+            .translate(-translate.x(), -translate.y())
+        )
+
+    def __get_marker_position(
+        self, position: QPointF | Position, marker_size: float, align_bottom: bool, direction: Literal[1, -1] = 1
+    ) -> QPointF:
+        x = position.x() if isinstance(position, QPointF) else position.x
+        y = position.y() if isinstance(position, QPointF) else position.y
+
+        return QPointF(
+            x - (marker_size / 2 * direction),
+            (y - (marker_size - (marker_size * 0.01)) * direction)
+            if align_bottom
+            else (y - (marker_size / 2 * direction)),
         )
 
     def __get_pen_size(self, scale: float = 1) -> float:
