@@ -51,7 +51,7 @@ class MapView(QGraphicsView):
     SEGMENT_INITIAL_SIZE = 0.00005
     """Size of a segment when zoom is 1
     """
-    SEGMENT_ZOOM_ADJUSTMENT = 0.1
+    SEGMENT_ZOOM_ADJUSTMENT = -0.075
     """Amount of zoom adjustment for the segments (1 = segment stays the same size, 0 = segment scales with the map)
     """
 
@@ -169,7 +169,7 @@ class MapView(QGraphicsView):
         self.__on_map_click.on_next(position)
 
     def __add_segment(
-        self, segment: Segment, color: QColor = Qt.GlobalColor.black
+        self, segment: Segment, color: QColor = QColor("#9c9c9c")
     ) -> None:
         """Add a segment on the map
 
@@ -182,7 +182,7 @@ class MapView(QGraphicsView):
             segment.origin.latitude,
             segment.destination.longitude,
             segment.destination.latitude,
-            QPen(QBrush(color), self.__get_pen_size()),
+            QPen(QBrush(color), self.__get_pen_size(), Qt.PenStyle.SolidLine, Qt.PenCapStyle.RoundCap),
         )
         self.__segments.append(segmentLine)
 
@@ -209,7 +209,9 @@ class MapView(QGraphicsView):
     def __adjust_map_graphics(self) -> None:
         """Adjust map segments and markers to the current map scale"""
         for segment in self.__segments:
-            segment.setPen(QPen(QBrush(Qt.GlobalColor.black), self.__get_pen_size()))
+            pen = segment.pen()
+            pen.setWidthF(self.__get_pen_size())
+            segment.setPen(pen)
 
         for marker, align_bottom in self.__markers:
             self.__adjust_marker(marker, align_bottom)
