@@ -8,6 +8,7 @@ from src.models.map.map_size import MapSize
 from src.models.map.position import Position
 from src.models.map.segment import Segment
 from src.models.singleton import Singleton
+from src.models.map.errors import MapLoadingError
 
 
 class MapLoaderService(Singleton):
@@ -22,11 +23,11 @@ class MapLoaderService(Singleton):
         """
         return self.create_map_from_xml(ET.parse(path).getroot())
 
-    def create_map_from_xml(self, element: Element) -> Map:
+    def create_map_from_xml(self, root_element: Element) -> Map:
         """Creates a Map instance from an XML element.
 
         Args:
-            element (Element): XML element
+            root_element (Element): Root element of the XML
 
         Returns:
             Map: Map instance
@@ -34,16 +35,23 @@ class MapLoaderService(Singleton):
         intersections: Dict[int, Intersection] = {}
         segments: List[Segment] = []
         map_size = MapSize.inverse_max_size()
+        warehouse: Intersection = None
 
-        for el in element:
-            if el.tag == "intersection":
-                intersection = Intersection.from_element(el)
-                intersections[intersection.id] = intersection
-                self.__update_map_size(map_size, intersection)
-            elif el.tag == "segment":
-                segments.append(Segment.from_element(el, intersections))
+        for element in root_element.findall("intersection"):
+            intersection = Intersection.from_element(element)
+            intersections[intersection.id] = intersection
+            self.__update_map_size(map_size, intersection)
 
-        return Map(intersections, segments, map_size)
+        for element in root_element.findall("segment"):
+            segments.append(Segment.from_element(element, intersections))
+
+        for element in root_element.findall("warehouse"):
+            warehouse = intersections[int(element.attrib["address"])]
+
+        if not warehouse:
+            raise MapLoadingError("No warehouse found in the XML file")
+
+        return Map(intersections, segments, warehouse, map_size)
 
     def __update_map_size(self, map_size: MapSize, position: Position) -> None:
         map_size.max = Position.max(map_size.max, position)

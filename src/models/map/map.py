@@ -10,4 +10,5 @@ from src.models.map.segment import Segment
 class Map:
     intersections: Dict[int, Intersection]
     segments: List[Segment]
+    warehouse: Intersection
     size: MapSize
