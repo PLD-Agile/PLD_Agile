@@ -11,11 +11,7 @@ from PyQt6.QtWidgets import (
 )
 
 from src.controllers.navigator.page import Page
-from views.main_page.map.map_view import MapView
-from src.views.modules.main_page_navigation import (
-    MainPageNavigationRoutes,
-    main_page_navigation,
-)
+from src.views.modules.main_page_navigator.navigator import get_main_page_navigator
 from src.views.ui.button import Button
 from src.views.ui.button_group import ButtonGroup
 from src.views.utils.theme import Theme
@@ -29,7 +25,7 @@ class MainPage(Page):
         layout = QHBoxLayout()
 
         layout.addLayout(self.__build_map_view())
-        layout.addWidget(main_page_navigation.get_router_outlet())
+        layout.addWidget(get_main_page_navigator().get_router_outlet())
 
         self.setLayout(layout)
 
