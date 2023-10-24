@@ -115,6 +115,7 @@ class MapView(QGraphicsView):
         if self.__scene:
             self.fitInView(self.__scene.sceneRect(), Qt.AspectRatioMode.KeepAspectRatio)
             self.__scale_factor = 1
+            self.__scale_map(1)
 
     def add_marker(
         self,

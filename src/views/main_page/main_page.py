@@ -39,7 +39,7 @@ class MainPage(Page):
 
         # TODO: Remove this
         map_view.set_map(
-            MapLoaderService.instance().load_map_from_xml("src/assets/largeMap.xml")
+            MapLoaderService.instance().load_map_from_xml("src/assets/smallMap.xml")
         )
 
         buttons_layout = QHBoxLayout()
