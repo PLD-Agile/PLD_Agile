@@ -6,9 +6,11 @@ from src.views.main_page.add_delivery_time_window_page import AddDeliveryTimeWin
 from src.views.main_page.confirm_delivery_address_page import ConfirmDeliveryAddressPage
 from src.views.main_page.current_tour_page import CurrentTourPage
 from src.views.main_page.select_delivery_man_page import SelectDeliveryManPage
+from src.views.main_page.load_map_page import LoadMapPage
 
 
 class MainPageNavigationRoutes(Enum):
+    LOAD_MAP = "load_map"
     CURRENT_TOUR = "current_tour"
     ADD_DELIVERY_ADDRESS = "add_delivery_address"
     CONFIRM_DELIVERY_ADDRESS = "confirm_delivery_address"
@@ -18,6 +20,10 @@ class MainPageNavigationRoutes(Enum):
 
 main_page_navigation = Navigator[MainPageNavigationRoutes](
     routes=[
+        Route(
+            name=MainPageNavigationRoutes.LOAD_MAP,
+            widget=LoadMapPage,
+        ),
         Route(
             name=MainPageNavigationRoutes.CURRENT_TOUR,
             widget=CurrentTourPage,
@@ -39,5 +45,5 @@ main_page_navigation = Navigator[MainPageNavigationRoutes](
             widget=SelectDeliveryManPage,
         ),
     ],
-    default_name=MainPageNavigationRoutes.CURRENT_TOUR,
+    default_name=MainPageNavigationRoutes.LOAD_MAP,
 )

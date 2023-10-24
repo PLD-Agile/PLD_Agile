@@ -18,12 +18,14 @@ from PyQt6.QtWidgets import (
     QSizePolicy,
     QWidget,
 )
-from reactivex import Observable, Subject
+from reactivex import Observable
+from reactivex.subject import BehaviorSubject, Subject
 
 from src.models.map import Map, Position, Segment
 from src.views.utils.icon import get_icon_pixmap
 from src.views.utils.theme import Theme
 from src.views.main_page.map.map_marker import MapMarker, AlignBottom
+from src.services.map.map_service import MapService
 
 
 class MapView(QGraphicsView):
@@ -57,19 +59,27 @@ class MapView(QGraphicsView):
     __scene: Optional[QGraphicsScene] = None
     __map: Optional[Map] = None
     __scale_factor: int = 1
-    __on_map_click: Subject[Position] = Subject()
     __segments: List[QAbstractGraphicsShapeItem] = []
     __markers: List[MapMarker] = []
     __marker_size: Optional[int] = None
+    __on_map_click: Subject[Position] = Subject()
+    __ready: BehaviorSubject[bool] = BehaviorSubject(False)
 
     def __init__(self, parent: Optional[QWidget] = None) -> None:
         super().__init__(parent)
         self.__set_config()
+        
+        MapService.instance().map.subscribe(lambda map: self.set_map(map) if map else self.reset())
 
     @property
     def on_map_click(self) -> Observable[Position]:
         """Subject that emit the position on the map when a user double clicks on it"""
         return self.__on_map_click
+    
+    @property
+    def ready(self) -> Observable[bool]:
+        """Subject that emit a boolean when the map is ready to be used"""
+        return self.__ready
 
     def set_map(self, map: Map):
         """Set the map and initialize the view
@@ -77,8 +87,6 @@ class MapView(QGraphicsView):
         Arguments:
             map (Map): Map to display
         """
-        self.__map = map
-
         scene_rect = QRectF(
             map.size.min.longitude,
             map.size.min.latitude,
@@ -91,6 +99,8 @@ class MapView(QGraphicsView):
             self.__scene.setSceneRect(scene_rect)
         else:
             self.__scene = QGraphicsScene(scene_rect)
+
+        self.__map = map
 
         self.__scene.setBackgroundBrush(QBrush(Qt.GlobalColor.white))
         self.setScene(self.__scene)
@@ -109,6 +119,8 @@ class MapView(QGraphicsView):
         )
 
         self.fit_map()
+        
+        self.__ready.on_next(True)
 
     def fit_map(self):
         """Adjust the view to fit the all map"""
@@ -158,6 +170,7 @@ class MapView(QGraphicsView):
 
     def reset(self):
         """Reset the map to its initial state"""
+        self.__ready.on_next(False)
         if self.__scene:
             self.__scene.clear()
         self.__segments = []
@@ -183,6 +196,9 @@ class MapView(QGraphicsView):
 
         Send the position of the click to the on_map_click subject
         """
+        if not self.__scene:
+            return
+        
         position = self.mapToScene(event.pos())
         position = Position(position.x(), position.y())
 
@@ -219,6 +235,9 @@ class MapView(QGraphicsView):
         Args:
             factor (float): Scale factor
         """
+        if not self.__scene:
+            return
+        
         updated_scale = self.__scale_factor * factor
 
         if updated_scale < 1:

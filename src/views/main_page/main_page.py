@@ -19,9 +19,12 @@ from src.views.modules.main_page_navigation import (
 from src.views.ui.button import Button
 from src.views.ui.button_group import ButtonGroup
 from src.views.utils.theme import Theme
+from typing import List
 
 
 class MainPage(Page):
+    __map_action_buttons: List[QWidget] = []
+    
     def __init__(self):
         super().__init__()
 
@@ -42,6 +45,8 @@ class MainPage(Page):
         map_zoom_out_button = Button(icon="minus")
         map_zoom_in_button = Button(icon="plus")
         map_zoom_buttons = ButtonGroup([map_zoom_out_button, map_zoom_in_button])
+        
+        self.__map_action_buttons += [reset_map_button, map_zoom_out_button, map_zoom_in_button]
 
         buttons_layout.addWidget(reset_map_button)
         buttons_layout.addWidget(map_zoom_buttons)
@@ -52,5 +57,7 @@ class MainPage(Page):
         reset_map_button.clicked.connect(map_view.fit_map)
         map_zoom_out_button.clicked.connect(map_view.zoom_out)
         map_zoom_in_button.clicked.connect(map_view.zoom_in)
+        
+        map_view.ready.subscribe(lambda ready: [button.setDisabled(not ready) for button in self.__map_action_buttons])
 
         return map_layout
