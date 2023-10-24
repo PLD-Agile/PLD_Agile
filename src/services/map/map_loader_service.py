@@ -7,13 +7,14 @@ from src.models.map.map import Map
 from src.models.map.map_size import MapSize
 from src.models.map.position import Position
 from src.models.map.segment import Segment
-from src.models.singleton import Singleton
+from src.services.singleton import Singleton
+from src.services.map.map_service import MapService
 from src.models.map.errors import MapLoadingError
 
 
 class MapLoaderService(Singleton):
     def load_map_from_xml(self, path: str) -> Map:
-        """Loads an XML file and create a Map instance from it.
+        """Loads an XML file, create a Map instance from it and pass it to the MapService.
 
         Args:
             path (str): Path to the XML file to import (relative to the project root)
@@ -24,7 +25,7 @@ class MapLoaderService(Singleton):
         return self.create_map_from_xml(ET.parse(path).getroot())
 
     def create_map_from_xml(self, root_element: Element) -> Map:
-        """Creates a Map instance from an XML element.
+        """Creates a Map instance from an XML element and pass it to the MapService.
 
         Args:
             root_element (Element): Root element of the XML
@@ -50,8 +51,12 @@ class MapLoaderService(Singleton):
 
         if not warehouse:
             raise MapLoadingError("No warehouse found in the XML file")
+        
+        map = Map(intersections, segments, warehouse, map_size)
+        
+        MapService.instance().set_map(map)
 
-        return Map(intersections, segments, warehouse, map_size)
+        return map
 
     def __update_map_size(self, map_size: MapSize, position: Position) -> None:
         map_size.max = Position.max(map_size.max, position)

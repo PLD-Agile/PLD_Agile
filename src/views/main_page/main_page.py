@@ -11,7 +11,6 @@ from PyQt6.QtWidgets import (
 )
 
 from src.controllers.navigator.page import Page
-from src.models.map import MapLoaderService
 from views.main_page.map.map_view import MapView
 from src.views.modules.main_page_navigation import (
     MainPageNavigationRoutes,
@@ -36,11 +35,6 @@ class MainPage(Page):
     def __build_map_view(self) -> QLayout:
         map_layout = QVBoxLayout()
         map_view = MapView()
-
-        # TODO: Remove this
-        map_view.set_map(
-            MapLoaderService.instance().load_map_from_xml("src/assets/smallMap.xml")
-        )
 
         buttons_layout = QHBoxLayout()
 
