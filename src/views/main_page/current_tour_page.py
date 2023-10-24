@@ -23,5 +23,5 @@ class CurrentTourPage(Page):
         self.setLayout(layout)
         
     def exit_map(self):
-        MapService.instance().set_map(None)
+        MapService.instance().clear_map()
         get_main_page_navigator().replace(MainPageNavigationRoutes.LOAD_MAP)

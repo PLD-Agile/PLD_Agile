@@ -175,6 +175,7 @@ class MapView(QGraphicsView):
             self.__scene.clear()
         self.__segments = []
         self.__markers = []
+        self.__route_markers = []
         self.__scale_factor = 1
         self.__marker_size = None
         self.__map = None

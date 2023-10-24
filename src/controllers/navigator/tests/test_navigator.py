@@ -43,7 +43,8 @@ class TestNavigator:
 
     @pytest.fixture(autouse=True)
     def init_navigator(self) -> Navigator[RoutesTest]:
-        self.navigator = Navigator[RoutesTest](
+        self.navigator = Navigator[RoutesTest]()
+        self.navigator.init(
             routes=ROUTES,
             default_name=DEFAULT_ROUTE_NAME,
             not_found_widget=NotFoundWidget,
