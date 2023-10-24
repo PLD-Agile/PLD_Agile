@@ -37,5 +37,5 @@ class LoadMapPage(Page):
         self.setLayout(layout)
 
     def load_map(self) -> None:
-        file_name, file_type = QFileDialog.getOpenFileName(self, 'Choose map', "${HOME}", "XML files (*.xml)")
+        file_name, _ = QFileDialog.getOpenFileName(self, 'Choose map', "${HOME}", "XML files (*.xml)")
         MapLoaderService.instance().load_map_from_xml(file_name)
