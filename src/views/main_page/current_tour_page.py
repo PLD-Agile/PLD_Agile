@@ -1,11 +1,12 @@
-from PyQt6.QtWidgets import QVBoxLayout, QLabel
 from PyQt6.QtCore import Qt
-from src.services.map.map_service import MapService
+from PyQt6.QtWidgets import QLabel, QVBoxLayout
 
 from src.controllers.navigator.page import Page
+from src.services.map.map_service import MapService
 from src.views.modules.main_page_navigator.navigator import get_main_page_navigator
 from src.views.modules.main_page_navigator.routes import MainPageNavigationRoutes
 from src.views.ui.button import Button
+
 
 class CurrentTourPage(Page):
     def __init__(self):
@@ -13,7 +14,7 @@ class CurrentTourPage(Page):
 
         layout = QVBoxLayout()
         layout.setAlignment(Qt.AlignmentFlag.AlignTop)
-        
+
         exit_map_button = Button("Exit map")
         exit_map_button.clicked.connect(self.exit_map)
 
@@ -21,7 +22,7 @@ class CurrentTourPage(Page):
         layout.addWidget(exit_map_button)
 
         self.setLayout(layout)
-        
+
     def exit_map(self):
         MapService.instance().clear_map()
         get_main_page_navigator().replace(MainPageNavigationRoutes.LOAD_MAP)
