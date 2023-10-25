@@ -1,6 +1,8 @@
-from PyQt6.QtWidgets import QHBoxLayout, QLabel, QLineEdit, QPushButton, QVBoxLayout
-from src.controllers.navigator.page import Page
 from PyQt6.QtCore import Qt
+from PyQt6.QtWidgets import QHBoxLayout, QLabel, QLineEdit, QPushButton, QVBoxLayout
+
+from src.controllers.navigator.page import Page
+
 
 class AddDeliveryManFormView(Page):
     def __init__(self):
@@ -15,7 +17,7 @@ class AddDeliveryManFormView(Page):
         phone_input = QLineEdit()
 
         add_button = QPushButton("Add Delivery Man")
-        add_button.setFixedWidth(150)  
+        add_button.setFixedWidth(150)
 
         layout = QVBoxLayout()
 

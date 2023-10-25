@@ -1,9 +1,20 @@
-from PyQt6.QtWidgets import (QHBoxLayout, QLabel, QLineEdit, QPushButton, QVBoxLayout, 
-                             QComboBox, QTableWidget, QTableWidgetItem, QWidget, 
-                             QVBoxLayout, QSpacerItem, QSizePolicy, QTableWidgetItem)
 from PyQt6.QtCore import Qt
+from PyQt6.QtWidgets import (
+    QComboBox,
+    QHBoxLayout,
+    QLabel,
+    QLineEdit,
+    QPushButton,
+    QSizePolicy,
+    QSpacerItem,
+    QTableWidget,
+    QTableWidgetItem,
+    QVBoxLayout,
+    QWidget,
+)
 
 from src.controllers.navigator.page import Page
+
 
 class DeliveryPage(Page):
     def __init__(self):
@@ -27,23 +38,33 @@ class DeliveryPage(Page):
         self.add_address_button = QPushButton("Add Address")
         self.add_address_button.clicked.connect(self.add_address)
 
-        # Tableau 
+        # Tableau
         self.table_widget = QTableWidget()
         self.table_widget.setColumnCount(3)
-        self.table_widget.setHorizontalHeaderLabels(["Delivery Address", "Time Window", "Delivery Man"])
+        self.table_widget.setHorizontalHeaderLabels(
+            ["Delivery Address", "Time Window", "Delivery Man"]
+        )
 
         #  Compute Tour
         compute_tour_button = QPushButton("Compute Tour")
         compute_tour_button.clicked.connect(self.compute_tour)
 
-  
         layout = QVBoxLayout()
 
-        for widget in [self.delivery_man_label, self.delivery_man_combobox, self.time_window_label, self.time_window_combobox, self.address_input, self.add_address_button]:
+        for widget in [
+            self.delivery_man_label,
+            self.delivery_man_combobox,
+            self.time_window_label,
+            self.time_window_combobox,
+            self.address_input,
+            self.add_address_button,
+        ]:
             widget.setStyleSheet("color: black;")
             layout.addWidget(widget)
 
-        spacer = QSpacerItem(0, 0, QSizePolicy.Policy.Expanding, QSizePolicy.Policy.Minimum)
+        spacer = QSpacerItem(
+            0, 0, QSizePolicy.Policy.Expanding, QSizePolicy.Policy.Minimum
+        )
         layout.addSpacerItem(spacer)
 
         layout.addWidget(self.table_widget)
@@ -51,7 +72,6 @@ class DeliveryPage(Page):
 
         self.setLayout(layout)
 
-     
         self.address_list = []
 
     def add_address(self):
