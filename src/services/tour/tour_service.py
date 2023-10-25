@@ -20,20 +20,22 @@ class TourService(Singleton):
 
     def add_tour(self, tour: Tour) -> None:
         self.__current_tours.on_next(self.__current_tours + [tour])
-        
+
     def remove_tour_from_index(self, index: int) -> None:
-        self.__current_tours.on_next(self.__current_tours.value[:index] + self.__current_tours.value[index + 1:])
+        self.__current_tours.on_next(
+            self.__current_tours.value[:index] + self.__current_tours.value[index + 1 :]
+        )
 
     def clear_current_tours(self) -> None:
         self.__current_tours.on_next([])
 
     def get_current_tours(self) -> List[Tour]:
         return self.__current_tours.value
-    
+
     def get_current_tour_from_index(self, index: int) -> Tour:
         tour = self.__current_tours.value[index]
-        
+
         if not tour:
             raise NoValueError("No tour found at index " + str(index))
-        
+
         return tour
