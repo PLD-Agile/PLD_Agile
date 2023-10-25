@@ -13,6 +13,7 @@ class ButtonGroup(QWidget):
         layout = QHBoxLayout()
 
         layout.setSpacing(1)
+        layout.setContentsMargins(0, 0, 0, 0)
 
         self.setLayout(layout)
 

@@ -1,6 +1,6 @@
-from typing import List, Optional, Tuple
+from typing import List, Literal, Optional, Tuple
 
-from PyQt6.QtCore import QPointF, Qt
+from PyQt6.QtCore import QPointF, QRectF, Qt
 from PyQt6.QtGui import (
     QBrush,
     QColor,
@@ -18,13 +18,14 @@ from PyQt6.QtWidgets import (
     QSizePolicy,
     QWidget,
 )
-from reactivex import Observable, Subject
+from reactivex import Observable
+from reactivex.subject import BehaviorSubject, Subject
 
-from src.models.temporary_map_loader import Map, Position, Segment
+from src.models.map import Map, Marker, Position, Segment
+from src.services.map.map_service import MapService
+from src.views.main_page.map.map_marker import AlignBottom, MapMarker
 from src.views.utils.icon import get_icon_pixmap
 from src.views.utils.theme import Theme
-
-AlignBottom = bool
 
 
 class MapView(QGraphicsView):
@@ -58,19 +59,25 @@ class MapView(QGraphicsView):
     __scene: Optional[QGraphicsScene] = None
     __map: Optional[Map] = None
     __scale_factor: int = 1
-    __on_map_click: Subject[Position] = Subject()
     __segments: List[QAbstractGraphicsShapeItem] = []
-    __markers: List[Tuple[QAbstractGraphicsShapeItem, AlignBottom]] = []
+    __markers: List[MapMarker] = []
+    __route_markers: List[MapMarker] = []
     __marker_size: Optional[int] = None
+    __ready: BehaviorSubject[bool] = BehaviorSubject(False)
 
     def __init__(self, parent: Optional[QWidget] = None) -> None:
         super().__init__(parent)
         self.__set_config()
 
+        MapService.instance().map.subscribe(
+            lambda map: self.set_map(map) if map else self.reset()
+        )
+        MapService.instance().markers().subscribe(self.__on_markers_change)
+
     @property
-    def on_map_click(self) -> Observable[Position]:
-        """Subject that emit the position on the map when a user double clicks on it"""
-        return self.__on_map_click
+    def ready(self) -> Observable[bool]:
+        """Subject that emit a boolean when the map is ready to be used"""
+        return self.__ready
 
     def set_map(self, map: Map):
         """Set the map and initialize the view
@@ -78,13 +85,20 @@ class MapView(QGraphicsView):
         Arguments:
             map (Map): Map to display
         """
-        self.__map = map
-        self.__scene = QGraphicsScene(
-            map.min_longitude,
-            map.min_latitude,
-            map.max_longitude - map.min_longitude,
-            map.max_latitude - map.min_latitude,
+        scene_rect = QRectF(
+            map.size.min.longitude,
+            map.size.min.latitude,
+            map.size.width,
+            map.size.height,
         )
+
+        if self.__scene:
+            self.reset()
+            self.__scene.setSceneRect(scene_rect)
+        else:
+            self.__scene = QGraphicsScene(scene_rect)
+
+        self.__map = map
 
         self.__scene.setBackgroundBrush(QBrush(Qt.GlobalColor.white))
         self.setScene(self.__scene)
@@ -94,13 +108,24 @@ class MapView(QGraphicsView):
 
         self.__marker_size = self.__scene.sceneRect().width() * self.MARKER_INITIAL_SIZE
 
+        self.add_marker(
+            position=map.warehouse,
+            icon="warehouse",
+            color=QColor("#1e8239"),
+            align_bottom=False,
+            scale=0.5,
+        )
+
         self.fit_map()
+
+        self.__ready.on_next(True)
 
     def fit_map(self):
         """Adjust the view to fit the all map"""
         if self.__scene:
             self.fitInView(self.__scene.sceneRect(), Qt.AspectRatioMode.KeepAspectRatio)
             self.__scale_factor = 1
+            self.__scale_map(1)
 
     def add_marker(
         self,
@@ -108,7 +133,8 @@ class MapView(QGraphicsView):
         icon: QIcon | str = "map-marker-alt",
         color: QColor = QColor("#f54242"),
         align_bottom: AlignBottom = True,
-    ):
+        scale: float = 1,
+    ) -> MapMarker:
         """Add a marker on the map at a given position
 
         Args:
@@ -117,24 +143,22 @@ class MapView(QGraphicsView):
             color (QColor, optional): Color of the icon. Defaults to QColor("#f54242").
             align_bottom (AlignBottom, optional): Whether the icon should be aligned at the bottom (ex: for map pin). Set to false if is a normal icon like a X. Defaults to True.
         """
+        marker_size = self.__marker_size * scale
+
         icon_pixmap = get_icon_pixmap(icon, self.MARKER_RESOLUTION_RESOLUTION, color)
+        icon_position = self.__get_marker_position(position, marker_size, align_bottom)
 
         icon_shape = self.__scene.addPixmap(icon_pixmap)
-        icon_shape.setPos(
-            QPointF(
-                # Longitude - half of the icon size (to center it)
-                position.longitude - self.__marker_size / 2,
-                # Latitude - icon size + 1% of the icon size (align it with the bottom of the icon which includes a little margin)
-                (position.latitude - self.__marker_size + (self.__marker_size * 0.01))
-                if align_bottom
-                else (position.latitude - self.__marker_size / 2),
-            )
-        )
-        icon_shape.setScale(self.__marker_size / self.MARKER_RESOLUTION_RESOLUTION)
+        icon_shape.setPos(icon_position)
+        icon_shape.setScale(marker_size / self.MARKER_RESOLUTION_RESOLUTION)
 
-        self.__adjust_marker(icon_shape, align_bottom)
+        marker = MapMarker(icon_shape, align_bottom, scale)
 
-        self.__markers.append((icon_shape, align_bottom))
+        self.__adjust_marker(marker)
+
+        self.__markers.append(marker)
+
+        return marker
 
     def zoom_in(self):
         """Zoom in the map"""
@@ -144,6 +168,18 @@ class MapView(QGraphicsView):
         """Zoom out the map"""
         self.__scale_map(1 / self.DEFAULT_ZOOM_ACTION)
 
+    def reset(self):
+        """Reset the map to its initial state"""
+        self.__ready.on_next(False)
+        if self.__scene:
+            self.__scene.clear()
+        self.__segments = []
+        self.__markers = []
+        self.__route_markers = []
+        self.__scale_factor = 1
+        self.__marker_size = None
+        self.__map = None
+
     def wheelEvent(self, event: QWheelEvent) -> None:
         """Method called when the user scrolls on the map
 
@@ -152,7 +188,7 @@ class MapView(QGraphicsView):
         if self.__scene and event.angleDelta().y() != 0:
             self.__scale_map(
                 1
-                + (self.__map.get_size() * self.SCROLL_INTENSITY)
+                + (self.__map.size.area * self.SCROLL_INTENSITY)
                 * event.angleDelta().y()
             )
 
@@ -161,12 +197,23 @@ class MapView(QGraphicsView):
 
         Send the position of the click to the on_map_click subject
         """
+        if not self.__scene:
+            return
+
         position = self.mapToScene(event.pos())
         position = Position(position.x(), position.y())
 
-        self.add_marker(position)
+        MapService.instance().add_marker(Marker(position))
 
-        self.__on_map_click.on_next(position)
+    def __on_markers_change(self, markers: List[Marker]) -> None:
+        for marker in self.__route_markers:
+            self.__scene.removeItem(marker.shape)
+
+        self.__route_markers = []
+
+        for marker in markers:
+            map_marker = self.add_marker(marker.position)
+            self.__route_markers.append(map_marker)
 
     def __add_segment(
         self, segment: Segment, color: QColor = QColor("#9c9c9c")
@@ -182,7 +229,12 @@ class MapView(QGraphicsView):
             segment.origin.latitude,
             segment.destination.longitude,
             segment.destination.latitude,
-            QPen(QBrush(color), self.__get_pen_size(), Qt.PenStyle.SolidLine, Qt.PenCapStyle.RoundCap),
+            QPen(
+                QBrush(color),
+                self.__get_pen_size(),
+                Qt.PenStyle.SolidLine,
+                Qt.PenCapStyle.RoundCap,
+            ),
         )
         self.__segments.append(segmentLine)
 
@@ -192,6 +244,9 @@ class MapView(QGraphicsView):
         Args:
             factor (float): Scale factor
         """
+        if not self.__scene:
+            return
+
         updated_scale = self.__scale_factor * factor
 
         if updated_scale < 1:
@@ -213,36 +268,50 @@ class MapView(QGraphicsView):
             pen.setWidthF(self.__get_pen_size())
             segment.setPen(pen)
 
-        for marker, align_bottom in self.__markers:
-            self.__adjust_marker(marker, align_bottom)
+        for marker in self.__markers:
+            self.__adjust_marker(marker)
 
-    def __adjust_marker(
-        self, marker: QAbstractGraphicsShapeItem, align_bottom: AlignBottom
-    ) -> None:
+    def __adjust_marker(self, marker: MapMarker) -> None:
         """Adjust a marker to the current map scale
 
         Args:
             marker (QAbstractGraphicsShapeItem): Marker to adjust
             align_bottom (AlignBottom):  Whether the icon should be aligned at the bottom (ex: for map pin). Set to false if is a normal icon like a X. Defaults to True.
         """
-        origin = marker.transformOriginPoint()
+        origin = marker.shape.transformOriginPoint()
 
-        translateX, translateY = (
-            origin.x() + self.__marker_size / 2,
-            (origin.y() + self.__marker_size)
-            if align_bottom
-            else (origin.y() + self.__marker_size / 2),
+        marker_size = self.__marker_size * marker.scale
+
+        translate = self.__get_marker_position(
+            origin, marker_size, marker.align_bottom, direction=-1
         )
         scale_factor = 1 / (
             self.__scale_factor * self.MARKER_ZOOM_ADJUSTMENT
             + (1 - self.MARKER_ZOOM_ADJUSTMENT)
         )
 
-        marker.setTransform(
+        marker.shape.setTransform(
             QTransform()
-            .translate(translateX, translateY)
+            .translate(translate.x(), translate.y())
             .scale(scale_factor, scale_factor)
-            .translate(-translateX, -translateY)
+            .translate(-translate.x(), -translate.y())
+        )
+
+    def __get_marker_position(
+        self,
+        position: QPointF | Position,
+        marker_size: float,
+        align_bottom: bool,
+        direction: Literal[1, -1] = 1,
+    ) -> QPointF:
+        x = position.x() if isinstance(position, QPointF) else position.x
+        y = position.y() if isinstance(position, QPointF) else position.y
+
+        return QPointF(
+            x - (marker_size / 2 * direction),
+            (y - (marker_size - (marker_size * 0.01)) * direction)
+            if align_bottom
+            else (y - (marker_size / 2 * direction)),
         )
 
     def __get_pen_size(self, scale: float = 1) -> float:

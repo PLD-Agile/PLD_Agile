@@ -1,8 +1,8 @@
-from PyQt6.QtWidgets import QGridLayout, QMainWindow, QPushButton, QVBoxLayout, QWidget
+from PyQt6.QtWidgets import QGridLayout, QMainWindow, QWidget
 
 from src.views.layout import Header
+from src.views.modules.app_navigator.navigator import get_app_navigator
 from src.views.utils.theme import Color, Theme
-from views.modules.app_navigation import app_navigation
 
 
 class MainWindow(QMainWindow):
@@ -25,7 +25,7 @@ class MainWindow(QMainWindow):
         layout.setContentsMargins(0, 0, 0, 0)
 
         header = Header()
-        router_outlet = app_navigation.get_router_outlet()
+        router_outlet = get_app_navigator().get_router_outlet()
 
         widget.setLayout(layout)
         layout.addWidget(header, 0, 0)

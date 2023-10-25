@@ -1,5 +1,5 @@
 from enum import Enum
-from typing import Generic, List, Optional, Tuple, TypeVar
+from typing import Dict, Generic, List, Optional, Tuple, TypeVar
 
 from PyQt6.QtWidgets import QLabel, QStackedWidget, QVBoxLayout, QWidget
 from reactivex import Observable
@@ -14,12 +14,30 @@ RouteName = TypeVar("RouteName", Enum, str)
 
 
 class Navigator(Generic[RouteName]):
+    __navigators: Dict[str, "Navigator"] = {}
+
     __history_stack: BehaviorSubject[List[RouteName]]
     __routes: List[Route]
     __not_found_widget: Optional[QWidget]
     __config: NavigatorConfig
 
-    def __init__(
+    def __init__(self) -> None:
+        self.__history_stack = BehaviorSubject([])
+        self.__routes = []
+        self.__not_found_widget = None
+        self.__config = NavigatorConfig()
+
+    @staticmethod
+    def get_navigator(name: str) -> "Navigator":
+        navigator = Navigator.__navigators.get(name)
+
+        if navigator is None:
+            navigator = Navigator()
+            Navigator.__navigators[name] = navigator
+
+        return navigator
+
+    def init(
         self,
         routes: List[Route],
         default_name: RouteName,
@@ -36,11 +54,10 @@ class Navigator(Generic[RouteName]):
         Returns:
             None
         """
-
         self.__routes = routes
-        self.__history_stack = BehaviorSubject([default_name])
         self.__not_found_widget = not_found_widget
         self.__config = config
+        self.__history_stack.on_next([default_name])
 
     @property
     def history_stack(self) -> Observable[List[str]]:
@@ -146,7 +163,9 @@ class Navigator(Generic[RouteName]):
         return widget
 
     def __match_name(self, route_name: str, search_name: str) -> bool:
-        return route_name == search_name
+        return route_name == search_name or (
+            route_name.value == search_name if isinstance(route_name, Enum) else False
+        )
 
     def __resolve_route(self, name: str) -> Tuple[int, Route]:
         for i, route in enumerate(self.__routes):

@@ -1,3 +1,5 @@
+from typing import List, Tuple
+
 from PyQt6.QtCore import Qt
 from PyQt6.QtGui import QIcon
 from PyQt6.QtWidgets import (
@@ -11,15 +13,11 @@ from PyQt6.QtWidgets import (
 )
 
 from src.controllers.navigator.page import Page
-from src.models.temporary_map_loader import TemporaryMapLoader
-from src.views.main_page.map_view import MapView
-from src.views.modules.main_page_navigation import (
-    MainPageNavigationRoutes,
-    main_page_navigation,
-)
+from src.views.modules.main_page_navigator.navigator import get_main_page_navigator
 from src.views.ui.button import Button
 from src.views.ui.button_group import ButtonGroup
 from src.views.utils.theme import Theme
+from views.main_page.map.map_view import MapView
 
 
 class MainPage(Page):
@@ -29,7 +27,7 @@ class MainPage(Page):
         layout = QHBoxLayout()
 
         layout.addLayout(self.__build_map_view())
-        layout.addWidget(main_page_navigation.get_router_outlet())
+        layout.addWidget(get_main_page_navigator().get_router_outlet())
 
         self.setLayout(layout)
 
@@ -37,14 +35,14 @@ class MainPage(Page):
         map_layout = QVBoxLayout()
         map_view = MapView()
 
-        # TODO: Remove this
-        map_view.set_map(TemporaryMapLoader().load_map())
-
         buttons_layout = QHBoxLayout()
+        buttons_layout.setAlignment(Qt.AlignmentFlag.AlignRight)
 
-        reset_map_button = Button("Reset zoom")
-        map_zoom_out_button = Button(icon="minus")
-        map_zoom_in_button = Button(icon="plus")
+        (
+            reset_map_button,
+            map_zoom_out_button,
+            map_zoom_in_button,
+        ) = self.__build_map_action_buttons(map_view)
         map_zoom_buttons = ButtonGroup([map_zoom_out_button, map_zoom_in_button])
 
         buttons_layout.addWidget(reset_map_button)
@@ -53,8 +51,26 @@ class MainPage(Page):
         map_layout.addWidget(map_view)
         map_layout.addLayout(buttons_layout)
 
+        return map_layout
+
+    def __build_map_action_buttons(self, map_view: MapView) -> Tuple[QWidget]:
+        reset_map_button = Button("Reset zoom")
+        map_zoom_out_button = Button(icon="minus")
+        map_zoom_in_button = Button(icon="plus")
+
         reset_map_button.clicked.connect(map_view.fit_map)
         map_zoom_out_button.clicked.connect(map_view.zoom_out)
         map_zoom_in_button.clicked.connect(map_view.zoom_in)
 
-        return map_layout
+        map_view.ready.subscribe(
+            lambda ready: [
+                button.setDisabled(not ready)
+                for button in [
+                    reset_map_button,
+                    map_zoom_out_button,
+                    map_zoom_in_button,
+                ]
+            ]
+        )
+
+        return reset_map_button, map_zoom_out_button, map_zoom_in_button

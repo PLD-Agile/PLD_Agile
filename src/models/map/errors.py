@@ -1,0 +1,2 @@
+class MapLoadingError(Exception):
+    pass
