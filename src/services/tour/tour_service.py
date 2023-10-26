@@ -74,15 +74,12 @@ class TourService(Singleton):
         self.__tour_requests.on_next(self.__tour_requests.value)
         
     def remove_delivery_request(self, delivery_request: DeliveryRequest, delivery_man: DeliveryMan) -> None:
-        tour_request = self.__tour_requests.value.get(delivery_man, None)
+        tour_request = self.get_tour_request_for_delivery_man(delivery_man)
         
         if not tour_request:
             return
         
         tour_request.deliveries.remove(delivery_request)
-        
-        if len(tour_request.deliveries) == 0:
-            del self.__tour_requests.value[delivery_man]
             
         self.__tour_requests.on_next(self.__tour_requests.value)
         
