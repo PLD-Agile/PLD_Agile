@@ -4,17 +4,16 @@ from reactivex import Observable
 from reactivex.operators import map
 from reactivex.subject import BehaviorSubject
 
-from src.models.map import Map, Marker
+from src.models.map import Map
 from src.services.singleton import Singleton
+from src.services.tour.tour_service import TourService
 
 
 class MapService(Singleton):
     __map: BehaviorSubject[Optional[Map]]
-    __markers: BehaviorSubject[List[Marker]]
 
     def __init__(self) -> None:
         self.__map = BehaviorSubject(None)
-        self.__markers = BehaviorSubject([])
 
     @property
     def map(self) -> Observable[Optional[Map]]:
@@ -24,15 +23,11 @@ class MapService(Singleton):
     def is_loaded(self) -> Observable[bool]:
         return self.__map.pipe(map(lambda map: map is not None))
 
-    def markers(self) -> Observable[List[Marker]]:
-        return self.__markers
-
     def set_map(self, map: Map) -> None:
         self.__map.on_next(map)
 
     def clear_map(self) -> None:
         self.__map.on_next(None)
-        self.__markers.on_next([])
+        TourService.instance().clear_tour_requests()
+        TourService.instance().clear_computed_tours()
 
-    def add_marker(self, marker: Marker) -> None:
-        self.__markers.on_next(self.__markers.value + [marker])
