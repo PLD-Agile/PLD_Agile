@@ -4,7 +4,6 @@ from reactivex import Observable
 from reactivex.subject import BehaviorSubject
 from reactivex.operators import map
 
-from src.models.errors.no_value_error import NoValueError
 from src.services.singleton import Singleton
 from src.services.tour.tour_saving_service import TourSavingService
 from src.models.tour import TourRequest, DeliveryRequest, DeliveryLocation, ComputedTour
@@ -38,13 +37,20 @@ class TourService(Singleton):
     def get_tour_requests(self) -> List[TourRequest]:
         return self.__tour_requests.value
     
-    def get_tour_request_for_delivery_man(self, delivery_man: DeliveryMan) -> Optional[DeliveryMan]:
+    def get_tour_request_for_delivery_man(self, delivery_man: DeliveryMan) -> Optional[TourRequest]:
         return next((tour for tour in self.__tour_requests.value if tour.delivery_man == delivery_man), None)
     
     def get_computed_tours(self) -> List[ComputedTour]:
         return self.__computed_tours.value
     
     def add_delivery_request(self, position: Position, delivery_man: DeliveryMan, timeWindow: int) -> None:
+        """Add a delivery request to the tour requests and publish the update.
+
+        Args:
+            position (Position): Approximate position of the delivery
+            delivery_man (DeliveryMan): Delivery Man to assign the delivery to
+            timeWindow (int): Time window for the delivery
+        """
         # tour_request = self.__tour_requests.value.get(delivery_man, None)
         tour_request = self.get_tour_request_for_delivery_man(delivery_man)
         
@@ -74,6 +80,12 @@ class TourService(Singleton):
         self.__tour_requests.on_next(self.__tour_requests.value)
         
     def remove_delivery_request(self, delivery_request: DeliveryRequest, delivery_man: DeliveryMan) -> None:
+        """Remove a delivery request from the tour requests and publish the update.
+
+        Args:
+            delivery_request (DeliveryRequest): Delivery request to remove
+            delivery_man (DeliveryMan): Delivery Man to remove the delivery from
+        """
         tour_request = self.get_tour_request_for_delivery_man(delivery_man)
         
         if not tour_request:
@@ -87,6 +99,8 @@ class TourService(Singleton):
         self.__tour_requests.on_next({})
         
     def compute_tours(self) -> None:
+        """Compute the tours and publish the update.
+        """
         # TODO: Use service to get computed tours
         # Example:
         # computed_tours = TourComputingService.instance().compute_tours(self.__tour_requests.value)
@@ -96,10 +110,22 @@ class TourService(Singleton):
         self.__computed_tours.on_next(computed_tours)
         
     def clear_computed_tours(self) -> None:
+        """Clear the computed tours and publish the update.
+        """
         self.__computed_tours.on_next([])
     
     def save_tours(self, path: str) -> None:
+        """Save the computed tours to a file.
+
+        Args:
+            path (str): Path to the file
+        """
         TourSavingService.instance().save_tours(self.__computed_tours.value, path)
         
     def load_tours(self, path: str) -> None:
+        """Load the computed tours from a file.
+
+        Args:
+            path (str): Path to the file
+        """
         self.__computed_tours.on_next(TourSavingService.instance().load_tours(path))
