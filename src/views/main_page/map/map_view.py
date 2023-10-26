@@ -20,12 +20,12 @@ from PyQt6.QtWidgets import (
 )
 from reactivex import Observable
 from reactivex.subject import BehaviorSubject, Subject
-from src.models.tour.delivery_location import DeliveryLocation
-from src.models.delivery_man.delivery_man import DeliveryMan
-from src.services.tour.tour_service import TourService
 
+from src.models.delivery_man.delivery_man import DeliveryMan
 from src.models.map import Map, Marker, Position, Segment
+from src.models.tour.delivery_location import DeliveryLocation
 from src.services.map.map_service import MapService
+from src.services.tour.tour_service import TourService
 from src.views.main_page.map.map_marker import AlignBottom, MapMarker
 from src.views.utils.icon import get_icon_pixmap
 from src.views.utils.theme import Theme
@@ -75,7 +75,9 @@ class MapView(QGraphicsView):
         MapService.instance().map.subscribe(
             lambda map: self.set_map(map) if map else self.reset()
         )
-        TourService.instance().tour_requests_delivery_locations.subscribe(self.__on_update_delivery_locations)
+        TourService.instance().tour_requests_delivery_locations.subscribe(
+            self.__on_update_delivery_locations
+        )
 
     @property
     def ready(self) -> Observable[bool]:
@@ -208,16 +210,18 @@ class MapView(QGraphicsView):
 
         TourService.instance().add_delivery_request(
             position=position,
-            delivery_man=DeliveryMan('John Doe'),
+            delivery_man=DeliveryMan("John Doe"),
             timeWindow=8,
         )
 
-    def __on_update_delivery_locations(self, delivery_locations: List[DeliveryLocation]):
+    def __on_update_delivery_locations(
+        self, delivery_locations: List[DeliveryLocation]
+    ):
         for marker in self.__delivery_locations_markers:
             self.__scene.removeItem(marker.shape)
-            
+
         self.__delivery_locations_markers = []
-        
+
         for delivery_location in delivery_locations:
             self.__delivery_locations_markers.append(
                 self.add_marker(

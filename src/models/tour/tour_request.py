@@ -1,7 +1,8 @@
 from dataclasses import dataclass
 from typing import List
-from src.models.tour.delivery_request import DeliveryRequest
+
 from src.models.delivery_man.delivery_man import DeliveryMan
+from src.models.tour.delivery_request import DeliveryRequest
 
 
 @dataclass

@@ -1,8 +1,9 @@
 from dataclasses import dataclass
-from src.models.tour.computed_delivery import ComputedDelivery
+from typing import List
+
 from src.models.delivery_man.delivery_man import DeliveryMan
 from src.models.map.segment import Segment
-from typing import List
+from src.models.tour.computed_delivery import ComputedDelivery
 
 
 @dataclass

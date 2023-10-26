@@ -30,4 +30,3 @@ class MapService(Singleton):
         self.__map.on_next(None)
         TourService.instance().clear_tour_requests()
         TourService.instance().clear_computed_tours()
-
