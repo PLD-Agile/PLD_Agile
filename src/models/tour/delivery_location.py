@@ -1,10 +1,9 @@
 from dataclasses import dataclass
 
-from src.models.map.intersection import Intersection
+from src.models.map.segment import Segment
 
 
 @dataclass
 class DeliveryLocation:
-    origin: Intersection
-    destination: Intersection
+    segment: Segment
     positionOnSegment: float

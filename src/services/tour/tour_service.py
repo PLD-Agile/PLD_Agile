@@ -5,7 +5,7 @@ from reactivex.operators import map
 from reactivex.subject import BehaviorSubject
 
 from src.models.delivery_man.delivery_man import DeliveryMan
-from src.models.map import Intersection, Position
+from src.models.map import Intersection, Position, Segment
 from src.models.tour import ComputedTour, DeliveryLocation, DeliveryRequest, TourRequest
 from src.services.singleton import Singleton
 from src.services.tour.tour_saving_service import TourSavingService
@@ -81,12 +81,16 @@ class TourService(Singleton):
             DeliveryRequest(
                 location=DeliveryLocation(
                     # TODO: Use service to find the actual intersection
-                    origin=Intersection(
-                        id=-1,
-                        longitude=position.longitude,
-                        latitude=position.latitude,
+                    segment=Segment(
+                        name="",
+                        origin=Intersection(
+                            id=-1,
+                            longitude=position.longitude,
+                            latitude=position.latitude,
+                        ),
+                        destination=None,
+                        length=1,
                     ),
-                    destination=None,
                     positionOnSegment=0,
                 ),
                 timeWindow=timeWindow,

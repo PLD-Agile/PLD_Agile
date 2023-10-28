@@ -225,7 +225,7 @@ class MapView(QGraphicsView):
         for delivery_location in delivery_locations:
             self.__delivery_locations_markers.append(
                 self.add_marker(
-                    position=delivery_location.origin,
+                    position=delivery_location.segment.origin,
                     icon="map-marker-alt",
                     color=QColor("#f54242"),
                 )
