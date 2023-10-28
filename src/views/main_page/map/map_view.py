@@ -21,8 +21,11 @@ from PyQt6.QtWidgets import (
 from reactivex import Observable
 from reactivex.subject import BehaviorSubject, Subject
 
+from src.models.delivery_man.delivery_man import DeliveryMan
 from src.models.map import Map, Marker, Position, Segment
+from src.models.tour.delivery_location import DeliveryLocation
 from src.services.map.map_service import MapService
+from src.services.tour.tour_service import TourService
 from src.views.main_page.map.map_marker import AlignBottom, MapMarker
 from src.views.utils.icon import get_icon_pixmap
 from src.views.utils.theme import Theme
@@ -61,7 +64,7 @@ class MapView(QGraphicsView):
     __scale_factor: int = 1
     __segments: List[QAbstractGraphicsShapeItem] = []
     __markers: List[MapMarker] = []
-    __route_markers: List[MapMarker] = []
+    __delivery_locations_markers: List[MapMarker] = []
     __marker_size: Optional[int] = None
     __ready: BehaviorSubject[bool] = BehaviorSubject(False)
 
@@ -72,7 +75,9 @@ class MapView(QGraphicsView):
         MapService.instance().map.subscribe(
             lambda map: self.set_map(map) if map else self.reset()
         )
-        MapService.instance().markers().subscribe(self.__on_markers_change)
+        TourService.instance().tour_requests_delivery_locations.subscribe(
+            self.__on_update_delivery_locations
+        )
 
     @property
     def ready(self) -> Observable[bool]:
@@ -203,17 +208,28 @@ class MapView(QGraphicsView):
         position = self.mapToScene(event.pos())
         position = Position(position.x(), position.y())
 
-        MapService.instance().add_marker(Marker(position))
+        TourService.instance().add_delivery_request(
+            position=position,
+            delivery_man=DeliveryMan("John Doe"),
+            timeWindow=8,
+        )
 
-    def __on_markers_change(self, markers: List[Marker]) -> None:
-        for marker in self.__route_markers:
+    def __on_update_delivery_locations(
+        self, delivery_locations: List[DeliveryLocation]
+    ):
+        for marker in self.__delivery_locations_markers:
             self.__scene.removeItem(marker.shape)
 
-        self.__route_markers = []
+        self.__delivery_locations_markers = []
 
-        for marker in markers:
-            map_marker = self.add_marker(marker.position)
-            self.__route_markers.append(map_marker)
+        for delivery_location in delivery_locations:
+            self.__delivery_locations_markers.append(
+                self.add_marker(
+                    position=delivery_location.segment.origin,
+                    icon="map-marker-alt",
+                    color=QColor("#f54242"),
+                )
+            )
 
     def __add_segment(
         self, segment: Segment, color: QColor = QColor("#9c9c9c")
