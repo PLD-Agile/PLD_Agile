@@ -210,7 +210,7 @@ class MapView(QGraphicsView):
 
         TourService.instance().add_delivery_request(
             position=position,
-            delivery_man=DeliveryMan("John Doe"),
+            delivery_man=DeliveryMan("John Doe", []),
             timeWindow=8,
         )
 
