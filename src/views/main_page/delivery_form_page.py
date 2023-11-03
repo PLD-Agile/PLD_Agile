@@ -52,7 +52,7 @@ class DeliveryFormPage(Page):
         TourService.instance().tour_requests.subscribe(self.__update_delivery_table)
 
     def compute_tour(self):
-        pass
+        TourService.instance().compute_tours()
 
     def remove_address(self, row):
         pass

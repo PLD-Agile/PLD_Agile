@@ -88,7 +88,11 @@ class TourService(Singleton):
                             longitude=position.longitude,
                             latitude=position.latitude,
                         ),
-                        destination=None,
+                        destination=Intersection(
+                            id=-1,
+                            longitude=position.longitude + 0.01,
+                            latitude=position.latitude + 0.01,
+                        ),
                         length=1,
                     ),
                     positionOnSegment=0,
@@ -127,6 +131,18 @@ class TourService(Singleton):
         # computed_tours = TourComputingService.instance().compute_tours(self.__tour_requests.value)
 
         computed_tours = []
+
+        for request in self.__tour_requests.value:
+            computed_tours.append(
+                ComputedTour(
+                    deliveries=request.deliveries,
+                    delivery_man=DeliveryMan("Bill", [8, 9, 10]),
+                    route=[
+                        delivery.location.segment for delivery in request.deliveries
+                    ],
+                    color="red",
+                )
+            )
 
         self.__computed_tours.on_next(computed_tours)
 
