@@ -1,35 +1,39 @@
-from src.models.map import Map
+from itertools import permutations
+from typing import List
+
+from src.models.map import Segment
 from src.models.tour import ComputedTour, DeliveryRequest, TourRequest
 from src.services.singleton import Singleton
-from src.services.tour.tour_service import TourService
 import networkx as nx
 import xml.etree.ElementTree as ET
-import random
 
 
 class TourComputingService(Singleton):
-    # def compute_tours(self, tour_requests, map):
-    def compute_tours(self):
-        xml_file = "C:/Users/hicham/py_workshop/PLD_Agile/src/assets/smallMap.xml"
-        mapGraph = self.create_graph_from_xml(xml_file)
-        # Generate 5 random delivery locations
-        random_locations = self.generate_random_delivery_locations(mapGraph, 5)
-        print(random_locations)
-        shortest_path_graph = self.compute_shortest_path_graph(mapGraph, random_locations)
-        for source, target, data in shortest_path_graph.edges(data=True):
-            path = data['path']
-            length = data['length']
-            print(f"Path from {source} to {target}:")
-            print(f"Path: {path}")
-            print(f"Length: {length}\n")
+
+    def compute_tours(self, tour_requests: List[TourRequest], xml_file) -> List[ComputedTour]:
+        """Compute tours for a list of tour requests."""
+        map_graph = self.create_graph_from_xml(xml_file)
+        computed_tours = []
+        for tour_request in tour_requests:
+            computed_tour = ComputedTour()
+            shortest_path_graph = self.compute_shortest_path_graph(map_graph, tour_request.deliveries)
+            computed_tour.route, computed_tour.length = self.solve_tsp(shortest_path_graph)
+            # TODO: Add color, delivery man, etc.
+            computed_tours.append(computed_tour)
+        return computed_tours
 
     #  Replace this with the data from the Map model
-    def create_graph_from_xml(self, xml_file):
+    def create_graph_from_xml(self, xml_file) -> nx.DiGraph:
+        """Create a directed graph from an XML file."""
         G = nx.DiGraph()  # Directed graph
 
         try:
             tree = ET.parse(xml_file)
             root = tree.getroot()
+
+            # Create node for warehouse
+            warehouse_id = int(root.find('warehouse').get('address'))
+            G.add_node(warehouse_id)
 
             # Create nodes for intersections
             for intersection_elem in root.findall('intersection'):
@@ -49,34 +53,31 @@ class TourComputingService(Singleton):
         except ET.ParseError:
             print("Error parsing XML file.")
 
-    def generate_random_delivery_locations(self, graph, num_locations):
-        delivery_locations = []
-        nodes = list(graph.nodes())
-
-        for _ in range(num_locations):
-            random_node = random.choice(nodes)
-            delivery_locations.append(random_node)
-
-        return delivery_locations
-
-    # Calculate the compute_shortest_path_graph for the random locations
-    def compute_shortest_path_graph(self, graph, delivery_locations):
+    def compute_shortest_path_graph(self, graph, delivery_locations) -> nx.DiGraph:
+        """Compute the shortest path graph between delivery locations."""
         G = nx.DiGraph()
 
         # Add delivery locations as nodes
         for location in delivery_locations:
             G.add_node(location)
 
-        # Compute shortest path distances and paths between delivery locations
+        # Compute the shortest path distances and paths between delivery locations
         for source in delivery_locations:
             for target in delivery_locations:
                 if source != target:
-                    shortest_path_length, shortest_path = nx.single_source_dijkstra(graph, source, target,
-                                                                                    weight='length')
+                    try:
+                        shortest_path_length, shortest_path = nx.single_source_dijkstra(graph, source, target,
+                                                                                        weight='length')
+                    except nx.NetworkXNoPath:
+                        continue
                     G.add_edge(source, target, length=shortest_path_length, path=shortest_path)
 
         return G
 
+    # TODO : solve the tsp algorithm from the shortest path graph, return the route and the length
 
-tourService = TourComputingService.instance()
-tourService.compute_tours()
+    def solve_tsp(self, shortest_path_graph) -> (List[Segment], float):
+        shortest_cycle_length = float('inf')
+        shortest_cycle = None
+        # Solve the TSP...
+        return shortest_cycle, shortest_cycle_length
