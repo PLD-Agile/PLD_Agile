@@ -6,7 +6,6 @@ from reactivex.subject import BehaviorSubject
 
 from src.models.map import Map
 from src.services.singleton import Singleton
-from src.services.tour.tour_service import TourService
 
 
 class MapService(Singleton):
@@ -23,10 +22,11 @@ class MapService(Singleton):
     def is_loaded(self) -> Observable[bool]:
         return self.__map.pipe(map(lambda map: map is not None))
 
+    def get_map(self) -> Map:
+        if not self.__map.value:
+            raise Exception("Map not loaded")
+
+        return self.__map.value
+
     def set_map(self, map: Map) -> None:
         self.__map.on_next(map)
-
-    def clear_map(self) -> None:
-        self.__map.on_next(None)
-        TourService.instance().clear_tour_requests()
-        TourService.instance().clear_computed_tours()

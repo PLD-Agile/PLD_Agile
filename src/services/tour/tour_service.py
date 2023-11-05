@@ -1,3 +1,4 @@
+import sys
 from typing import List, Optional
 
 from reactivex import Observable
@@ -7,7 +8,10 @@ from reactivex.subject import BehaviorSubject
 from src.models.delivery_man.delivery_man import DeliveryMan
 from src.models.map import Intersection, Position, Segment
 from src.models.tour import ComputedTour, DeliveryLocation, DeliveryRequest, TourRequest
+from src.services.map.delivery_location_service import DeliveryLocationService
+from src.services.map.map_service import MapService
 from src.services.singleton import Singleton
+from src.services.tour.tour_computing_service import TourComputingService
 from src.services.tour.tour_saving_service import TourSavingService
 
 
@@ -79,23 +83,8 @@ class TourService(Singleton):
 
         tour_request.deliveries.append(
             DeliveryRequest(
-                location=DeliveryLocation(
-                    # TODO: Use service to find the actual intersection
-                    segment=Segment(
-                        name="Road 1",
-                        origin=Intersection(
-                            id=-1,
-                            longitude=position.longitude,
-                            latitude=position.latitude,
-                        ),
-                        destination=Intersection(
-                            id=-1,
-                            longitude=position.longitude + 0.01,
-                            latitude=position.latitude + 0.01,
-                        ),
-                        length=1,
-                    ),
-                    positionOnSegment=0,
+                location=DeliveryLocationService.instance().find_delivery_location_from_position(
+                    position
                 ),
                 timeWindow=timeWindow,
             )
@@ -128,22 +117,26 @@ class TourService(Singleton):
         """Compute the tours and publish the update."""
         # TODO: Use service to get computed tours
         # Example:
-        # computed_tours = TourComputingService.instance().compute_tours(self.__tour_requests.value)
 
-        computed_tours = []
+        computed_tours = TourComputingService.instance().compute_tours(
+            tour_requests=self.__tour_requests.value,
+            map=MapService.instance().get_map(),
+        )
 
-        for request in self.__tour_requests.value:
-            computed_tours.append(
-                ComputedTour(
-                    deliveries=request.deliveries,
-                    delivery_man=DeliveryMan("Bill", [8, 9, 10]),
-                    route=[
-                        delivery.location.segment for delivery in request.deliveries
-                    ],
-                    length=1,
-                    color="red",
-                )
-            )
+        # computed_tours = []
+
+        # for request in self.__tour_requests.value:
+        #     computed_tours.append(
+        #         ComputedTour(
+        #             deliveries=request.deliveries,
+        #             delivery_man=DeliveryMan("Bill", [8, 9, 10]),
+        #             route=[
+        #                 delivery.location.segment for delivery in request.deliveries
+        #             ],
+        #             length=1,
+        #             color="red",
+        #         )
+        #     )
 
         self.__computed_tours.on_next(computed_tours)
 

@@ -1,67 +1,73 @@
 import xml.etree.ElementTree as ET
-from typing import List
+from typing import List, Tuple
 
 import networkx as nx
 
-from src.models.map import Segment
-from src.models.tour import ComputedTour, DeliveryRequest, TourRequest
+from src.models.delivery_man.delivery_man import DeliveryMan
+from src.models.map import Map, Segment
+from src.models.tour import ComputedDelivery, ComputedTour, DeliveryRequest, TourRequest
 from src.services.singleton import Singleton
 
 
 class TourComputingService(Singleton):
     def compute_tours(
-        self, tour_requests: List[TourRequest], xml_file
+        self, tour_requests: List[TourRequest], map: Map
     ) -> List[ComputedTour]:
         """Compute tours for a list of tour requests."""
-        map_graph = self.create_graph_from_xml(xml_file)
-        computed_tours = []
+        map_graph = self.create_graph_from_xml(map)
+
+        computed_tours: List[ComputedTour] = []
+
         for tour_request in tour_requests:
-            computed_tour = ComputedTour()
-            shortest_path_graph = self.compute_shortest_path_graph(
-                map_graph, tour_request.deliveries
+            route, length = self.solve_tsp(map_graph, map, tour_request.deliveries)
+
+            computed_tours.append(
+                ComputedTour(
+                    deliveries=[
+                        ComputedDelivery(
+                            location=delivery.location,
+                            time=0,
+                        )
+                        for delivery in tour_request.deliveries
+                    ],
+                    delivery_man=DeliveryMan(
+                        name="John Doe",
+                        availabilities=[],
+                    ),
+                    route=route,
+                    length=length,
+                    color="green",
+                )
             )
-            computed_tour.route, computed_tour.length = self.solve_tsp(
-                shortest_path_graph
-            )
-            # TODO: Add color, delivery man, etc.
-            computed_tours.append(computed_tour)
+
+        print(computed_tours)
+
         return computed_tours
 
     #  Replace this with the data from the Map model
-    def create_graph_from_xml(self, xml_file) -> nx.DiGraph:
+    def create_graph_from_xml(self, map: Map) -> nx.Graph:
         """Create a directed graph from an XML file."""
-        G = nx.DiGraph()  # Directed graph
+        graph = nx.DiGraph()
 
-        try:
-            tree = ET.parse(xml_file)
-            root = tree.getroot()
+        graph.add_node(map.warehouse.id)
 
-            # Create node for warehouse
-            warehouse_id = int(root.find("warehouse").get("address"))
-            G.add_node(warehouse_id)
+        for intersection in map.intersections.values():
+            graph.add_node(
+                intersection.id,
+                latitude=float(intersection.latitude),
+                longitude=float(intersection.longitude),
+            )
 
-            # Create nodes for intersections
-            for intersection_elem in root.findall("intersection"):
-                intersection_id = int(intersection_elem.get("id"))
-                G.add_node(
-                    intersection_id,
-                    latitude=float(intersection_elem.get("latitude")),
-                    longitude=float(intersection_elem.get("longitude")),
-                )
+        for segment in map.segments:
+            graph.add_edge(
+                segment.origin.id, segment.destination.id, length=segment.length
+            )
 
-            # Create edges for road segments
-            for segment_elem in root.findall("segment"):
-                origin_id = int(segment_elem.get("origin"))
-                destination_id = int(segment_elem.get("destination"))
-                length = float(segment_elem.get("length"))
-                G.add_edge(origin_id, destination_id, length=length)
+        return graph
 
-            return G
-
-        except ET.ParseError:
-            print("Error parsing XML file.")
-
-    def compute_shortest_path_graph(self, graph, delivery_locations) -> nx.DiGraph:
+    def compute_shortest_path_graph(
+        self, graph: nx.Graph, delivery_locations
+    ) -> nx.DiGraph:
         """Compute the shortest path graph between delivery locations."""
         G = nx.DiGraph()
 
@@ -87,8 +93,30 @@ class TourComputingService(Singleton):
 
     # TODO : solve the tsp algorithm from the shortest path graph, return the route and the length
 
-    def solve_tsp(self, shortest_path_graph) -> (List[Segment], float):
-        shortest_cycle_length = float("inf")
-        shortest_cycle = None
-        # Solve the TSP...
-        return shortest_cycle, shortest_cycle_length
+    def solve_tsp(
+        self, shortest_path_graph: nx.Graph, map: Map, deliveries: List[DeliveryRequest]
+    ) -> Tuple[List[Segment], float]:
+        cycle: List[Segment] = []
+        cycle_length = 0
+
+        # Loops through the deliveries in pairs ([1, 2], [2, 3], [3, 4], ...])
+        for delivery_origin, delivery_destination in zip(deliveries, deliveries[1:]):
+            # Returns a list of the intersections IDs to go through to go from the origin to the destination
+            delivery_intersections_ids = nx.shortest_path(
+                shortest_path_graph,
+                delivery_origin.location.segment.origin.id,
+                delivery_destination.location.segment.origin.id,
+                weight="length",
+            )
+
+            # Loops through the intersections IDs in pairs ([1, 2], [2, 3], [3, 4], ...)
+            for cycle_origin_id, cycle_destination_id in zip(
+                delivery_intersections_ids, delivery_intersections_ids[1:]
+            ):
+                length = shortest_path_graph[cycle_origin_id][cycle_destination_id][
+                    "length"
+                ]
+                cycle_length += length
+                cycle.append(map.segments_map[cycle_origin_id][cycle_destination_id])
+
+        return cycle, cycle_length
