@@ -15,7 +15,7 @@ from src.views.ui.button_group import ButtonGroup
 from src.views.ui.nav_button import NavigationButton
 
 
-class MenuView(Page):
+class ReadDeliveryMan(Page):
     def __init__(self):
         super().__init__()
 
