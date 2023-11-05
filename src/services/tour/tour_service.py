@@ -82,7 +82,7 @@ class TourService(Singleton):
                 location=DeliveryLocation(
                     # TODO: Use service to find the actual intersection
                     segment=Segment(
-                        name="",
+                        name="Road 1",
                         origin=Intersection(
                             id=-1,
                             longitude=position.longitude,

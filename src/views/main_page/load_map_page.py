@@ -51,4 +51,4 @@ class LoadMapPage(Page):
 
     def load_map(self, path: str) -> None:
         MapLoaderService.instance().load_map_from_xml(path)
-        get_main_page_navigator().replace(MainPageNavigationRoutes.DELIVERY)
+        get_main_page_navigator().replace(MainPageNavigationRoutes.DELIVERY_FORM)

@@ -3,4 +3,4 @@ from enum import Enum
 
 class MainPageNavigationRoutes(Enum):
     LOAD_MAP = "load_map"
-    DELIVERY = "delivery"
+    DELIVERY_FORM = "delivery_form"
