@@ -1,6 +1,6 @@
 from dataclasses import dataclass
 from typing import List
-from src.models.tour import ComputedTour
+#from src.models.tour import ComputedTour
 
 DELIVERYMAN_SPEED = 15
 
@@ -8,36 +8,57 @@ DELIVERYMAN_SPEED = 15
 class DeliveryMan:
     name: str
     availabilities: List[int]
-    speed: float
-    tourAssigned: ComputedTour
-    
-    def __init__(self, name: str, speed: float = DELIVERYMAN_SPEED, tourAssigned: ComputedTour = None) -> None:
-        self.name = name
-        self.speed = speed
-        self.tourAssigned = tourAssigned
+    speed: float = DELIVERYMAN_SPEED
+    #tourAssigned: ComputedTour
 
     @property
     def name(self) -> str:
-        return self._name
+        """Get the value of the name of the delivery man."""
+        return self.name
 
     @name.setter
     def name(self, value: str) -> None:
-        if value:
-            self._name = value
-        else:
-            raise ValueError("Name can't be empty")
+        """Set the value of the name of the delivery man."""
+        self.name = value
+        
+    @property
+    def availabilities(self) -> List[int]:
+        """Get the value of the availabilities hours of the delivery man."""
+        return self.availabilities
+    
+    @availabilities.setter
+    def availabilities(self, value: List[int]) -> None:
+        """Set the value of the availabilities hours of the delivery man."""
+        self.availabilities = value
+    
+    def __sortByHour(self, hour):
+        """ Returns the value in format 24 hours """
+        return hour % 24
+
+    def addAvailableHour(self, value: int) -> None:
+        """Add an hour to the availabilities hours of the delivery man."""
+        self.availabilities.append(value)
+        self.availabilities = sorted(self.availabilities, key=self.__sortByHour)
+    
+    def removeAvailableHour(self, value: int) -> None:
+        """ Removes the first aparition of an hour from the availabilities hours of the de livery man. """
+        if value in self.availabilities:
+            self.availabilities.remove(value)
 
     @property
     def speed(self) -> float:
-        return self._speed
+        """Get the value of the speed of the delivery man."""
+        return self.speed
 
     @speed.setter
     def speed(self, value: float) -> None:
-        if value >= 0:
-            self._speed = value
-        else:
-            raise ValueError("Speed can't be negative")
+        """Set the value of the speed of the delivery man."""
+        self.speed = value
         
+    """ 
+    ---------
+    DEPRECATED
+    ----------
     @property
     def tourAssigned(self) -> ComputedTour:
         return self.tourAssigned
@@ -47,4 +68,4 @@ class DeliveryMan:
         if value:
             self.tourAssigned = value
         else:
-            raise ValueError("TourAssigned can't be empty")
+            raise ValueError("TourAssigned can't be empty") """
