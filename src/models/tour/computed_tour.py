@@ -11,4 +11,5 @@ class ComputedTour:
     deliveries: List[ComputedDelivery]
     delivery_man: DeliveryMan
     route: List[Segment]
+    length: float
     color: str
