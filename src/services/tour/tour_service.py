@@ -140,6 +140,7 @@ class TourService(Singleton):
                     route=[
                         delivery.location.segment for delivery in request.deliveries
                     ],
+                    length=1,
                     color="red",
                 )
             )
