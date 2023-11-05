@@ -231,7 +231,7 @@ class MapView(QGraphicsView):
 
     def __on_update_computed_tours(self, computed_tours: List[ComputedTour]):
         for maker in self.__map_annotations.segments.get(SegmentTypes.Tour):
-            self.__scene.removeItem(maker)
+            self.__scene.removeItem(maker.shape)
 
         self.__map_annotations.segments.clear(SegmentTypes.Tour)
 
