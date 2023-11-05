@@ -1,0 +1,2 @@
+class DeliveryManError(Exception):
+    pass
