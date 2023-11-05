@@ -5,13 +5,12 @@ from src.controllers.navigator.page import Page
 from src.services.map import MapLoaderService
 from src.views.modules.main_page_navigator.navigator import get_main_page_navigator
 from src.views.modules.main_page_navigator.routes import MainPageNavigationRoutes
-from src.views.ui.button import Button
-from src.views.ui.button_group import ButtonGroup
+from src.views.ui import Button, ButtonGroup, Callout, Separator, Text, TextSize
 
 DEFAULT_BUTTONS = [
-    ("small", "src/assets/smallMap.xml"),
-    ("medium", "src/assets/mediumMap.xml"),
-    ("large", "src/assets/largeMap.xml"),
+    ("Small map", "src/assets/smallMap.xml"),
+    ("Medium map", "src/assets/mediumMap.xml"),
+    ("Large map", "src/assets/largeMap.xml"),
 ]
 
 
@@ -19,26 +18,37 @@ class LoadMapPage(Page):
     def __init__(self):
         super().__init__()
 
+        # Define components to be used in this screen
         layout = QVBoxLayout()
 
-        layout.setAlignment(Qt.AlignmentFlag.AlignTop)
+        options_label = Text("Select an option", TextSize.H2)
 
-        load_map_button = Button("Load map")
-        load_map_button.clicked.connect(self.ask_user_for_map)
-
+        load_map_default_label = QLabel("Load from our default maps:")
         default_buttons = []
-
         for name, path in DEFAULT_BUTTONS:
             button = Button(name)
             button.clicked.connect(lambda _, path=path: self.load_map(path))
             default_buttons.append(button)
-
         load_map_default_button_group = ButtonGroup(default_buttons)
 
-        layout.addWidget(QLabel("Load from file:"))
-        layout.addWidget(load_map_button)
-        layout.addWidget(QLabel("Load from default maps:"))
+        separator = Separator()
+
+        load_map_label = Callout("Or load a custom map")
+        load_map_button = Button("Load a custom map")
+        load_map_button.clicked.connect(self.ask_user_for_map)
+
+        # Add components in the screen
+        layout.setAlignment(Qt.AlignmentFlag.AlignTop)
+
+        layout.addWidget(options_label)
+
+        layout.addWidget(load_map_default_label)
         layout.addWidget(load_map_default_button_group)
+
+        layout.addWidget(separator)
+
+        layout.addWidget(load_map_label)
+        layout.addWidget(load_map_button)
 
         self.setLayout(layout)
 
