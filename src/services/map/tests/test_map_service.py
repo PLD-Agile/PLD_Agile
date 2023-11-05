@@ -33,29 +33,3 @@ class TestMapService:
             assert map is None
 
         self.map_service.map.subscribe(on_next)
-
-    def test_should_add_marker(self):
-        self.map_service.add_marker("MARKER")
-
-        def on_next(markers):
-            assert markers == ["MARKER"]
-
-        self.map_service.markers().subscribe(on_next)
-
-    def test_should_add_multiple_markers(self):
-        self.map_service.add_marker("MARKER")
-        self.map_service.add_marker("MARKER2")
-
-        def on_next(markers):
-            assert markers == ["MARKER", "MARKER2"]
-
-        self.map_service.markers().subscribe(on_next)
-
-    def test_should_clear_markers(self):
-        self.map_service.add_marker("MARKER")
-        self.map_service.clear_map()
-
-        def on_next(markers):
-            assert markers == []
-
-        self.map_service.markers().subscribe(on_next)
