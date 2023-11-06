@@ -1,23 +1,11 @@
 from typing import List, Literal, Optional, Tuple
 
 from PyQt6.QtCore import QPointF, QRectF, Qt
-from PyQt6.QtGui import (
-    QBrush,
-    QColor,
-    QIcon,
-    QMouseEvent,
-    QPen,
-    QTransform,
-    QWheelEvent,
-)
-from PyQt6.QtWidgets import (
-    QAbstractGraphicsShapeItem,
-    QFrame,
-    QGraphicsScene,
-    QGraphicsView,
-    QSizePolicy,
-    QWidget,
-)
+from PyQt6.QtGui import (QBrush, QColor, QIcon, QMouseEvent, QPen, QTransform,
+                         QWheelEvent)
+from PyQt6.QtWidgets import (QAbstractGraphicsShapeItem, QFrame,
+                             QGraphicsScene, QGraphicsView, QSizePolicy,
+                             QWidget)
 from reactivex import Observable
 from reactivex.subject import BehaviorSubject, Subject
 

@@ -1,14 +1,8 @@
 from typing import List
 
 from PyQt6.QtCore import Qt
-from PyQt6.QtWidgets import (
-    QComboBox,
-    QHBoxLayout,
-    QLayout,
-    QTableWidget,
-    QTableWidgetItem,
-    QVBoxLayout,
-)
+from PyQt6.QtWidgets import (QComboBox, QHBoxLayout, QLayout, QTableWidget,
+                             QTableWidgetItem, QVBoxLayout)
 
 from src.controllers.navigator.page import Page
 from src.models.delivery_man.delivery_man import DeliveryMan

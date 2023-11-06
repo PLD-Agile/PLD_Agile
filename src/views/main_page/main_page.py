@@ -2,18 +2,12 @@ from typing import List, Tuple
 
 from PyQt6.QtCore import Qt
 from PyQt6.QtGui import QIcon
-from PyQt6.QtWidgets import (
-    QHBoxLayout,
-    QLayout,
-    QPushButton,
-    QSizePolicy,
-    QStyle,
-    QVBoxLayout,
-    QWidget,
-)
+from PyQt6.QtWidgets import (QHBoxLayout, QLayout, QPushButton, QSizePolicy,
+                             QStyle, QVBoxLayout, QWidget)
 
 from src.controllers.navigator.page import Page
-from src.views.modules.main_page_navigator.navigator import get_main_page_navigator
+from src.views.modules.main_page_navigator.navigator import \
+    get_main_page_navigator
 from src.views.ui.button import Button
 from src.views.ui.button_group import ButtonGroup
 from src.views.utils.theme import Theme

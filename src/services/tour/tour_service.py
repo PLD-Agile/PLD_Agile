@@ -6,7 +6,8 @@ from reactivex.subject import BehaviorSubject
 
 from src.models.delivery_man.delivery_man import DeliveryMan
 from src.models.map import Intersection, Position, Segment
-from src.models.tour import ComputedTour, DeliveryLocation, DeliveryRequest, TourRequest
+from src.models.tour import (ComputedTour, DeliveryLocation, DeliveryRequest,
+                             TourRequest)
 from src.services.singleton import Singleton
 from src.services.tour.tour_saving_service import TourSavingService
 
