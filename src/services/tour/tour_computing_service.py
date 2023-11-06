@@ -1,3 +1,4 @@
+import itertools
 import xml.etree.ElementTree as ET
 from typing import List
 
@@ -90,5 +91,42 @@ class TourComputingService(Singleton):
     def solve_tsp(self, shortest_path_graph) -> (List[Segment], float):
         shortest_cycle_length = float("inf")
         shortest_cycle = None
-        # Solve the TSP...
-        return shortest_cycle, shortest_cycle_length
+        route = []
+
+        # Generate all permutations of delivery points to find the shortest cycle
+        delivery_points = shortest_path_graph.nodes()
+        for permuted_points in itertools.permutations(delivery_points):
+            cycle_length = 0
+            for i in range(len(permuted_points) - 1):
+                source = permuted_points[i]
+                target = permuted_points[i + 1]
+                cycle_length += shortest_path_graph[source][target]["length"]
+            # Add the length of the last edge back to the starting point to complete the cycle
+            cycle_length += shortest_path_graph[permuted_points[-1]][
+                permuted_points[0]
+            ]["length"]
+
+            if cycle_length < shortest_cycle_length:
+                shortest_cycle_length = cycle_length
+                shortest_cycle = permuted_points
+
+        # Compute the actual route from the shortest cycle
+
+        for i in range(len(shortest_cycle) - 1):
+            source = shortest_cycle[i]
+            target = shortest_cycle[i + 1]
+            dijkstra_path = shortest_path_graph[source][target]["path"]
+
+            for j in range(len(dijkstra_path) - 1):
+                segment = (dijkstra_path[j], dijkstra_path[j + 1])
+                route.append(segment)
+
+        # Complete the route with the path from the last delivery point to the first
+        dijkstra_path = shortest_path_graph[shortest_cycle[-1]][shortest_cycle[0]][
+            "path"
+        ]
+        for j in range(len(dijkstra_path) - 1):
+            segment = (dijkstra_path[j], dijkstra_path[j + 1])
+            route.append(segment)
+
+        return route, shortest_cycle_length
