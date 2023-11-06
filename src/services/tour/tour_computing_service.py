@@ -1,88 +1,96 @@
 import itertools
 import xml.etree.ElementTree as ET
-from typing import List
+from typing import List, Tuple
 
 import networkx as nx
 
-from src.models.map import Segment
-from src.models.tour import ComputedTour, DeliveryRequest, TourRequest
+from src.models.delivery_man.delivery_man import DeliveryMan
+from src.models.map import Map, Segment
+from src.models.tour import (
+    ComputedDelivery,
+    ComputedTour,
+    DeliveryLocation,
+    DeliveryRequest,
+    TourRequest,
+)
 from src.services.singleton import Singleton
 
 
 class TourComputingService(Singleton):
-    def compute_tours(self, tour_requests: List[TourRequest], xml_file) -> List[int]:
+    def compute_tours(
+        self, tour_requests: List[TourRequest], map: Map
+    ) -> List[List[int]]:
         """Compute tours for a list of tour requests."""
-        map_graph = self.create_graph_from_xml(xml_file)
-        computed_tours = []
-        for tour_request in tour_requests:
-            computed_tour = ComputedTour()
-            shortest_path_graph = self.compute_shortest_path_graph(
-                map_graph, tour_request.deliveries
-            )
+        map_graph = self.create_graph_from_map(map)
+        warehouse = DeliveryRequest(
+            DeliveryLocation(Segment("", map.warehouse, map.warehouse, 0), 0), 0
+        )
 
-        return self.solve_tsp(shortest_path_graph)
+        return [
+            self.solve_tsp(
+                self.compute_shortest_path_graph(
+                    map_graph, [warehouse] + tour_request.deliveries
+                )
+            )
+            for tour_request in tour_requests
+        ]
 
     #  Replace this with the data from the Map model
-    def create_graph_from_xml(self, xml_file) -> nx.DiGraph:
+    def create_graph_from_map(self, map: Map) -> nx.Graph:
         """Create a directed graph from an XML file."""
-        G = nx.DiGraph()  # Directed graph
+        graph = nx.DiGraph()
 
-        try:
-            tree = ET.parse(xml_file)
-            root = tree.getroot()
+        graph.add_node(map.warehouse.id)
 
-            # Create node for warehouse
-            warehouse_id = int(root.find("warehouse").get("address"))
-            G.add_node(warehouse_id)
+        for intersection in map.intersections.values():
+            graph.add_node(
+                intersection.id,
+                latitude=float(intersection.latitude),
+                longitude=float(intersection.longitude),
+            )
 
-            # Create nodes for intersections
-            for intersection_elem in root.findall("intersection"):
-                intersection_id = int(intersection_elem.get("id"))
-                G.add_node(
-                    intersection_id,
-                    latitude=float(intersection_elem.get("latitude")),
-                    longitude=float(intersection_elem.get("longitude")),
-                )
+        for segment in map.get_all_segments():
+            graph.add_edge(
+                segment.origin.id, segment.destination.id, length=segment.length
+            )
 
-            # Create edges for road segments
-            for segment_elem in root.findall("segment"):
-                origin_id = int(segment_elem.get("origin"))
-                destination_id = int(segment_elem.get("destination"))
-                length = float(segment_elem.get("length"))
-                G.add_edge(origin_id, destination_id, length=length)
+        return graph
 
-            return G
-
-        except ET.ParseError:
-            print("Error parsing XML file.")
-
-    def compute_shortest_path_graph(self, graph, delivery_locations) -> nx.DiGraph:
+    def compute_shortest_path_graph(
+        self, graph: nx.Graph, deliveries: List[DeliveryRequest]
+    ) -> nx.DiGraph:
         """Compute the shortest path graph between delivery locations."""
         G = nx.DiGraph()
 
         # Add delivery locations as nodes
-        for location in delivery_locations:
-            G.add_node(location)
+        for delivery in deliveries:
+            G.add_node(delivery.location.segment.origin.id)
 
         # Compute the shortest path distances and paths between delivery locations
-        for source in delivery_locations:
-            for target in delivery_locations:
+        for source in deliveries:
+            for target in deliveries:
                 if source != target:
                     try:
                         shortest_path_length, shortest_path = nx.single_source_dijkstra(
-                            graph, source, target, weight="length"
+                            graph,
+                            source.location.segment.origin.id,
+                            target.location.segment.origin.id,
+                            weight="length",
                         )
                     except nx.NetworkXNoPath:
                         continue
                     G.add_edge(
-                        source, target, length=shortest_path_length, path=shortest_path
+                        source.location.segment.origin.id,
+                        target.location.segment.origin.id,
+                        length=shortest_path_length,
+                        path=shortest_path,
                     )
 
         return G
 
     # TODO : solve the tsp algorithm from the shortest path graph, return the route and the length
 
-    def solve_tsp(self, shortest_path_graph) -> List[int]:
+    def solve_tsp(self, shortest_path_graph: nx.Graph) -> List[int]:
         shortest_cycle_length = float("inf")
         shortest_cycle = None
         route = []

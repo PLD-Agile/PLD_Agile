@@ -79,7 +79,8 @@ class TestMapLoaderService:
     def test_should_create_map_from_xml_with_segments(self, root):
         map = self.map_loader_service.create_map_from_xml(root)
 
-        assert len(map.segments) == 2
+        assert len(map.segments) == 1
+        assert len(map.segments[1]) == 2
 
     def test_should_create_map_from_xml_with_warehouse(self, root):
         map = self.map_loader_service.create_map_from_xml(root)

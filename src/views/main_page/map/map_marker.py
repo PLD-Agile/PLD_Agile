@@ -1,12 +1,10 @@
 from dataclasses import dataclass
 
-from PyQt6.QtWidgets import QAbstractGraphicsShapeItem
+from src.views.main_page.map.map_annotation import MapAnnotation
 
 AlignBottom = bool
 
 
 @dataclass
-class MapMarker:
-    shape: QAbstractGraphicsShapeItem
-    align_bottom: AlignBottom
-    scale: float
+class MapMarker(MapAnnotation):
+    align_bottom: AlignBottom = False

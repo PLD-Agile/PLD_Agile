@@ -1,6 +1,10 @@
+from typing import List
+
 import networkx as nx
 from pytest import fixture
 
+from src.models.map import Intersection, Segment
+from src.models.tour import DeliveryLocation, DeliveryRequest
 from src.services.tour.tour_computing_service import TourComputingService
 
 
@@ -27,7 +31,15 @@ def test_compute_shortest_path_graph(tour_service):
     G.add_edge(3, 4, length=2.5)
 
     # Define a set of delivery locations
-    delivery_locations = [1, 2, 4]
+    delivery_locations: List[DeliveryRequest] = [
+        DeliveryRequest(
+            DeliveryLocation(
+                Segment("", Intersection(0, 0, i), Intersection(0, 0, i), 0), 0
+            ),
+            0,
+        )
+        for i in [1, 2, 4]
+    ]
 
     # Compute the shortest path graph
     shortest_path_graph = tour_service.compute_shortest_path_graph(

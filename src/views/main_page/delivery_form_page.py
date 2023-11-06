@@ -58,7 +58,7 @@ class DeliveryFormPage(Page):
         TourService.instance().tour_requests.subscribe(self.__update_delivery_table)
 
     def compute_tour(self):
-        pass
+        TourService.instance().compute_tours()
 
     def remove_address(self, row):
         pass
@@ -122,7 +122,7 @@ class DeliveryFormPage(Page):
         compute_tour_button.clicked.connect(self.compute_tour)
 
         # Add components in the screen
-        buttons_layout.addWidget(compute_tour_button)
+        # buttons_layout.addWidget(compute_tour_button)
 
         layout.addWidget(table)
         layout.addLayout(buttons_layout)
