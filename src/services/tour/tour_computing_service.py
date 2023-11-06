@@ -1,3 +1,4 @@
+import itertools
 import xml.etree.ElementTree as ET
 from typing import List
 
@@ -9,9 +10,7 @@ from src.services.singleton import Singleton
 
 
 class TourComputingService(Singleton):
-    def compute_tours(
-        self, tour_requests: List[TourRequest], xml_file
-    ) -> List[ComputedTour]:
+    def compute_tours(self, tour_requests: List[TourRequest], xml_file) -> List[int]:
         """Compute tours for a list of tour requests."""
         map_graph = self.create_graph_from_xml(xml_file)
         computed_tours = []
@@ -20,12 +19,8 @@ class TourComputingService(Singleton):
             shortest_path_graph = self.compute_shortest_path_graph(
                 map_graph, tour_request.deliveries
             )
-            computed_tour.route, computed_tour.length = self.solve_tsp(
-                shortest_path_graph
-            )
-            # TODO: Add color, delivery man, etc.
-            computed_tours.append(computed_tour)
-        return computed_tours
+
+        return self.solve_tsp(shortest_path_graph)
 
     #  Replace this with the data from the Map model
     def create_graph_from_xml(self, xml_file) -> nx.DiGraph:
@@ -87,8 +82,45 @@ class TourComputingService(Singleton):
 
     # TODO : solve the tsp algorithm from the shortest path graph, return the route and the length
 
-    def solve_tsp(self, shortest_path_graph) -> (List[Segment], float):
+    def solve_tsp(self, shortest_path_graph) -> List[int]:
         shortest_cycle_length = float("inf")
         shortest_cycle = None
-        # Solve the TSP...
-        return shortest_cycle, shortest_cycle_length
+        route = []
+
+        # Generate all permutations of delivery points to find the shortest cycle
+        delivery_points = list(shortest_path_graph.nodes())
+        warehouse_id = delivery_points.pop(0)
+        for permuted_points in itertools.permutations(delivery_points):
+            permuted_points = list(permuted_points)
+            permuted_points = [warehouse_id] + permuted_points
+            cycle_length = 0
+            for i in range(len(permuted_points) - 1):
+                source = permuted_points[i]
+                target = permuted_points[i + 1]
+                cycle_length += shortest_path_graph[source][target]["length"]
+            # Add the length of the last edge back to the starting point to complete the cycle
+            cycle_length += shortest_path_graph[permuted_points[-1]][
+                permuted_points[0]
+            ]["length"]
+
+            if cycle_length < shortest_cycle_length:
+                shortest_cycle_length = cycle_length
+                shortest_cycle = permuted_points
+
+        # Compute the actual route from the shortest cycle
+
+        for i in range(len(shortest_cycle) - 1):
+            source = shortest_cycle[i]
+            target = shortest_cycle[i + 1]
+            dijkstra_path = shortest_path_graph[source][target]["path"]
+            route = route + dijkstra_path
+            route.pop()
+
+        # Complete the route with the path from the last delivery point to the first
+        dijkstra_path = shortest_path_graph[shortest_cycle[-1]][shortest_cycle[0]][
+            "path"
+        ]
+
+        route = route + dijkstra_path
+
+        return route
