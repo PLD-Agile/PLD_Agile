@@ -45,3 +45,51 @@ def test_compute_shortest_path_graph(tour_service):
     assert shortest_path_graph[1][2]["path"] == [1, 2]
     assert shortest_path_graph[1][4]["path"] == [1, 3, 4]
     assert shortest_path_graph[2][4]["path"] == [2, 3, 4]
+
+
+def test_solve_tsp(tour_service):
+    # Create a sample complete directed graph
+    G = nx.DiGraph()
+    G.add_node(0)
+    G.add_node(1)
+    G.add_node(2)
+
+    G.add_edge(0, 1, length=1.0, path=[0, 23, 56, 1])
+    G.add_edge(1, 0, length=2.0, path=[1, 12, 16, 0])
+    G.add_edge(0, 2, length=3.0, path=[0, 5, 33, 2])
+    G.add_edge(2, 0, length=4.0, path=[2, 42, 27, 0])
+    G.add_edge(1, 2, length=5.0, path=[1, 7, 6, 2])
+    G.add_edge(2, 1, length=6.0, path=[2, 20, 35, 1])
+
+    route, route_length = tour_service.solve_tsp(G)
+
+    # Check if the above graph is a valid NetworkX DiGraph
+    assert isinstance(G, nx.DiGraph)
+    assert route[0][0] == 0
+    assert route[0][1] == 23
+
+    assert route[1][0] == 23
+    assert route[1][1] == 56
+
+    assert route[2][0] == 56
+    assert route[2][1] == 1
+
+    assert route[3][0] == 1
+    assert route[3][1] == 7
+
+    assert route[4][0] == 7
+    assert route[4][1] == 6
+
+    assert route[5][0] == 6
+    assert route[5][1] == 2
+
+    assert route[6][0] == 2
+    assert route[6][1] == 42
+
+    assert route[7][0] == 42
+    assert route[7][1] == 27
+
+    assert route[8][0] == 27
+    assert route[8][1] == 0
+
+    assert route_length == 10.0
