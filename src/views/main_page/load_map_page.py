@@ -3,10 +3,8 @@ from PyQt6.QtWidgets import QFileDialog, QLabel, QVBoxLayout
 
 from src.controllers.navigator.page import Page
 from src.services.map import MapLoaderService
-from src.views.modules.main_page_navigator.navigator import \
-    get_main_page_navigator
-from src.views.modules.main_page_navigator.routes import \
-    MainPageNavigationRoutes
+from src.views.modules.main_page_navigator.navigator import get_main_page_navigator
+from src.views.modules.main_page_navigator.routes import MainPageNavigationRoutes
 from src.views.ui.button import Button
 from src.views.ui.button_group import ButtonGroup
 

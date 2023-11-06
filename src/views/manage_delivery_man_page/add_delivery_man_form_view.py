@@ -1,6 +1,5 @@
 from PyQt6.QtCore import Qt
-from PyQt6.QtWidgets import (QHBoxLayout, QLabel, QLineEdit, QPushButton,
-                             QVBoxLayout)
+from PyQt6.QtWidgets import QHBoxLayout, QLabel, QLineEdit, QPushButton, QVBoxLayout
 
 from src.controllers.navigator.page import Page
 
