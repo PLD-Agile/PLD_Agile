@@ -1,5 +1,5 @@
 from PyQt6.QtCore import Qt
-from PyQt6.QtWidgets import QFileDialog, QLabel, QVBoxLayout, QHBoxLayout
+from PyQt6.QtWidgets import QFileDialog, QHBoxLayout, QLabel, QVBoxLayout
 
 from src.controllers.navigator.page import Page
 from src.services.map import MapLoaderService
@@ -49,7 +49,7 @@ class LoadMapPage(Page):
         layout.addWidget(separator)
 
         layout.addWidget(load_map_label)
-        
+
         load_map_layout.setAlignment(Qt.AlignmentFlag.AlignCenter)
         load_map_layout.addWidget(load_map_button)
         layout.addLayout(load_map_layout)

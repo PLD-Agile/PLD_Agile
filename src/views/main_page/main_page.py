@@ -36,9 +36,9 @@ class MainPage(Page):
     def __build_map_view(self) -> QLayout:
         # Define components to be used in this screen
         map_layout = QVBoxLayout()
-        
+
         map_buttons_layout = QHBoxLayout()
-        
+
         map_view = MapView()
         (
             change_map_button,
@@ -46,10 +46,10 @@ class MainPage(Page):
             map_zoom_out_button,
             map_zoom_in_button,
         ) = self.__build_map_action_buttons(map_view)
-        
+
         map_zoom_buttons = ButtonGroup([map_zoom_out_button, map_zoom_in_button])
 
-        # Add components in the screen        
+        # Add components in the screen
         map_buttons_layout.setAlignment(Qt.AlignmentFlag.AlignRight)
         map_buttons_layout.addWidget(change_map_button)
         map_buttons_layout.addWidget(reset_map_button)
@@ -82,4 +82,9 @@ class MainPage(Page):
             ]
         )
 
-        return change_map_button, reset_map_button, map_zoom_out_button, map_zoom_in_button
+        return (
+            change_map_button,
+            reset_map_button,
+            map_zoom_out_button,
+            map_zoom_in_button,
+        )
