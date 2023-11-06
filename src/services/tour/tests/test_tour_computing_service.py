@@ -61,35 +61,8 @@ def test_solve_tsp(tour_service):
     G.add_edge(1, 2, length=5.0, path=[1, 7, 6, 2])
     G.add_edge(2, 1, length=6.0, path=[2, 20, 35, 1])
 
-    route, route_length = tour_service.solve_tsp(G)
+    path = tour_service.solve_tsp(G)
 
     # Check if the above graph is a valid NetworkX DiGraph
     assert isinstance(G, nx.DiGraph)
-    assert route[0][0] == 0
-    assert route[0][1] == 23
-
-    assert route[1][0] == 23
-    assert route[1][1] == 56
-
-    assert route[2][0] == 56
-    assert route[2][1] == 1
-
-    assert route[3][0] == 1
-    assert route[3][1] == 7
-
-    assert route[4][0] == 7
-    assert route[4][1] == 6
-
-    assert route[5][0] == 6
-    assert route[5][1] == 2
-
-    assert route[6][0] == 2
-    assert route[6][1] == 42
-
-    assert route[7][0] == 42
-    assert route[7][1] == 27
-
-    assert route[8][0] == 27
-    assert route[8][1] == 0
-
-    assert route_length == 10.0
+    assert path == [0,23,56,1,7,6,2,42,27,0]
