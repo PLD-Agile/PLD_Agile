@@ -98,6 +98,17 @@ class TourComputingService(Singleton):
     ) -> Tuple[List[Segment], float]:
         cycle: List[Segment] = []
         cycle_length = 0
+        
+        warehouse_route_intersections_ids = nx.shortest_path(shortest_path_graph, map.warehouse.id, deliveries[0].location.segment.origin.id, weight="length")
+        
+        for cycle_origin_id, cycle_destination_id in zip(
+            warehouse_route_intersections_ids, warehouse_route_intersections_ids[1:]
+        ):
+            length = shortest_path_graph[cycle_origin_id][cycle_destination_id][
+                "length"
+            ]
+            cycle_length += length
+            cycle.append(map.segments_map[cycle_origin_id][cycle_destination_id])
 
         # Loops through the deliveries in pairs ([1, 2], [2, 3], [3, 4], ...])
         for delivery_origin, delivery_destination in zip(deliveries, deliveries[1:]):
@@ -118,5 +129,18 @@ class TourComputingService(Singleton):
                 ]
                 cycle_length += length
                 cycle.append(map.segments_map[cycle_origin_id][cycle_destination_id])
+                
+        
+        # Returns to the warehouse
+        warehouse_route_intersections_ids = nx.shortest_path(shortest_path_graph, deliveries[-1].location.segment.origin.id, map.warehouse.id, weight="length")
+        
+        for cycle_origin_id, cycle_destination_id in zip(
+            warehouse_route_intersections_ids, warehouse_route_intersections_ids[1:]
+        ):
+            length = shortest_path_graph[cycle_origin_id][cycle_destination_id][
+                "length"
+            ]
+            cycle_length += length
+            cycle.append(map.segments_map[cycle_origin_id][cycle_destination_id])
 
         return cycle, cycle_length
