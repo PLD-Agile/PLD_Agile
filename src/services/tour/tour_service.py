@@ -78,7 +78,7 @@ class TourService(Singleton):
         """
         # tour_request = self.__tour_requests.value.get(delivery_man, None)
         tour_request = self.get_tour_request_for_delivery_man(delivery_man)
-
+        
         if not tour_request:
             tour_request = TourRequest(
                 deliveries=[],
@@ -129,28 +129,32 @@ class TourService(Singleton):
         computed_tours: List[ComputedTour] = []
         map = MapService.instance().get_map()
 
-        tours_intersection_ids = TourComputingService.instance().compute_tours(
-            tour_requests=self.__tour_requests.value,
-            map=map,
-        )
-
-        for index, tour_intersection_ids in enumerate(tours_intersection_ids):
-            computed_tours.append(
-                ComputedTour(
-                    deliveries=self.__tour_requests.value[index].deliveries,
-                    delivery_man=DeliveryMan("Bill", [8, 9, 10]),
-                    route=[
-                        map.segments[origin_id][destination_id]
-                        for origin_id, destination_id in zip(
-                            tour_intersection_ids, tour_intersection_ids[1:]
-                        )
-                    ],
-                    length=0,
-                    color=COLORS[index % len(COLORS)],
-                )
+        try:
+            tours_intersection_ids = TourComputingService.instance().compute_tours(
+                tour_requests=self.__tour_requests.value,
+                map=map,
             )
 
-        self.__computed_tours.on_next(computed_tours)
+            for index, tour_intersection_ids in enumerate(tours_intersection_ids):
+                computed_tours.append(
+                    ComputedTour(
+                        deliveries=self.__tour_requests.value[index].deliveries,
+                        delivery_man=DeliveryMan("Bill", [8, 9, 10]),
+                        route=[
+                            map.segments[origin_id][destination_id]
+                            for origin_id, destination_id in zip(
+                                tour_intersection_ids, tour_intersection_ids[1:]
+                            )
+                        ],
+                        length=0,
+                        color=COLORS[index % len(COLORS)],
+                    )
+                )
+
+            self.__computed_tours.on_next(computed_tours)
+        except KeyError:
+            print('Error: cannot compute tours')
+            self.__computed_tours.on_next([])
 
     def clear_computed_tours(self) -> None:
         """Clear the computed tours and publish the update."""
