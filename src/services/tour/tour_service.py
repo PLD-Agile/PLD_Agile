@@ -78,7 +78,7 @@ class TourService(Singleton):
         """
         # tour_request = self.__tour_requests.value.get(delivery_man, None)
         tour_request = self.get_tour_request_for_delivery_man(delivery_man)
-        
+
         if not tour_request:
             tour_request = TourRequest(
                 deliveries=[],
