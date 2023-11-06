@@ -24,36 +24,44 @@ class MainPage(Page):
     def __init__(self):
         super().__init__()
 
+        # Define components to be used in this screen
         layout = QHBoxLayout()
 
+        # Add components in the screen
         layout.addLayout(self.__build_map_view())
         layout.addWidget(get_main_page_navigator().get_router_outlet())
 
         self.setLayout(layout)
 
     def __build_map_view(self) -> QLayout:
+        # Define components to be used in this screen
         map_layout = QVBoxLayout()
+
+        map_buttons_layout = QHBoxLayout()
+
         map_view = MapView()
-
-        buttons_layout = QHBoxLayout()
-        buttons_layout.setAlignment(Qt.AlignmentFlag.AlignRight)
-
         (
+            change_map_button,
             reset_map_button,
             map_zoom_out_button,
             map_zoom_in_button,
         ) = self.__build_map_action_buttons(map_view)
+
         map_zoom_buttons = ButtonGroup([map_zoom_out_button, map_zoom_in_button])
 
-        buttons_layout.addWidget(reset_map_button)
-        buttons_layout.addWidget(map_zoom_buttons)
+        # Add components in the screen
+        map_buttons_layout.setAlignment(Qt.AlignmentFlag.AlignRight)
+        map_buttons_layout.addWidget(change_map_button)
+        map_buttons_layout.addWidget(reset_map_button)
+        map_buttons_layout.addWidget(map_zoom_buttons)
 
         map_layout.addWidget(map_view)
-        map_layout.addLayout(buttons_layout)
+        map_layout.addLayout(map_buttons_layout)
 
         return map_layout
 
     def __build_map_action_buttons(self, map_view: MapView) -> Tuple[QWidget]:
+        change_map_button = Button("Change map")
         reset_map_button = Button("Reset zoom")
         map_zoom_out_button = Button(icon="minus")
         map_zoom_in_button = Button(icon="plus")
@@ -66,6 +74,7 @@ class MainPage(Page):
             lambda ready: [
                 button.setDisabled(not ready)
                 for button in [
+                    change_map_button,
                     reset_map_button,
                     map_zoom_out_button,
                     map_zoom_in_button,
@@ -73,4 +82,9 @@ class MainPage(Page):
             ]
         )
 
-        return reset_map_button, map_zoom_out_button, map_zoom_in_button
+        return (
+            change_map_button,
+            reset_map_button,
+            map_zoom_out_button,
+            map_zoom_in_button,
+        )
