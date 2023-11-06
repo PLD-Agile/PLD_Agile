@@ -40,8 +40,6 @@ class TourComputingService(Singleton):
                 )
             )
 
-        print(computed_tours)
-
         return computed_tours
 
     #  Replace this with the data from the Map model
