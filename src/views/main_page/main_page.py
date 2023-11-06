@@ -11,10 +11,10 @@ from PyQt6.QtWidgets import (
     QVBoxLayout,
     QWidget,
 )
-from src.services.map.map_service import MapService
-from src.services.tour.tour_service import TourService
 
 from src.controllers.navigator.page import Page
+from src.services.map.map_service import MapService
+from src.services.tour.tour_service import TourService
 from src.views.modules.main_page_navigator.navigator import get_main_page_navigator
 from src.views.modules.main_page_navigator.routes import MainPageNavigationRoutes
 from src.views.ui.button import Button
@@ -92,7 +92,7 @@ class MainPage(Page):
             map_zoom_out_button,
             map_zoom_in_button,
         )
-        
+
     def __change_map(self, map_view: MapView) -> None:
         TourService.instance().clear()
         MapService.instance().clear()

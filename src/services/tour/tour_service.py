@@ -13,7 +13,6 @@ from src.services.singleton import Singleton
 from src.services.tour.tour_computing_service import TourComputingService
 from src.services.tour.tour_saving_service import TourSavingService
 
-
 COLORS = ["#3875ff", "green", "yellow", "purple", "orange", "pink"]
 
 
@@ -44,7 +43,7 @@ class TourService(Singleton):
     @property
     def computed_tours(self) -> Observable[List[ComputedTour]]:
         return self.__computed_tours
-    
+
     def clear(self) -> None:
         self.__tour_requests.on_next([])
         self.__computed_tours.on_next([])
@@ -97,7 +96,7 @@ class TourService(Singleton):
         )
 
         self.__tour_requests.on_next(self.__tour_requests.value)
-        
+
         # TODO: review how to compute tours when adding a delivery request
         self.compute_tours()
 
@@ -126,7 +125,7 @@ class TourService(Singleton):
         """Compute the tours and publish the update."""
         # TODO: Use service to get computed tours
         # Example:
-        
+
         computed_tours: List[ComputedTour] = []
         map = MapService.instance().get_map()
 
@@ -134,14 +133,17 @@ class TourService(Singleton):
             tour_requests=self.__tour_requests.value,
             map=map,
         )
-        
+
         for index, tour_intersection_ids in enumerate(tours_intersection_ids):
             computed_tours.append(
                 ComputedTour(
                     deliveries=self.__tour_requests.value[index].deliveries,
                     delivery_man=DeliveryMan("Bill", [8, 9, 10]),
                     route=[
-                        map.segments[origin_id][destination_id] for origin_id, destination_id in zip(tour_intersection_ids, tour_intersection_ids[1:])
+                        map.segments[origin_id][destination_id]
+                        for origin_id, destination_id in zip(
+                            tour_intersection_ids, tour_intersection_ids[1:]
+                        )
                     ],
                     length=0,
                     color=COLORS[index % len(COLORS)],

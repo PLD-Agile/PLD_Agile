@@ -45,9 +45,7 @@ class MapLoaderService(Singleton):
 
         for element in root_element.findall("segment"):
             segment = Segment.from_element(element, intersections)
-            segments.setdefault(segment.origin.id, {})[
-                segment.destination.id
-            ] = segment
+            segments.setdefault(segment.origin.id, {})[segment.destination.id] = segment
 
         for element in root_element.findall("warehouse"):
             warehouse = intersections[int(element.attrib["address"])]

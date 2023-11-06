@@ -6,17 +6,34 @@ import networkx as nx
 
 from src.models.delivery_man.delivery_man import DeliveryMan
 from src.models.map import Map, Segment
-from src.models.tour import ComputedDelivery, ComputedTour, DeliveryRequest, TourRequest, DeliveryLocation
+from src.models.tour import (
+    ComputedDelivery,
+    ComputedTour,
+    DeliveryLocation,
+    DeliveryRequest,
+    TourRequest,
+)
 from src.services.singleton import Singleton
 
 
 class TourComputingService(Singleton):
-    def compute_tours(self, tour_requests: List[TourRequest], map: Map) -> List[List[int]]:
+    def compute_tours(
+        self, tour_requests: List[TourRequest], map: Map
+    ) -> List[List[int]]:
         """Compute tours for a list of tour requests."""
         map_graph = self.create_graph_from_map(map)
-        warehouse = DeliveryRequest(DeliveryLocation(Segment("", map.warehouse, map.warehouse, 0), 0), 0)
-        
-        return [self.solve_tsp(self.compute_shortest_path_graph(map_graph, [warehouse] + tour_request.deliveries)) for tour_request in tour_requests]
+        warehouse = DeliveryRequest(
+            DeliveryLocation(Segment("", map.warehouse, map.warehouse, 0), 0), 0
+        )
+
+        return [
+            self.solve_tsp(
+                self.compute_shortest_path_graph(
+                    map_graph, [warehouse] + tour_request.deliveries
+                )
+            )
+            for tour_request in tour_requests
+        ]
 
     #  Replace this with the data from the Map model
     def create_graph_from_map(self, map: Map) -> nx.Graph:
@@ -55,12 +72,18 @@ class TourComputingService(Singleton):
                 if source != target:
                     try:
                         shortest_path_length, shortest_path = nx.single_source_dijkstra(
-                            graph, source.location.segment.origin.id, target.location.segment.origin.id, weight="length"
+                            graph,
+                            source.location.segment.origin.id,
+                            target.location.segment.origin.id,
+                            weight="length",
                         )
                     except nx.NetworkXNoPath:
                         continue
                     G.add_edge(
-                        source.location.segment.origin.id, target.location.segment.origin.id, length=shortest_path_length, path=shortest_path
+                        source.location.segment.origin.id,
+                        target.location.segment.origin.id,
+                        length=shortest_path_length,
+                        path=shortest_path,
                     )
 
         return G
