@@ -42,6 +42,10 @@ class TourService(Singleton):
     @property
     def computed_tours(self) -> Observable[List[ComputedTour]]:
         return self.__computed_tours
+    
+    def clear(self) -> None:
+        self.__tour_requests.on_next([])
+        self.__computed_tours.on_next([])
 
     def get_tour_requests(self) -> List[TourRequest]:
         return self.__tour_requests.value
@@ -91,6 +95,9 @@ class TourService(Singleton):
         )
 
         self.__tour_requests.on_next(self.__tour_requests.value)
+        
+        # TODO: review how to compute tours when adding a delivery request
+        self.compute_tours()
 
     def remove_delivery_request(
         self, delivery_request: DeliveryRequest, delivery_man: DeliveryMan

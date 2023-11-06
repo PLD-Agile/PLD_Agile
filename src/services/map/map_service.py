@@ -30,3 +30,6 @@ class MapService(Singleton):
 
     def set_map(self, map: Map) -> None:
         self.__map.on_next(map)
+
+    def clear(self) -> None:
+        self.__map.on_next(None)

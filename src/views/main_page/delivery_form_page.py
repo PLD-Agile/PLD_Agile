@@ -122,7 +122,7 @@ class DeliveryFormPage(Page):
         compute_tour_button.clicked.connect(self.compute_tour)
 
         # Add components in the screen
-        buttons_layout.addWidget(compute_tour_button)
+        # buttons_layout.addWidget(compute_tour_button)
 
         layout.addWidget(table)
         layout.addLayout(buttons_layout)
