@@ -10,9 +10,7 @@ from src.services.singleton import Singleton
 
 
 class TourComputingService(Singleton):
-    def compute_tours(
-        self, tour_requests: List[TourRequest], xml_file
-    ) -> List[int]:
+    def compute_tours(self, tour_requests: List[TourRequest], xml_file) -> List[int]:
         """Compute tours for a list of tour requests."""
         map_graph = self.create_graph_from_xml(xml_file)
         computed_tours = []
@@ -117,7 +115,6 @@ class TourComputingService(Singleton):
             dijkstra_path = shortest_path_graph[source][target]["path"]
             route = route + dijkstra_path
             route.pop()
-
 
         # Complete the route with the path from the last delivery point to the first
         dijkstra_path = shortest_path_graph[shortest_cycle[-1]][shortest_cycle[0]][

@@ -65,4 +65,4 @@ def test_solve_tsp(tour_service):
 
     # Check if the above graph is a valid NetworkX DiGraph
     assert isinstance(G, nx.DiGraph)
-    assert path == [0,23,56,1,7,6,2,42,27,0]
+    assert path == [0, 23, 56, 1, 7, 6, 2, 42, 27, 0]
