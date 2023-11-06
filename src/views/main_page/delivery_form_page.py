@@ -1,4 +1,4 @@
-from typing import List
+from typing import Dict, List
 
 from PyQt6.QtCore import Qt
 from PyQt6.QtWidgets import (
@@ -15,10 +15,11 @@ from src.models.delivery_man.delivery_man import DeliveryMan
 from src.models.tour import TourRequest
 from src.services.tour.tour_service import TourService
 from src.views.ui import Button, Callout, Separator, Text, TextSize
+from src.services.delivery_man.delivery_man_service import DeliveryManService
 
 DELIVERY_MAN: List[DeliveryMan] = [
     DeliveryMan("Josué stcyr", [8, 9, 10, 11]),
-    DeliveryMan("clem farhat", [8, 9]),
+    DeliveryMan("clem farhat", [8, 9, 10, 11]),
 ]
 
 
@@ -29,32 +30,39 @@ class DeliveryFormPage(Page):
 
     def __init__(self):
         super().__init__()
+        delivey_man_service = DeliveryManService()
 
         # Define components to be used in this screen
         layout = QVBoxLayout()
+        warehouse_location_label = Text("Warehouse Location", TextSize.H2)
         add_deliveries_label = Text("Add deliveries", TextSize.H2)
         add_deliveries_click = Callout(
             "Double-click on the map to add deliveries with the selected delivery man and time"
         )
 
         deliveries_label = Text("Deliveries", TextSize.H2)
-        separator = Separator()
+        separator1 = Separator()
+        separator2 = Separator()
 
         # Add components in the screen
+        layout.addWidget(warehouse_location_label)
+        layout.addLayout(self.__build_warehouse_location())
+        layout.addWidget(separator1)
         layout.addWidget(add_deliveries_label)
         layout.addLayout(self.__build_delivery_man_form())
         layout.addWidget(add_deliveries_click)
 
         layout.addWidget(deliveries_label)
         layout.addLayout(self.__build_delivery_table())
-        layout.addWidget(separator)
-        layout.addLayout(self.__build_load_tour())
+        layout.addWidget(separator2)
+        layout.addLayout(self.__build_save_load_tours())
 
         self.setLayout(layout)
 
         # UNUSED self.address_list = []
 
-        self.__update_delivery_man_combobox(DELIVERY_MAN)
+        self.__update_delivery_man_combobox(delivey_man_service.get_delivery_men())
+
         TourService.instance().tour_requests.subscribe(self.__update_delivery_table)
 
     def compute_tour(self):
@@ -62,6 +70,17 @@ class DeliveryFormPage(Page):
 
     def remove_address(self, row):
         pass
+
+    def __build_warehouse_location(self) -> QLayout:
+        # Define components to be used in this screen
+        layout = QHBoxLayout()
+
+        warehouse_address_label = Text("20 avenue Albert Einstein", TextSize.label)
+
+        layout.addWidget(warehouse_address_label)
+
+        return layout
+
 
     def __build_delivery_man_form(self) -> QLayout:
         # Define components to be used in this screen
@@ -129,29 +148,32 @@ class DeliveryFormPage(Page):
 
         return layout
 
-    def __build_load_tour(self) -> QLayout:
+    def __build_save_load_tours(self) -> QLayout:
         # Define components to be used in this screen
         layout = QVBoxLayout()
 
         load_tour_label = Callout(
-            "Or load an existing tour (this will overwrite any destinations above)"
+            "Save tours or load an existing tour (this will overwrite any destinations above)"
         )
 
         buttons_layout = QHBoxLayout()
         buttons_layout.setAlignment(Qt.AlignmentFlag.AlignCenter)
-        compute_tour_button = Button("Load Tour")
-        buttons_layout.addWidget(compute_tour_button)
+        save_tours_button = Button("Save Tours")
+        load_tour_button = Button("Load Tour")
+        buttons_layout.addWidget(save_tours_button)
+        buttons_layout.addWidget(load_tour_button)
+
 
         layout.addWidget(load_tour_label)
         layout.addLayout(buttons_layout)
 
         return layout
 
-    def __update_delivery_man_combobox(self, delivery_mans: List[DeliveryMan]) -> None:
+    def __update_delivery_man_combobox(self, delivery_men: Dict[str, DeliveryMan]) -> None:
         current_value = self.__delivery_man_control.currentData()
         self.__delivery_man_control.clear()
 
-        for delivery_man in delivery_mans:
+        for delivery_man in delivery_men.values():
             self.__delivery_man_control.addItem(delivery_man.name, delivery_man)
 
         new_index = max(self.__delivery_man_control.findData(current_value), 0)

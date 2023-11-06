@@ -1,9 +1,27 @@
+from typing import Dict
 from src.models.delivery_man.delivery_man import DeliveryMan
 from src.models.delivery_man.errors import DeliveryManError
 from src.services.singleton import Singleton
 
 
 class DeliveryManService(Singleton):
+    __delivery_men : Dict[str, DeliveryMan] = {
+        "Josué stcyr": DeliveryMan("Josué stcyr", [8, 9, 10, 11]),
+        "clem farhat": DeliveryMan("clem farhat", [8, 9, 10, 11]),
+    }
+
+    def get_delivery_men(self) -> Dict[str, DeliveryMan]:
+        """Returns every Delivery Men.
+
+        Args:
+           No args.
+
+        Returns:
+            Dict[DeliveryMan]: DeliveryMen dictionnary instance
+        """
+
+        return self.__delivery_men
+
     def create_delivery_man(self, delivery_man_info) -> DeliveryMan:
         """Creates a Delivery Man and pass it back.
 
@@ -29,6 +47,8 @@ class DeliveryManService(Singleton):
         else:
             raise DeliveryManError("No name or availabilities provided")
 
+        self.__delivery_men[deliveryman.name] = deliveryman
+
         return deliveryman
 
     def modify_delivery_man(
@@ -44,6 +64,9 @@ class DeliveryManService(Singleton):
         Returns:
             DeliveryMan: DeliveryMan instance
         """
+        
+        delivery_man = self.__delivery_men[delivery_man.name]
+
         name = delivery_man_info.get("name")
         availabilities = delivery_man_info.get("availabilities")
         speed = delivery_man_info.get("speed")
@@ -66,6 +89,6 @@ class DeliveryManService(Singleton):
             delivery_man: A DeliveryMan instance to be deleted
         """
 
-        del delivery_man
+        del self.__delivery_men[delivery_man.name]
 
         return
