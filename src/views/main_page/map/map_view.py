@@ -106,7 +106,7 @@ class MapView(QGraphicsView):
         self.__scene.setBackgroundBrush(QBrush(Qt.GlobalColor.white))
         self.setScene(self.__scene)
 
-        for segment in map.segments:
+        for segment in map.get_all_segments():
             self.__add_segment(segment)
 
         self.__marker_size = self.__scene.sceneRect().width() * self.MARKER_INITIAL_SIZE

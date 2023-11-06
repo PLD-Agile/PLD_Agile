@@ -2,47 +2,32 @@ from PyQt6.QtCore import Qt
 from PyQt6.QtWidgets import QHBoxLayout, QLabel, QLineEdit, QPushButton, QVBoxLayout
 
 from src.controllers.navigator.page import Page
+from src.views.ui import Button, Callout, Separator, Text, TextSize
 
 
 class AddDeliveryManFormView(Page):
     def __init__(self):
         super().__init__()
 
-        title_label = QLabel("<b><font size='6'>Add Delivery Man</font></b>")
+        # Define components to be used in this screen
+        layout = QVBoxLayout()
+        title_label = Text("Create a deliveryman", TextSize.H2)
 
-        name_label = QLabel("<b>Name:</b>")
+        name_label = QLabel("Name")
         name_input = QLineEdit()
 
-        phone_label = QLabel("<b>Phone:</b>")
-        phone_input = QLineEdit()
+        buttons_layout = QHBoxLayout()
+        add_button = Button("Create")
 
-        add_button = QPushButton("Add Delivery Man")
-        add_button.setFixedWidth(150)
+        # Add components in the screen
+        layout.setAlignment(Qt.AlignmentFlag.AlignTop)
+        layout.addWidget(title_label)
+        layout.addWidget(name_label)
+        layout.addWidget(name_input)
 
-        layout = QVBoxLayout()
+        buttons_layout.setAlignment(Qt.AlignmentFlag.AlignRight)
+        buttons_layout.addWidget(add_button)
 
-        for widget in [title_label, name_label, name_input, phone_label, phone_input]:
-            widget.setStyleSheet("color: black;")
-            layout.addWidget(widget)
-
-        layout.addWidget(add_button, alignment=Qt.AlignmentFlag.AlignRight)
-
-        style_sheet = """
-            QPushButton {
-                background-color: #FFC0CB;  /* Pink */
-                border: none;
-                color: white;
-                padding: 10px 20px;
-                text-align: center;
-                text-decoration: none;
-                font-size: 16px;
-                margin: 4px 2px;
-                border-radius: 8px;
-            }
-            QPushButton:hover {
-                background-color: #FF69B4;  /* Hot Pink on hover */
-            }
-        """
-        self.setStyleSheet(style_sheet)
+        layout.addLayout(buttons_layout)
 
         self.setLayout(layout)

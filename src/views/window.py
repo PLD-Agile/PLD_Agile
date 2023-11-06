@@ -12,7 +12,7 @@ class MainWindow(QMainWindow):
         self.setMinimumSize(1000, 630)
         self.setContentsMargins(0, 0, 0, 0)
 
-        self.setWindowTitle("My App")
+        self.setWindowTitle("Delivery System v1.0")
 
         self.setCentralWidget(self.build_central_widget())
 

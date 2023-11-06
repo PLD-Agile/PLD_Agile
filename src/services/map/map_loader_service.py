@@ -34,8 +34,7 @@ class MapLoaderService(Singleton):
             Map: Map instance
         """
         intersections: Dict[int, Intersection] = {}
-        segments: List[Segment] = []
-        segments_map: Dict[int, Dict[int, Segment]] = {}
+        segments: Dict[int, Dict[int, Segment]] = {}
         map_size = MapSize.inverse_max_size()
         warehouse: Intersection = None
 
@@ -46,8 +45,7 @@ class MapLoaderService(Singleton):
 
         for element in root_element.findall("segment"):
             segment = Segment.from_element(element, intersections)
-            segments.append(segment)
-            segments_map.setdefault(segment.origin.id, {})[
+            segments.setdefault(segment.origin.id, {})[
                 segment.destination.id
             ] = segment
 
@@ -57,7 +55,7 @@ class MapLoaderService(Singleton):
         if not warehouse:
             raise MapLoadingError("No warehouse found in the XML file")
 
-        map = Map(intersections, segments, segments_map, warehouse, map_size)
+        map = Map(intersections, segments, warehouse, map_size)
 
         MapService.instance().set_map(map)
 

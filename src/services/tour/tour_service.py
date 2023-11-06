@@ -117,11 +117,27 @@ class TourService(Singleton):
         """Compute the tours and publish the update."""
         # TODO: Use service to get computed tours
         # Example:
+        
+        computed_tours: List[ComputedTour] = []
+        map = MapService.instance().get_map()
 
-        computed_tours = TourComputingService.instance().compute_tours(
+        tours_intersection_ids = TourComputingService.instance().compute_tours(
             tour_requests=self.__tour_requests.value,
-            map=MapService.instance().get_map(),
+            map=map,
         )
+        
+        for index, tour_intersection_ids in enumerate(tours_intersection_ids):
+            computed_tours.append(
+                ComputedTour(
+                    deliveries=self.__tour_requests.value[index].deliveries,
+                    delivery_man=DeliveryMan("Bill", [8, 9, 10]),
+                    route=[
+                        map.segments[origin_id][destination_id] for origin_id, destination_id in zip(tour_intersection_ids, tour_intersection_ids[1:])
+                    ],
+                    length=0,
+                    color="green",
+                )
+            )
 
         # computed_tours = []
 

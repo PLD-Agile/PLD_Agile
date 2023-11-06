@@ -30,23 +30,29 @@ class DeliveryFormPage(Page):
     def __init__(self):
         super().__init__()
 
+        # Define components to be used in this screen
         layout = QVBoxLayout()
-
-        layout.addWidget(Text("Add deliveries", TextSize.H1))
-        layout.addLayout(self.__build_delivery_man_form())
-        layout.addWidget(
-            Callout(
-                "Double-click on the map to add deliveries with the selected delivery man and time"
-            )
+        add_deliveries_label = Text("Add deliveries", TextSize.H2)
+        add_deliveries_click = Callout(
+            "Double-click on the map to add deliveries with the selected delivery man and time"
         )
-        layout.addWidget(Text("Deliveries", TextSize.H1))
+
+        deliveries_label = Text("Deliveries", TextSize.H2)
+        separator = Separator()
+
+        # Add components in the screen
+        layout.addWidget(add_deliveries_label)
+        layout.addLayout(self.__build_delivery_man_form())
+        layout.addWidget(add_deliveries_click)
+
+        layout.addWidget(deliveries_label)
         layout.addLayout(self.__build_delivery_table())
-        layout.addWidget(Separator())
+        layout.addWidget(separator)
         layout.addLayout(self.__build_load_tour())
 
         self.setLayout(layout)
 
-        self.address_list = []
+        # UNUSED self.address_list = []
 
         self.__update_delivery_man_combobox(DELIVERY_MAN)
         TourService.instance().tour_requests.subscribe(self.__update_delivery_table)
@@ -58,16 +64,18 @@ class DeliveryFormPage(Page):
         pass
 
     def __build_delivery_man_form(self) -> QLayout:
+        # Define components to be used in this screen
         layout = QHBoxLayout()
 
         delivery_man_layout = QVBoxLayout()
-        delivery_man_label = Text("Delivery man", TextSize.label)
         delivery_man_combobox = QComboBox()
+        delivery_man_label = Text("Delivery man", TextSize.label)
 
         time_window_layout = QVBoxLayout()
-        time_window_label = Text("Time window", TextSize.label)
         time_window_combobox = QComboBox()
+        time_window_label = Text("Time window", TextSize.label)
 
+        # Add components in the screen
         delivery_man_layout.addWidget(delivery_man_label)
         delivery_man_layout.addWidget(delivery_man_combobox)
 
@@ -95,6 +103,7 @@ class DeliveryFormPage(Page):
         return layout
 
     def __build_delivery_table(self) -> QLayout:
+        # Define components to be used in this screen
         layout = QVBoxLayout()
 
         table = QTableWidget()
@@ -112,6 +121,7 @@ class DeliveryFormPage(Page):
         compute_tour_button = Button("Compute Tour")
         compute_tour_button.clicked.connect(self.compute_tour)
 
+        # Add components in the screen
         buttons_layout.addWidget(compute_tour_button)
 
         layout.addWidget(table)
@@ -120,20 +130,19 @@ class DeliveryFormPage(Page):
         return layout
 
     def __build_load_tour(self) -> QLayout:
+        # Define components to be used in this screen
         layout = QVBoxLayout()
+
+        load_tour_label = Callout(
+            "Or load an existing tour (this will overwrite any destinations above)"
+        )
 
         buttons_layout = QHBoxLayout()
         buttons_layout.setAlignment(Qt.AlignmentFlag.AlignCenter)
-
         compute_tour_button = Button("Load Tour")
-
         buttons_layout.addWidget(compute_tour_button)
 
-        layout.addWidget(
-            Callout(
-                "Or load an existing tour (this will overwrite any destinations above)"
-            )
-        )
+        layout.addWidget(load_tour_label)
         layout.addLayout(buttons_layout)
 
         return layout
