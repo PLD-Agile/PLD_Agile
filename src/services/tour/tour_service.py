@@ -1,4 +1,3 @@
-import sys
 from typing import List, Optional
 
 from reactivex import Observable
@@ -6,13 +5,16 @@ from reactivex.operators import map
 from reactivex.subject import BehaviorSubject
 
 from src.models.delivery_man.delivery_man import DeliveryMan
-from src.models.map import Intersection, Position, Segment
+from src.models.map import Position
 from src.models.tour import ComputedTour, DeliveryLocation, DeliveryRequest, TourRequest
 from src.services.map.delivery_location_service import DeliveryLocationService
 from src.services.map.map_service import MapService
 from src.services.singleton import Singleton
 from src.services.tour.tour_computing_service import TourComputingService
 from src.services.tour.tour_saving_service import TourSavingService
+
+
+COLORS = ["#3875ff", "green", "yellow", "purple", "orange", "pink"]
 
 
 class TourService(Singleton):
@@ -142,24 +144,9 @@ class TourService(Singleton):
                         map.segments[origin_id][destination_id] for origin_id, destination_id in zip(tour_intersection_ids, tour_intersection_ids[1:])
                     ],
                     length=0,
-                    color="green",
+                    color=COLORS[index % len(COLORS)],
                 )
             )
-
-        # computed_tours = []
-
-        # for request in self.__tour_requests.value:
-        #     computed_tours.append(
-        #         ComputedTour(
-        #             deliveries=request.deliveries,
-        #             delivery_man=DeliveryMan("Bill", [8, 9, 10]),
-        #             route=[
-        #                 delivery.location.segment for delivery in request.deliveries
-        #             ],
-        #             length=1,
-        #             color="red",
-        #         )
-        #     )
 
         self.__computed_tours.on_next(computed_tours)
 
