@@ -17,11 +17,6 @@ from src.services.tour.tour_service import TourService
 from src.views.ui import Button, Callout, Separator, Text, TextSize
 from src.services.delivery_man.delivery_man_service import DeliveryManService
 
-DELIVERY_MAN: List[DeliveryMan] = [
-    DeliveryMan("Josué stcyr", [8, 9, 10, 11]),
-    DeliveryMan("clem farhat", [8, 9, 10, 11]),
-]
-
 
 class DeliveryFormPage(Page):
     __delivery_man_control: QComboBox
@@ -30,7 +25,6 @@ class DeliveryFormPage(Page):
 
     def __init__(self):
         super().__init__()
-        delivey_man_service = DeliveryManService()
 
         # Define components to be used in this screen
         layout = QVBoxLayout()
@@ -61,8 +55,7 @@ class DeliveryFormPage(Page):
 
         # UNUSED self.address_list = []
 
-        self.__update_delivery_man_combobox(delivey_man_service.get_delivery_men())
-
+        DeliveryManService.instance().delivery_men.subscribe(self.__update_delivery_man_combobox)
         TourService.instance().tour_requests.subscribe(self.__update_delivery_table)
 
     def compute_tour(self):
