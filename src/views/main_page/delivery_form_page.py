@@ -10,8 +10,8 @@ from PyQt6.QtWidgets import (
     QVBoxLayout,
     QWidget,
 )
-from services.command.command_service import CommandService
-from services.command.commands.remove_delivery_request_command import RemoveDeliveryRequestCommand
+from src.services.command.command_service import CommandService
+from src.services.command.commands.remove_delivery_request_command import RemoveDeliveryRequestCommand
 
 from src.controllers.navigator.page import Page
 from src.models.delivery_man.delivery_man import DeliveryMan

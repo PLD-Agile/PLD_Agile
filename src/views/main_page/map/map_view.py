@@ -13,7 +13,7 @@ from PyQt6.QtGui import (
 from PyQt6.QtWidgets import QFrame, QGraphicsScene, QGraphicsView, QSizePolicy, QWidget
 from reactivex import Observable
 from reactivex.subject import BehaviorSubject
-from services.command.commands.add_delivery_request_command import AddDeliveryRequestCommand
+from src.services.command.commands.add_delivery_request_command import AddDeliveryRequestCommand
 from src.services.command.command_service import CommandService
 
 from src.models.delivery_man.delivery_man import DeliveryMan
