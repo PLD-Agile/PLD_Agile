@@ -109,7 +109,7 @@ class DeliveryFormPage(Page):
         table = QTableWidget()
         table.setColumnCount(3)
         table.setHorizontalHeaderLabels(
-            ["Delivery Address", "Time Window", "Delivery Man"]
+            ["Delivery Address", "Time Window", "Deliveryman"]
         )
         table.setEditTriggers(QTableWidget.EditTrigger.NoEditTriggers)
 
@@ -120,9 +120,14 @@ class DeliveryFormPage(Page):
 
         compute_tour_button = Button("Compute Tour")
         compute_tour_button.clicked.connect(self.compute_tour)
+        
+        save_tour_button = Button("Save Tour")
+        remove_delivery_point_button = Button("Remove selected delivery")
 
         # Add components in the screen
         buttons_layout.addWidget(compute_tour_button)
+        buttons_layout.addWidget(save_tour_button)
+        buttons_layout.addWidget(remove_delivery_point_button)
 
         layout.addWidget(table)
         layout.addLayout(buttons_layout)
