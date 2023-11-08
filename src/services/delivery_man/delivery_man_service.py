@@ -5,7 +5,7 @@ from src.services.singleton import Singleton
 
 class DeliveryManService(Singleton):
     def create_delivery_man(self, delivery_man_info) -> DeliveryMan:
-        """Creates a Delivery Man and pass it back.
+        """Creates a Deliveryman and pass it back.
 
         Args:
             delivery_man_info: A dictionary containing the name,
@@ -34,7 +34,7 @@ class DeliveryManService(Singleton):
     def modify_delivery_man(
         self, delivery_man: DeliveryMan, delivery_man_info
     ) -> DeliveryMan:
-        """Updates a Delivery Man and pass it back.
+        """Updates a Deliveryman and pass it back.
 
         Args:
             delivery_man: A DeliveryMan instance to be updated
@@ -60,7 +60,7 @@ class DeliveryManService(Singleton):
         return delivery_man
 
     def remove_delivery_man(self, delivery_man: DeliveryMan) -> None:
-        """Deletes a Delivery Man.
+        """Deletes a Deliveryman.
 
         Args:
             delivery_man: A DeliveryMan instance to be deleted
