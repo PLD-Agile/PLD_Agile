@@ -1,6 +1,6 @@
 from typing import Dict, List
-from reactivex import Observable
 
+from reactivex import Observable
 from reactivex.subject import BehaviorSubject
 
 from src.models.delivery_man.delivery_man import DeliveryMan
@@ -9,10 +9,12 @@ from src.services.singleton import Singleton
 
 
 class DeliveryManService(Singleton):
-    __delivery_men : BehaviorSubject[Dict[str, DeliveryMan]] = BehaviorSubject({
-        "Josué stcyr": DeliveryMan("Josué stcyr", [8, 9, 10, 11]),
-        "clem farhat": DeliveryMan("clem farhat", [8, 9, 10, 11]),
-    })
+    __delivery_men: BehaviorSubject[Dict[str, DeliveryMan]] = BehaviorSubject(
+        {
+            "Josué stcyr": DeliveryMan("Josué stcyr", [8, 9, 10, 11]),
+            "clem farhat": DeliveryMan("clem farhat", [8, 9, 10, 11]),
+        }
+    )
 
     @property
     def delivery_men(self) -> Observable[Dict[str, DeliveryMan]]:
@@ -39,11 +41,11 @@ class DeliveryManService(Singleton):
 
         availabilities = [8, 9, 10, 11]
 
-        if (name is None):
+        if name is None:
             raise DeliveryManError("No name or availabilities provided")
 
         deliveryman = DeliveryMan(name, availabilities)
-        
+
         self.__delivery_men.value[deliveryman.name] = deliveryman
         self.__delivery_men.on_next(self.__delivery_men.value)
 
@@ -62,7 +64,7 @@ class DeliveryManService(Singleton):
         Returns:
             DeliveryMan: DeliveryMan instance
         """
-        
+
         delivery_man = self.__delivery_men.value[delivery_man.name]
 
         name = delivery_man_info.get("name")
@@ -88,5 +90,5 @@ class DeliveryManService(Singleton):
 
         del self.__delivery_men.value[delivery_man.name]
         self.__delivery_men.on_next(self.__delivery_men.value)
-        
+
         return

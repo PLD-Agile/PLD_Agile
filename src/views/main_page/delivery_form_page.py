@@ -13,9 +13,9 @@ from PyQt6.QtWidgets import (
 from src.controllers.navigator.page import Page
 from src.models.delivery_man.delivery_man import DeliveryMan
 from src.models.tour import TourRequest
+from src.services.delivery_man.delivery_man_service import DeliveryManService
 from src.services.tour.tour_service import TourService
 from src.views.ui import Button, Callout, Separator, Text, TextSize
-from src.services.delivery_man.delivery_man_service import DeliveryManService
 
 
 class DeliveryFormPage(Page):
@@ -55,7 +55,9 @@ class DeliveryFormPage(Page):
 
         # UNUSED self.address_list = []
 
-        DeliveryManService.instance().delivery_men.subscribe(self.__update_delivery_man_combobox)
+        DeliveryManService.instance().delivery_men.subscribe(
+            self.__update_delivery_man_combobox
+        )
         TourService.instance().tour_requests.subscribe(self.__update_delivery_table)
 
     def compute_tour(self):
@@ -73,7 +75,6 @@ class DeliveryFormPage(Page):
         layout.addWidget(warehouse_address_label)
 
         return layout
-
 
     def __build_delivery_man_form(self) -> QLayout:
         # Define components to be used in this screen
@@ -156,13 +157,14 @@ class DeliveryFormPage(Page):
         buttons_layout.addWidget(save_tours_button)
         buttons_layout.addWidget(load_tour_button)
 
-
         layout.addWidget(load_tour_label)
         layout.addLayout(buttons_layout)
 
         return layout
 
-    def __update_delivery_man_combobox(self, delivery_men: Dict[str, DeliveryMan]) -> None:
+    def __update_delivery_man_combobox(
+        self, delivery_men: Dict[str, DeliveryMan]
+    ) -> None:
         current_value = self.__delivery_man_control.currentData()
         self.__delivery_man_control.clear()
 
