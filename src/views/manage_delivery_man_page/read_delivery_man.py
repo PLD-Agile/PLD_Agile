@@ -23,7 +23,7 @@ class ReadDeliveryMan(QWidget):
 
         # Create an observer to update the delivery men list
         delivery_observable = DeliveryManService.instance().delivery_men
-        delivery_observable.subscribe(self.__update_delivery_man_list)
+        delivery_observable.subscribe(self.__build_deliverymen_list)
 
     def __build_deliverymen_list(self, delivery_men: Dict[str, DeliveryMan]) -> None:
         # Clear the existing list
@@ -35,6 +35,3 @@ class ReadDeliveryMan(QWidget):
         for index, deliveryMan in enumerate(delivery_men.values()):
             deliveryManWidget = QLabel(str(index+1) + ".  Name: " + deliveryMan.name)
             self.__delivery_men_list.addWidget(deliveryManWidget)
-
-    def __update_delivery_man_list(self, delivery_men: Dict[str, DeliveryMan]) -> None:
-        self.__build_deliverymen_list(delivery_men)
