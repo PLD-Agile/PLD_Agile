@@ -1,6 +1,6 @@
-from typing import List, Optional
+from typing import List, Optional, Tuple
 
-from reactivex import Observable
+from reactivex import Observable, combine_latest
 from reactivex.operators import map
 from reactivex.subject import BehaviorSubject
 
@@ -19,24 +19,34 @@ COLORS = ["#3875ff", "green", "yellow", "purple", "orange", "pink"]
 class TourService(Singleton):
     __tour_requests: BehaviorSubject[List[TourRequest]]
     __computed_tours: BehaviorSubject[List[ComputedTour]]
+    __selected_delivery_request: BehaviorSubject[Optional[DeliveryRequest]]
 
     def __init__(self) -> None:
         self.__tour_requests = BehaviorSubject([])
         self.__computed_tours = BehaviorSubject([])
+        self.__selected_delivery_request = BehaviorSubject(None)
 
     @property
     def tour_requests(self) -> Observable[List[TourRequest]]:
         return self.__tour_requests
 
     @property
-    def tour_requests_delivery_locations(self) -> Observable[List[DeliveryLocation]]:
-        return self.__tour_requests.pipe(
+    def tour_requests_delivery_locations(
+        self,
+    ) -> Observable[Tuple[DeliveryLocation, List[DeliveryLocation]]]:
+        return combine_latest(
+            self.__selected_delivery_request,
+            self.__tour_requests,
+        ).pipe(
             map(
-                lambda tour_requests: [
-                    delivery_request.location
-                    for tour_request in tour_requests
-                    for delivery_request in tour_request.deliveries
-                ]
+                lambda x: (
+                    x[0],
+                    [
+                        delivery_request.location
+                        for tour_request in x[1]
+                        for delivery_request in tour_request.deliveries
+                    ],
+                )
             )
         )
 
@@ -65,6 +75,11 @@ class TourService(Singleton):
 
     def get_computed_tours(self) -> List[ComputedTour]:
         return self.__computed_tours.value
+
+    def select_delivery_request(
+        self, delivery_request: Optional[DeliveryRequest]
+    ) -> None:
+        self.__selected_delivery_request.on_next(delivery_request)
 
     def add_delivery_request(
         self, position: Position, delivery_man: DeliveryMan, timeWindow: int
@@ -118,6 +133,9 @@ class TourService(Singleton):
 
         self.__tour_requests.on_next(self.__tour_requests.value)
 
+        if self.__selected_delivery_request.value == delivery_request:
+            self.__selected_delivery_request.on_next(None)
+
         # TODO: review how to compute tours when adding a delivery request
         self.compute_tours()
 
@@ -139,7 +157,7 @@ class TourService(Singleton):
         for index, tour_intersection_ids in enumerate(tours_intersection_ids):
             if not self.__tour_requests.value[index].deliveries:
                 continue
-            
+
             computed_tours.append(
                 ComputedTour(
                     deliveries=self.__tour_requests.value[index].deliveries,

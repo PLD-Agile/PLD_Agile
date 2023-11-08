@@ -113,6 +113,7 @@ class DeliveryFormPage(Page):
             ["Delivery Address", "Time Window", "Delivery Man", ""]
         )
         table.setEditTriggers(QTableWidget.EditTrigger.NoEditTriggers)
+        table.setSelectionMode(QTableWidget.SelectionMode.SingleSelection)
 
         self.__delivery_table = table
 
@@ -176,33 +177,51 @@ class DeliveryFormPage(Page):
     def __update_delivery_table(self, tours: List[TourRequest]) -> None:
         self.__delivery_table.setRowCount(0)
 
-        for tour in tours:
-            for delivery in tour.deliveries:
-                row_position = self.__delivery_table.rowCount()
+        self.table_rows = [
+            (tour, delivery) for tour in tours for delivery in tour.deliveries
+        ]
 
-                timeWindow = f"{delivery.timeWindow}:00 - {delivery.timeWindow + 1}:00"
-                
-                actions_widget = QWidget()
-                actions_layout = QHBoxLayout()
-                remove_btn = Button("Remove")
-                
-                remove_btn.clicked.connect(lambda: self.remove_delivery(delivery, tour.delivery_man))
-                
-                actions_layout.setContentsMargins(2, 2, 2, 2)
-                
-                actions_layout.addWidget(remove_btn)
-                actions_widget.setLayout(actions_layout)
+        for tour, delivery in self.table_rows:
+            row_position = self.__delivery_table.rowCount()
 
-                self.__delivery_table.insertRow(row_position)
-                self.__delivery_table.setItem(
-                    row_position, 0, QTableWidgetItem(delivery.location.segment.name)
-                )
-                self.__delivery_table.setItem(
-                    row_position, 1, QTableWidgetItem(timeWindow)
-                )
-                self.__delivery_table.setItem(
-                    row_position, 2, QTableWidgetItem(tour.delivery_man.name)
-                )
-                self.__delivery_table.setCellWidget(
-                    row_position, 3, actions_widget,
-                )
+            timeWindow = f"{delivery.timeWindow}:00 - {delivery.timeWindow + 1}:00"
+
+            actions_widget = QWidget()
+            actions_layout = QHBoxLayout()
+            remove_btn = Button("Remove")
+
+            remove_btn.clicked.connect(
+                lambda: self.remove_delivery(delivery, tour.delivery_man)
+            )
+
+            actions_layout.setContentsMargins(2, 2, 2, 2)
+
+            actions_layout.addWidget(remove_btn)
+            actions_widget.setLayout(actions_layout)
+
+            self.__delivery_table.insertRow(row_position)
+
+            self.__delivery_table.setItem(
+                row_position, 0, QTableWidgetItem(delivery.location.segment.name)
+            )
+            self.__delivery_table.setItem(row_position, 1, QTableWidgetItem(timeWindow))
+            self.__delivery_table.setItem(
+                row_position, 2, QTableWidgetItem(tour.delivery_man.name)
+            )
+            self.__delivery_table.setCellWidget(
+                row_position,
+                3,
+                actions_widget,
+            )
+
+        def select_delivery_request(row_index: int) -> None:
+            TourService.instance().select_delivery_request(
+                self.table_rows[row_index][1].location
+            )
+
+        self.__delivery_table.itemSelectionChanged.connect(
+            lambda: select_delivery_request(self.__delivery_table.currentRow())
+        )
+        
+        self.__delivery_table.clearSelection()
+        TourService.instance().select_delivery_request(None)
