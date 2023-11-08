@@ -106,16 +106,18 @@ class TourComputingService(Singleton):
             for i in range(len(permuted_points) - 1):
                 source = permuted_points[i]
                 target = permuted_points[i + 1]
-                if not shortest_path_graph.has_edge(source,target):
+                if not shortest_path_graph.has_edge(source, target):
                     is_valid_tuple = False
-                    break  
+                    break
                 cycle_length += shortest_path_graph[source][target]["length"]
 
             if not is_valid_tuple:
                 continue
             # Add the length of the last edge back to the starting point to complete the cycle
-            if not shortest_path_graph.has_edge(permuted_points[-1],permuted_points[0]):
-                continue                                    
+            if not shortest_path_graph.has_edge(
+                permuted_points[-1], permuted_points[0]
+            ):
+                continue
             cycle_length += shortest_path_graph[permuted_points[-1]][
                 permuted_points[0]
             ]["length"]
