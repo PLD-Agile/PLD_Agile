@@ -7,7 +7,7 @@ from reactivex.subject import BehaviorSubject, Subject
 
 class CommandService(Singleton):
     __history: BehaviorSubject[List[AbstractCommand]] = BehaviorSubject([])
-    __history_index: BehaviorSubject[int] = -1
+    __history_index: BehaviorSubject[int] = BehaviorSubject(-1)
     __on_execute: Subject[AbstractCommand] = Subject()
     __on_undo: Subject[AbstractCommand] = Subject()
     

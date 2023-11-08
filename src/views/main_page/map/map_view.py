@@ -13,6 +13,8 @@ from PyQt6.QtGui import (
 from PyQt6.QtWidgets import QFrame, QGraphicsScene, QGraphicsView, QSizePolicy, QWidget
 from reactivex import Observable
 from reactivex.subject import BehaviorSubject
+from services.command.commands.add_delivery_request_command import AddDeliveryRequestCommand
+from src.services.command.command_service import CommandService
 
 from src.models.delivery_man.delivery_man import DeliveryMan
 from src.models.map import Map, Position, Segment
@@ -205,11 +207,11 @@ class MapView(QGraphicsView):
         position = self.mapToScene(event.pos())
         position = Position(position.x(), position.y())
 
-        TourService.instance().add_delivery_request(
+        CommandService.instance().execute(AddDeliveryRequestCommand(
             position=position,
             delivery_man=DeliveryMan("John Doe", []),
-            timeWindow=8,
-        )
+            time_window=8,
+        ))
 
     def __on_update_delivery_locations(
         self,

@@ -82,7 +82,7 @@ class TourService(Singleton):
         self.__selected_delivery_request.on_next(delivery_request)
 
     def add_delivery_request(
-        self, position: Position, delivery_man: DeliveryMan, timeWindow: int
+        self, position: Position, delivery_man: DeliveryMan, time_window: int
     ) -> None:
         """Add a delivery request to the tour requests and publish the update.
 
@@ -106,7 +106,7 @@ class TourService(Singleton):
                 location=DeliveryLocationService.instance().find_delivery_location_from_position(
                     position
                 ),
-                timeWindow=timeWindow,
+                timeWindow=time_window,
             )
         )
 
