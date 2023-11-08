@@ -92,7 +92,7 @@ class TourComputingService(Singleton):
 
     def solve_tsp(self, shortest_path_graph: nx.Graph) -> List[int]:
         shortest_cycle_length = float("inf")
-        shortest_cycle = None
+        shortest_cycle = []
         route = []
 
         # Generate all permutations of delivery points to find the shortest cycle
@@ -126,8 +126,9 @@ class TourComputingService(Singleton):
                 shortest_cycle_length = cycle_length
                 shortest_cycle = permuted_points
 
-        # Compute the actual route from the shortest cycle
-
+                # Compute the actual route from the shortest cycle
+        if shortest_cycle == []:
+            return []
         for i in range(len(shortest_cycle) - 1):
             source = shortest_cycle[i]
             target = shortest_cycle[i + 1]
