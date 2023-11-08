@@ -1,5 +1,5 @@
 import sys
-from typing import Optional, List
+from typing import List, Optional
 
 from src.models.map import Intersection, Position, Segment
 from src.models.tour import DeliveryLocation
@@ -16,7 +16,7 @@ class DeliveryLocationService(Singleton):
         # TODO: Find the point on the segment
         closest_intersection = self.__find_closest_intersection(position)
         segments = self.__get_intersection_segments(closest_intersection)
-        
+
         if len(segments) == 0:
             raise Exception("No segments found for intersection")
 
@@ -45,6 +45,6 @@ class DeliveryLocationService(Singleton):
                 found_distance = distance
 
         return found
-    
+
     def __get_intersection_segments(self, intersection: Intersection) -> List[Segment]:
         return list(MapService.instance().get_map().segments[intersection.id].values())

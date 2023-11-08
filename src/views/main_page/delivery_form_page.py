@@ -13,7 +13,7 @@ from PyQt6.QtWidgets import (
 
 from src.controllers.navigator.page import Page
 from src.models.delivery_man.delivery_man import DeliveryMan
-from src.models.tour import TourRequest, DeliveryRequest
+from src.models.tour import DeliveryRequest, TourRequest
 from src.services.tour.tour_service import TourService
 from src.views.ui import Button, Callout, Separator, Text, TextSize
 
@@ -222,6 +222,6 @@ class DeliveryFormPage(Page):
         self.__delivery_table.itemSelectionChanged.connect(
             lambda: select_delivery_request(self.__delivery_table.currentRow())
         )
-        
+
         self.__delivery_table.clearSelection()
         TourService.instance().select_delivery_request(None)
