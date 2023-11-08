@@ -71,7 +71,6 @@ def test_solve_tsp(tour_service):
     G.add_edge(0, 2, length=3.0, path=[0, 5, 33, 2])
     G.add_edge(2, 0, length=4.0, path=[2, 42, 27, 0])
     G.add_edge(1, 2, length=5.0, path=[1, 7, 6, 2])
-    G.add_edge(2, 1, length=6.0, path=[2, 20, 35, 1])
 
     path = tour_service.solve_tsp(G)
 
