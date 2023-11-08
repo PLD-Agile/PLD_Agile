@@ -13,7 +13,7 @@ class DeleteDeliveryManFormView(Page):
         layout = QVBoxLayout()
         title_label = Text("Remove a deliveryman", TextSize.H2)
 
-        options_label = QLabel("Select a deliveryman:")
+        options_label = Text("Select a deliveryman:", TextSize.H3)
 
         # Add components in the screen
         layout.setAlignment(Qt.AlignmentFlag.AlignTop)

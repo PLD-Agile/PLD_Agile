@@ -134,7 +134,7 @@ class DeliveryFormPage(Page):
         layout = QVBoxLayout()
 
         load_tour_label = Callout(
-            "Or load an existing tour (this will overwrite any destinations above)"
+            "Or load an existing tour to the current delivery man and current delivery window"
         )
 
         buttons_layout = QHBoxLayout()
