@@ -10,12 +10,14 @@ from PyQt6.QtWidgets import (
     QVBoxLayout,
     QWidget,
 )
-from src.services.command.command_service import CommandService
-from src.services.command.commands.remove_delivery_request_command import RemoveDeliveryRequestCommand
 
 from src.controllers.navigator.page import Page
 from src.models.delivery_man.delivery_man import DeliveryMan
 from src.models.tour import DeliveryRequest, TourRequest
+from src.services.command.command_service import CommandService
+from src.services.command.commands.remove_delivery_request_command import (
+    RemoveDeliveryRequestCommand,
+)
 from src.services.tour.tour_service import TourService
 from src.views.ui import Button, Callout, Separator, Text, TextSize
 
@@ -64,10 +66,12 @@ class DeliveryFormPage(Page):
         TourService.instance().compute_tours()
 
     def remove_delivery(self, delivery: DeliveryRequest, delivery_man: DeliveryMan):
-        CommandService.instance().execute(RemoveDeliveryRequestCommand(
-            delivery_request=delivery,
-            delivery_man=delivery_man,
-        ))
+        CommandService.instance().execute(
+            RemoveDeliveryRequestCommand(
+                delivery_request=delivery,
+                delivery_man=delivery_man,
+            )
+        )
         # TourService.instance().remove_delivery_request(delivery, delivery_man)
 
     def __build_delivery_man_form(self) -> QLayout:

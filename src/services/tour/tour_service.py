@@ -100,13 +100,13 @@ class TourService(Singleton):
                 delivery_man=delivery_man,
             )
             self.__tour_requests.value.append(tour_request)
-            
+
         delivery_request = DeliveryRequest(
-                location=DeliveryLocationService.instance().find_delivery_location_from_position(
-                    position
-                ),
-                timeWindow=time_window,
-            )
+            location=DeliveryLocationService.instance().find_delivery_location_from_position(
+                position
+            ),
+            timeWindow=time_window,
+        )
 
         tour_request.deliveries.append(delivery_request)
 
@@ -114,7 +114,7 @@ class TourService(Singleton):
 
         # TODO: review how to compute tours when adding a delivery request
         self.compute_tours()
-        
+
         return delivery_request
 
     def remove_delivery_request(
