@@ -8,11 +8,12 @@ from PyQt6.QtWidgets import (
     QTableWidget,
     QTableWidgetItem,
     QVBoxLayout,
+    QWidget,
 )
 
 from src.controllers.navigator.page import Page
 from src.models.delivery_man.delivery_man import DeliveryMan
-from src.models.tour import TourRequest
+from src.models.tour import DeliveryRequest, TourRequest
 from src.services.tour.tour_service import TourService
 from src.views.ui import Button, Callout, Separator, Text, TextSize
 
@@ -60,8 +61,8 @@ class DeliveryFormPage(Page):
     def compute_tour(self):
         TourService.instance().compute_tours()
 
-    def remove_address(self, row):
-        pass
+    def remove_delivery(self, delivery: DeliveryRequest, delivery_man: DeliveryMan):
+        TourService.instance().remove_delivery_request(delivery, delivery_man)
 
     def __build_delivery_man_form(self) -> QLayout:
         # Define components to be used in this screen
@@ -107,11 +108,12 @@ class DeliveryFormPage(Page):
         layout = QVBoxLayout()
 
         table = QTableWidget()
-        table.setColumnCount(3)
+        table.setColumnCount(4)
         table.setHorizontalHeaderLabels(
-            ["Delivery Address", "Time Window", "Delivery Man"]
+            ["Delivery Address", "Time Window", "Delivery Man", ""]
         )
         table.setEditTriggers(QTableWidget.EditTrigger.NoEditTriggers)
+        table.setSelectionMode(QTableWidget.SelectionMode.SingleSelection)
 
         self.__delivery_table = table
 
@@ -175,19 +177,51 @@ class DeliveryFormPage(Page):
     def __update_delivery_table(self, tours: List[TourRequest]) -> None:
         self.__delivery_table.setRowCount(0)
 
-        for tour in tours:
-            for delivery in tour.deliveries:
-                row_position = self.__delivery_table.rowCount()
+        self.table_rows = [
+            (tour, delivery) for tour in tours for delivery in tour.deliveries
+        ]
 
-                timeWindow = f"{delivery.timeWindow}:00 - {delivery.timeWindow + 1}:00"
+        for tour, delivery in self.table_rows:
+            row_position = self.__delivery_table.rowCount()
 
-                self.__delivery_table.insertRow(row_position)
-                self.__delivery_table.setItem(
-                    row_position, 0, QTableWidgetItem(delivery.location.segment.name)
-                )
-                self.__delivery_table.setItem(
-                    row_position, 1, QTableWidgetItem(timeWindow)
-                )
-                self.__delivery_table.setItem(
-                    row_position, 2, QTableWidgetItem(tour.delivery_man.name)
-                )
+            timeWindow = f"{delivery.timeWindow}:00 - {delivery.timeWindow + 1}:00"
+
+            actions_widget = QWidget()
+            actions_layout = QHBoxLayout()
+            remove_btn = Button("Remove")
+
+            remove_btn.clicked.connect(
+                lambda: self.remove_delivery(delivery, tour.delivery_man)
+            )
+
+            actions_layout.setContentsMargins(2, 2, 2, 2)
+
+            actions_layout.addWidget(remove_btn)
+            actions_widget.setLayout(actions_layout)
+
+            self.__delivery_table.insertRow(row_position)
+
+            self.__delivery_table.setItem(
+                row_position, 0, QTableWidgetItem(delivery.location.segment.name)
+            )
+            self.__delivery_table.setItem(row_position, 1, QTableWidgetItem(timeWindow))
+            self.__delivery_table.setItem(
+                row_position, 2, QTableWidgetItem(tour.delivery_man.name)
+            )
+            self.__delivery_table.setCellWidget(
+                row_position,
+                3,
+                actions_widget,
+            )
+
+        def select_delivery_request(row_index: int) -> None:
+            TourService.instance().select_delivery_request(
+                self.table_rows[row_index][1].location
+            )
+
+        self.__delivery_table.itemSelectionChanged.connect(
+            lambda: select_delivery_request(self.__delivery_table.currentRow())
+        )
+
+        self.__delivery_table.clearSelection()
+        TourService.instance().select_delivery_request(None)
