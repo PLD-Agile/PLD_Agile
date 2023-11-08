@@ -78,6 +78,7 @@ def test_solve_tsp_should_return_solution(tour_service):
     assert isinstance(G, nx.DiGraph)
     assert path == [0, 23, 56, 1, 7, 6, 2, 42, 27, 0]
 
+
 def test_solve_tsp_should_return_empty_solution_if_cul_de_sac(tour_service):
     # Create a sample complete directed graph
     G = nx.DiGraph()
