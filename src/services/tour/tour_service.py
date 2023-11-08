@@ -118,6 +118,9 @@ class TourService(Singleton):
 
         self.__tour_requests.on_next(self.__tour_requests.value)
 
+        # TODO: review how to compute tours when adding a delivery request
+        self.compute_tours()
+
     def clear_tour_requests(self) -> None:
         self.__tour_requests.on_next({})
 
@@ -134,6 +137,9 @@ class TourService(Singleton):
             map=map,
         )
         for index, tour_intersection_ids in enumerate(tours_intersection_ids):
+            if not self.__tour_requests.value[index].deliveries:
+                continue
+            
             computed_tours.append(
                 ComputedTour(
                     deliveries=self.__tour_requests.value[index].deliveries,

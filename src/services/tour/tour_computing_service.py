@@ -32,7 +32,7 @@ class TourComputingService(Singleton):
                     map_graph, [warehouse] + tour_request.deliveries
                 )
             )
-            for tour_request in tour_requests
+            for tour_request in tour_requests if tour_request.deliveries
         ]
 
     #  Replace this with the data from the Map model
