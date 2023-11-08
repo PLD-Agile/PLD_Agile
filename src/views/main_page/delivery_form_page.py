@@ -177,6 +177,9 @@ class DeliveryFormPage(Page):
         current_value = self.__time_window_control.currentData()
         self.__time_window_control.clear()
 
+        if not delivery_man:
+            return
+
         for time_window in delivery_man.availabilities:
             self.__time_window_control.addItem(
                 f"{time_window}:00 - {time_window + 1}:00", time_window
