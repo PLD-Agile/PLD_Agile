@@ -3,6 +3,7 @@ from src.services.command.abstract_command import AbstractCommand
 from src.services.singleton import Singleton
 from reactivex import Observable
 from reactivex.subject import BehaviorSubject, Subject
+from reactivex.operators import map
 
 
 class CommandService(Singleton):
@@ -10,10 +11,6 @@ class CommandService(Singleton):
     __history_index: BehaviorSubject[int] = BehaviorSubject(-1)
     __on_execute: Subject[AbstractCommand] = Subject()
     __on_undo: Subject[AbstractCommand] = Subject()
-    
-    def __init__(self) -> None:
-        self.__on_execute.subscribe(lambda command: print(f'Executed {command}'))
-        self.__on_undo.subscribe(lambda command: print(f'Undone {command}'))
     
     def execute(self, command: AbstractCommand) -> None:
         self.__history.value = self.__history.value[:self.__history_index.value + 1] + [command]
@@ -37,10 +34,10 @@ class CommandService(Singleton):
             self.__on_execute.on_next(self.__history.value[self.__history_index.value])
             
     def can_undo(self) -> Observable[bool]:
-        return self.__history_index.map(lambda: not self.__is_root())
+        return self.__history_index.pipe(map(lambda: not self.__is_root()))
     
     def can_redo(self) -> Observable[bool]:
-        return self.__history_index.map(lambda: self.__is_detached())
+        return self.__history_index.pipe(map(lambda: self.__is_detached()))
     
     def on_execute(self) -> Observable[AbstractCommand]:
         return self.__on_execute
