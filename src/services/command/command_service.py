@@ -26,8 +26,8 @@ class CommandService(Singleton):
         
     def undo(self) -> None:
         if not self.__is_root():
-            self.__history_index.on_next(self.__history_index.value - 1)
             self.__history.value[self.__history_index.value].undo()
+            self.__history_index.on_next(self.__history_index.value - 1)
             self.__on_undo.on_next(self.__history.value[self.__history_index.value])
             
     def redo(self) -> None:
