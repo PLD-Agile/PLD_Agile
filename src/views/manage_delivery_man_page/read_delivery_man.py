@@ -1,10 +1,13 @@
 from typing import Dict
+
 from PyQt6.QtCore import Qt
-from PyQt6.QtWidgets import QVBoxLayout, QWidget, QLabel
+from PyQt6.QtWidgets import QLabel, QVBoxLayout, QWidget
 from reactivex import Observer
+
 from models.delivery_man.delivery_man import DeliveryMan
-from src.views.ui import Text, TextSize
 from src.services.delivery_man.delivery_man_service import DeliveryManService
+from src.views.ui import Text, TextSize
+
 
 class ReadDeliveryMan(QWidget):
     def __init__(self):
@@ -33,5 +36,5 @@ class ReadDeliveryMan(QWidget):
                 widget.deleteLater()
 
         for index, deliveryMan in enumerate(delivery_men.values()):
-            deliveryManWidget = QLabel(str(index+1) + ".  Name: " + deliveryMan.name)
+            deliveryManWidget = QLabel(str(index + 1) + ".  Name: " + deliveryMan.name)
             self.__delivery_men_list.addWidget(deliveryManWidget)
