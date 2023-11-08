@@ -8,8 +8,12 @@ from src.views.modules.app_navigator.routes import AppNavigationRoutes
 
 def init_commands_shortcuts(widget: QWidget):
     QShortcut(QKeySequence.StandardKey.Undo, widget).activated.connect(
-        lambda: CommandService.instance().undo() if get_app_navigator().get_current_route_name() == AppNavigationRoutes.MAIN else None
+        lambda: CommandService.instance().undo()
+        if get_app_navigator().get_current_route_name() == AppNavigationRoutes.MAIN
+        else None
     )
     QShortcut(QKeySequence.StandardKey.Redo, widget).activated.connect(
-        lambda: CommandService.instance().redo() if get_app_navigator().get_current_route_name() == AppNavigationRoutes.MAIN else None
+        lambda: CommandService.instance().redo()
+        if get_app_navigator().get_current_route_name() == AppNavigationRoutes.MAIN
+        else None
     )
