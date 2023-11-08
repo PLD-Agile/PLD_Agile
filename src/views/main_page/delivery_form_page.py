@@ -120,7 +120,7 @@ class DeliveryFormPage(Page):
 
         compute_tour_button = Button("Compute Tour")
         compute_tour_button.clicked.connect(self.compute_tour)
-        
+
         save_tour_button = Button("Save Tour")
         remove_delivery_point_button = Button("Remove selected delivery")
 

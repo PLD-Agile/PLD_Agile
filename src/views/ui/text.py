@@ -5,6 +5,7 @@ from PyQt6.QtWidgets import QGraphicsOpacityEffect, QLabel, QWidget
 
 from src.views.utils.theme import Color
 
+
 class TextSize(Enum):
     H1 = 1
     H2 = 2
@@ -49,7 +50,7 @@ class Text(QLabel):
             return 600
         else:
             return 400
-    
+
     def __get_color(self) -> str:
         return Color.PRIMARY_CONTRAST.value
 
