@@ -1,4 +1,4 @@
-from typing import List, Literal, Optional, Tuple
+from typing import List, Literal, Optional
 
 from PyQt6.QtCore import QPointF, QRectF, Qt
 from PyQt6.QtGui import (
@@ -10,22 +10,21 @@ from PyQt6.QtGui import (
     QTransform,
     QWheelEvent,
 )
-from PyQt6.QtWidgets import (
-    QAbstractGraphicsShapeItem,
-    QFrame,
-    QGraphicsScene,
-    QGraphicsView,
-    QSizePolicy,
-    QWidget,
-)
+from PyQt6.QtWidgets import QFrame, QGraphicsScene, QGraphicsView, QSizePolicy, QWidget
 from reactivex import Observable
-from reactivex.subject import BehaviorSubject, Subject
+from reactivex.subject import BehaviorSubject
 
 from src.models.delivery_man.delivery_man import DeliveryMan
-from src.models.map import Map, Marker, Position, Segment
-from src.models.tour.delivery_location import DeliveryLocation
+from src.models.map import Map, Position, Segment
+from src.models.tour import ComputedTour, DeliveryLocation
 from src.services.map.map_service import MapService
 from src.services.tour.tour_service import TourService
+from src.views.main_page.map.map_annotation import MapAnnotation
+from src.views.main_page.map.map_annotation_collection import (
+    MapAnnotationCollection,
+    MarkersTypes,
+    SegmentTypes,
+)
 from src.views.main_page.map.map_marker import AlignBottom, MapMarker
 from src.views.utils.icon import get_icon_pixmap
 from src.views.utils.theme import Theme
@@ -62,10 +61,8 @@ class MapView(QGraphicsView):
     __scene: Optional[QGraphicsScene] = None
     __map: Optional[Map] = None
     __scale_factor: int = 1
-    __segments: List[QAbstractGraphicsShapeItem] = []
-    __markers: List[MapMarker] = []
-    __delivery_locations_markers: List[MapMarker] = []
     __marker_size: Optional[int] = None
+    __map_annotations: MapAnnotationCollection = MapAnnotationCollection()
     __ready: BehaviorSubject[bool] = BehaviorSubject(False)
 
     def __init__(self, parent: Optional[QWidget] = None) -> None:
@@ -78,6 +75,7 @@ class MapView(QGraphicsView):
         TourService.instance().tour_requests_delivery_locations.subscribe(
             self.__on_update_delivery_locations
         )
+        TourService.instance().computed_tours.subscribe(self.__on_update_computed_tours)
 
     @property
     def ready(self) -> Observable[bool]:
@@ -108,7 +106,7 @@ class MapView(QGraphicsView):
         self.__scene.setBackgroundBrush(QBrush(Qt.GlobalColor.white))
         self.setScene(self.__scene)
 
-        for segment in map.segments:
+        for segment in map.get_all_segments():
             self.__add_segment(segment)
 
         self.__marker_size = self.__scene.sceneRect().width() * self.MARKER_INITIAL_SIZE
@@ -139,6 +137,7 @@ class MapView(QGraphicsView):
         color: QColor = QColor("#f54242"),
         align_bottom: AlignBottom = True,
         scale: float = 1,
+        marker_type: MarkersTypes = MarkersTypes.Default,
     ) -> MapMarker:
         """Add a marker on the map at a given position
 
@@ -161,7 +160,7 @@ class MapView(QGraphicsView):
 
         self.__adjust_marker(marker)
 
-        self.__markers.append(marker)
+        self.__map_annotations.markers.append(marker_type, marker)
 
         return marker
 
@@ -178,11 +177,9 @@ class MapView(QGraphicsView):
         self.__ready.on_next(False)
         if self.__scene:
             self.__scene.clear()
-        self.__segments = []
-        self.__markers = []
-        self.__route_markers = []
         self.__scale_factor = 1
         self.__marker_size = None
+        self.__map_annotations.clear_all()
         self.__map = None
 
     def wheelEvent(self, event: QWheelEvent) -> None:
@@ -217,22 +214,42 @@ class MapView(QGraphicsView):
     def __on_update_delivery_locations(
         self, delivery_locations: List[DeliveryLocation]
     ):
-        for marker in self.__delivery_locations_markers:
+        for marker in self.__map_annotations.markers.get(MarkersTypes.Delivery):
             self.__scene.removeItem(marker.shape)
 
-        self.__delivery_locations_markers = []
+        self.__map_annotations.markers.clear(MarkersTypes.Delivery)
 
         for delivery_location in delivery_locations:
-            self.__delivery_locations_markers.append(
+            self.__map_annotations.markers.append(
+                MarkersTypes.Delivery,
                 self.add_marker(
                     position=delivery_location.segment.origin,
                     icon="map-marker-alt",
                     color=QColor("#f54242"),
-                )
+                ),
             )
 
+    def __on_update_computed_tours(self, computed_tours: List[ComputedTour]):
+        for maker in self.__map_annotations.segments.get(SegmentTypes.Tour):
+            self.__scene.removeItem(maker.shape)
+
+        self.__map_annotations.segments.clear(SegmentTypes.Tour)
+
+        for computed_tour in computed_tours:
+            for segment in computed_tour.route:
+                self.__add_segment(
+                    segment=segment,
+                    color=QColor(computed_tour.color),
+                    scale=2,
+                    segment_type=SegmentTypes.Tour,
+                )
+
     def __add_segment(
-        self, segment: Segment, color: QColor = QColor("#9c9c9c")
+        self,
+        segment: Segment,
+        color: QColor = QColor("#9c9c9c"),
+        scale: float = 1,
+        segment_type: SegmentTypes = SegmentTypes.Default,
     ) -> None:
         """Add a segment on the map
 
@@ -247,12 +264,15 @@ class MapView(QGraphicsView):
             segment.destination.latitude,
             QPen(
                 QBrush(color),
-                self.__get_pen_size(),
+                self.__get_pen_size() * scale,
                 Qt.PenStyle.SolidLine,
                 Qt.PenCapStyle.RoundCap,
             ),
         )
-        self.__segments.append(segmentLine)
+
+        self.__map_annotations.segments.append(
+            segment_type, MapAnnotation(segmentLine, scale)
+        )
 
     def __scale_map(self, factor: float):
         """Scales the map for a given factor. This is used to zoom in and out.
@@ -279,12 +299,12 @@ class MapView(QGraphicsView):
 
     def __adjust_map_graphics(self) -> None:
         """Adjust map segments and markers to the current map scale"""
-        for segment in self.__segments:
-            pen = segment.pen()
-            pen.setWidthF(self.__get_pen_size())
-            segment.setPen(pen)
+        for segment in self.__map_annotations.segments.get_all():
+            pen = segment.shape.pen()
+            pen.setWidthF(self.__get_pen_size() * segment.scale)
+            segment.shape.setPen(pen)
 
-        for marker in self.__markers:
+        for marker in self.__map_annotations.markers.get_all():
             self.__adjust_marker(marker)
 
     def __adjust_marker(self, marker: MapMarker) -> None:

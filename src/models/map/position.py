@@ -1,3 +1,4 @@
+import math
 from dataclasses import dataclass
 from typing import List
 
@@ -57,4 +58,17 @@ class Position:
         return Position(
             min(self.longitude, p.longitude, *map(lambda p: p.longitude, args)),
             min(self.latitude, p.latitude, *map(lambda p: p.latitude, args)),
+        )
+
+    def distance_to(self, p: "Position") -> float:
+        """Compute the distance between the current position and the given position.
+
+        Args:
+            p (Position): Other position to compute the distance to.
+
+        Returns:
+            float: Distance between the two positions.
+        """
+        return math.sqrt(
+            (self.longitude - p.longitude) ** 2 + (self.latitude - p.latitude) ** 2
         )

@@ -34,7 +34,7 @@ class MapLoaderService(Singleton):
             Map: Map instance
         """
         intersections: Dict[int, Intersection] = {}
-        segments: List[Segment] = []
+        segments: Dict[int, Dict[int, Segment]] = {}
         map_size = MapSize.inverse_max_size()
         warehouse: Intersection = None
 
@@ -44,7 +44,8 @@ class MapLoaderService(Singleton):
             self.__update_map_size(map_size, intersection)
 
         for element in root_element.findall("segment"):
-            segments.append(Segment.from_element(element, intersections))
+            segment = Segment.from_element(element, intersections)
+            segments.setdefault(segment.origin.id, {})[segment.destination.id] = segment
 
         for element in root_element.findall("warehouse"):
             warehouse = intersections[int(element.attrib["address"])]
