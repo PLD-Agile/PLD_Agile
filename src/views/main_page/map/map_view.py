@@ -17,6 +17,10 @@ from reactivex.subject import BehaviorSubject
 from src.models.delivery_man.delivery_man import DeliveryMan
 from src.models.map import Map, Position, Segment
 from src.models.tour import ComputedTour, DeliveryLocation
+from src.services.command.command_service import CommandService
+from src.services.command.commands.add_delivery_request_command import (
+    AddDeliveryRequestCommand,
+)
 from src.services.map.map_service import MapService
 from src.services.tour.tour_service import TourService
 from src.views.main_page.map.map_annotation import MapAnnotation
@@ -205,10 +209,12 @@ class MapView(QGraphicsView):
         position = self.mapToScene(event.pos())
         position = Position(position.x(), position.y())
 
-        TourService.instance().add_delivery_request(
-            position=position,
-            delivery_man=DeliveryMan("John Doe", []),
-            timeWindow=8,
+        CommandService.instance().execute(
+            AddDeliveryRequestCommand(
+                position=position,
+                delivery_man=DeliveryMan("John Doe", []),
+                time_window=8,
+            )
         )
 
     def __on_update_delivery_locations(
