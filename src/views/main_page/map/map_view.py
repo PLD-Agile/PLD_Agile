@@ -32,7 +32,7 @@ from src.views.main_page.map.map_annotation_collection import (
 from src.views.main_page.map.map_marker import AlignBottom, MapMarker
 from src.views.utils.icon import get_icon_pixmap
 from src.views.utils.theme import Theme
-
+from src.services.delivery_man.delivery_man_service import DeliveryManService
 
 class MapView(QGraphicsView):
     """Widget to display a Map"""
@@ -209,11 +209,12 @@ class MapView(QGraphicsView):
         position = self.mapToScene(event.pos())
         position = Position(position.x(), position.y())
 
+        delivery_man, time_window = DeliveryManService.instance().get_selected_values()
         CommandService.instance().execute(
             AddDeliveryRequestCommand(
                 position=position,
-                delivery_man=DeliveryMan("John Doe", []),
-                time_window=8,
+                delivery_man=delivery_man,
+                time_window=time_window,
             )
         )
 
