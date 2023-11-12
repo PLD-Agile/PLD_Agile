@@ -127,6 +127,8 @@ class DeliveryFormPage(Page):
         delivery_man_combobox.currentIndexChanged.connect(
             lambda: DeliveryManService.instance().set_selected_delivery_man(
                 delivery_man_combobox.currentData().name
+                if delivery_man_combobox.currentData()
+                else None
             )
         )
         time_window_combobox.currentIndexChanged.connect(

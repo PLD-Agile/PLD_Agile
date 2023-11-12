@@ -13,7 +13,7 @@ from src.services.singleton import Singleton
 from src.services.tour.tour_computing_service import TourComputingService
 from src.services.tour.tour_saving_service import TourSavingService
 
-COLORS = ["#3875ff", "green", "yellow", "purple", "orange", "pink"]
+COLORS = ["#6929c4", "#1192e8", "#005d5d", "#9f1853", "#198038", "#012749", "#b28600"]
 
 
 class TourService(Singleton):

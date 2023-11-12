@@ -17,8 +17,8 @@ class Header(QWidget):
         layout = QHBoxLayout()
         title = Text("Delivery System v1.0", TextSize.H1)
 
-        undo_button = Button(icon="chevron-left")
-        redo_button = Button(icon="chevron-right")
+        undo_button = Button(icon="undo")
+        redo_button = Button(icon="redo")
         command_button_group = ButtonGroup([undo_button, redo_button])
         command_button_group.layout().setAlignment(Qt.AlignmentFlag.AlignRight)
 
