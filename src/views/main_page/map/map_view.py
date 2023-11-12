@@ -252,7 +252,7 @@ class MapView(QGraphicsView):
                 self.__add_segment(
                     segment=segment,
                     color=QColor(computed_tour.color),
-                    scale=2,
+                    scale=2.5,
                     segment_type=SegmentTypes.Tour,
                 )
 
