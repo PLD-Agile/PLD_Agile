@@ -1,6 +1,6 @@
-from typing import Dict, List
+from typing import Dict, List, Optional, Tuple
 
-from reactivex import Observable
+from reactivex import Observable, combine_latest
 from reactivex.subject import BehaviorSubject
 
 from src.models.delivery_man.delivery_man import DeliveryMan
@@ -15,6 +15,10 @@ class DeliveryManService(Singleton):
             "clem farhat": DeliveryMan("clem farhat", [8, 9, 10, 11]),
         }
     )
+    __selected_delivery_man: BehaviorSubject[Optional[DeliveryMan]] = BehaviorSubject(
+        None
+    )
+    __selected_time_window: BehaviorSubject[Optional[int]] = BehaviorSubject(None)
 
     @property
     def delivery_men(self) -> Observable[Dict[str, DeliveryMan]]:
@@ -28,6 +32,17 @@ class DeliveryManService(Singleton):
         """
 
         return self.__delivery_men
+
+    @property
+    def selected_values(
+        self,
+    ) -> Observable[Tuple[Optional[DeliveryMan], Optional[int]]]:
+        """Returns selected delivery man and time window.
+
+        Returns:
+            Observable[Tuple[Optional[DeliveryMan], Optional[int]]]: _description_
+        """
+        return combine_latest(self.__selected_delivery_man, self.__selected_time_window)
 
     def create_delivery_man(self, name: str) -> None:
         """Creates a Delivery Man and pass it back.
@@ -92,3 +107,26 @@ class DeliveryManService(Singleton):
         self.__delivery_men.on_next(self.__delivery_men.value)
 
         return
+
+    def set_selected_delivery_man(self, delivery_man_name: Optional[str]) -> None:
+        """Set currently selected delivery man.
+
+        Args:
+            delivery_man_name (str): Name of the delivery man to be selected
+        """
+        self.__selected_delivery_man.on_next(
+            self.__delivery_men.value[delivery_man_name]
+            if delivery_man_name is not None
+            else None
+        )
+
+    def set_selected_time_window(self, time_window: Optional[int]) -> None:
+        """Set currently selected time window.
+
+        Args:
+            time_window (int): Time window to be selected
+        """
+        self.__selected_time_window.on_next(time_window)
+
+    def get_selected_values(self) -> Tuple[Optional[DeliveryMan], Optional[int]]:
+        return (self.__selected_delivery_man.value, self.__selected_time_window.value)

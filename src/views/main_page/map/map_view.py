@@ -21,6 +21,7 @@ from src.services.command.command_service import CommandService
 from src.services.command.commands.add_delivery_request_command import (
     AddDeliveryRequestCommand,
 )
+from src.services.delivery_man.delivery_man_service import DeliveryManService
 from src.services.map.map_service import MapService
 from src.services.tour.tour_service import TourService
 from src.views.main_page.map.map_annotation import MapAnnotation
@@ -209,11 +210,12 @@ class MapView(QGraphicsView):
         position = self.mapToScene(event.pos())
         position = Position(position.x(), position.y())
 
+        delivery_man, time_window = DeliveryManService.instance().get_selected_values()
         CommandService.instance().execute(
             AddDeliveryRequestCommand(
                 position=position,
-                delivery_man=DeliveryMan("John Doe", []),
-                time_window=8,
+                delivery_man=delivery_man,
+                time_window=time_window,
             )
         )
 

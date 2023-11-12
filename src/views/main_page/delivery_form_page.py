@@ -14,11 +14,11 @@ from PyQt6.QtWidgets import (
 from src.controllers.navigator.page import Page
 from src.models.delivery_man.delivery_man import DeliveryMan
 from src.models.tour import DeliveryRequest, TourRequest
-from src.services.delivery_man.delivery_man_service import DeliveryManService
 from src.services.command.command_service import CommandService
 from src.services.command.commands.remove_delivery_request_command import (
     RemoveDeliveryRequestCommand,
 )
+from src.services.delivery_man.delivery_man_service import DeliveryManService
 from src.services.tour.tour_service import TourService
 from src.views.ui import Button, Callout, Separator, Text, TextSize
 
@@ -121,6 +121,17 @@ class DeliveryFormPage(Page):
         delivery_man_combobox.currentIndexChanged.connect(
             lambda: self.__update_time_window_combobox(
                 delivery_man_combobox.currentData()
+            )
+        )
+
+        delivery_man_combobox.currentIndexChanged.connect(
+            lambda: DeliveryManService.instance().set_selected_delivery_man(
+                delivery_man_combobox.currentData().name
+            )
+        )
+        time_window_combobox.currentIndexChanged.connect(
+            lambda: DeliveryManService.instance().set_selected_time_window(
+                time_window_combobox.currentData()
             )
         )
 
