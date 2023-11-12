@@ -88,7 +88,7 @@ class TourService(Singleton):
 
         Args:
             position (Position): Approximate position of the delivery
-            delivery_man (DeliveryMan): Delivery Man to assign the delivery to
+            delivery_man (DeliveryMan): Deliveryman to be assigned to the delivery
             timeWindow (int): Time window for the delivery
         """
         # tour_request = self.__tour_requests.value.get(delivery_man, None)
@@ -122,7 +122,7 @@ class TourService(Singleton):
 
         Args:
             delivery_request (DeliveryRequest): Delivery request to remove
-            delivery_man (DeliveryMan): Delivery Man to remove the delivery from
+            delivery_man (DeliveryMan): Deliveryman to remove the delivery from
         """
         tour_request = self.get_tour_request_for_delivery_man(delivery_man)
 

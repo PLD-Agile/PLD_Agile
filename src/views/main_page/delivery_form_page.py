@@ -35,7 +35,7 @@ class DeliveryFormPage(Page):
         layout = QVBoxLayout()
         add_deliveries_label = Text("Add deliveries", TextSize.H2)
         add_deliveries_click = Callout(
-            "Double-click on the map to add deliveries with the selected delivery man and time"
+            "Double-click on the map to add deliveries with the selected deliveryman and time"
         )
 
         deliveries_label = Text("Deliveries", TextSize.H2)
@@ -70,7 +70,7 @@ class DeliveryFormPage(Page):
 
         delivery_man_layout = QVBoxLayout()
         delivery_man_combobox = QComboBox()
-        delivery_man_label = Text("Delivery man", TextSize.label)
+        delivery_man_label = Text("Deliveryman", TextSize.label)
 
         time_window_layout = QVBoxLayout()
         time_window_combobox = QComboBox()
@@ -120,11 +120,14 @@ class DeliveryFormPage(Page):
         buttons_layout = QHBoxLayout()
         buttons_layout.setAlignment(Qt.AlignmentFlag.AlignCenter)
 
-        compute_tour_button = Button("Compute Tour")
-        compute_tour_button.clicked.connect(self.compute_tour)
+        """ compute_tour_button = Button("Compute Tour")
+        compute_tour_button.clicked.connect(self.compute_tour) """
+
+        save_tour_button = Button("Save Tour")
 
         # Add components in the screen
         # buttons_layout.addWidget(compute_tour_button)
+        buttons_layout.addWidget(save_tour_button)
 
         layout.addWidget(table)
         layout.addLayout(buttons_layout)
@@ -136,7 +139,7 @@ class DeliveryFormPage(Page):
         layout = QVBoxLayout()
 
         load_tour_label = Callout(
-            "Or load an existing tour (this will overwrite any destinations above)"
+            "Or load an existing tour to the current deliveryman and current delivery window"
         )
 
         buttons_layout = QHBoxLayout()
