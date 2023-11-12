@@ -21,6 +21,7 @@ from src.services.command.command_service import CommandService
 from src.services.command.commands.add_delivery_request_command import (
     AddDeliveryRequestCommand,
 )
+from src.services.delivery_man.delivery_man_service import DeliveryManService
 from src.services.map.map_service import MapService
 from src.services.tour.tour_service import TourService
 from src.views.main_page.map.map_annotation import MapAnnotation
@@ -32,7 +33,7 @@ from src.views.main_page.map.map_annotation_collection import (
 from src.views.main_page.map.map_marker import AlignBottom, MapMarker
 from src.views.utils.icon import get_icon_pixmap
 from src.views.utils.theme import Theme
-from src.services.delivery_man.delivery_man_service import DeliveryManService
+
 
 class MapView(QGraphicsView):
     """Widget to display a Map"""
