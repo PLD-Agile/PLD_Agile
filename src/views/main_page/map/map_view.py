@@ -1,4 +1,4 @@
-from typing import List, Literal, Optional
+from typing import List, Literal, Optional, Tuple
 
 from PyQt6.QtCore import QPointF, QRectF, Qt
 from PyQt6.QtGui import (
@@ -212,8 +212,11 @@ class MapView(QGraphicsView):
         )
 
     def __on_update_delivery_locations(
-        self, delivery_locations: List[DeliveryLocation]
+        self,
+        deliveries: Tuple[Optional[DeliveryLocation], List[DeliveryLocation]],
     ):
+        selected_delivery_location, delivery_locations = deliveries
+
         for marker in self.__map_annotations.markers.get(MarkersTypes.Delivery):
             self.__scene.removeItem(marker.shape)
 
@@ -226,6 +229,7 @@ class MapView(QGraphicsView):
                     position=delivery_location.segment.origin,
                     icon="map-marker-alt",
                     color=QColor("#f54242"),
+                    scale=1.5 if delivery_location == selected_delivery_location else 1,
                 ),
             )
 
