@@ -38,10 +38,10 @@ class CommandService(Singleton):
             self.__on_execute.on_next(self.__history.value[self.__history_index.value])
 
     def can_undo(self) -> Observable[bool]:
-        return self.__history_index.pipe(map(lambda: not self.__is_root()))
+        return self.__history_index.pipe(map(lambda _: not self.__is_root()))
 
     def can_redo(self) -> Observable[bool]:
-        return self.__history_index.pipe(map(lambda: self.__is_detached()))
+        return self.__history_index.pipe(map(lambda _: self.__is_detached()))
 
     def on_execute(self) -> Observable[AbstractCommand]:
         return self.__on_execute
