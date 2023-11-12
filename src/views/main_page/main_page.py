@@ -13,7 +13,10 @@ from PyQt6.QtWidgets import (
 )
 
 from src.controllers.navigator.page import Page
+from src.services.map.map_service import MapService
+from src.services.tour.tour_service import TourService
 from src.views.modules.main_page_navigator.navigator import get_main_page_navigator
+from src.views.modules.main_page_navigator.routes import MainPageNavigationRoutes
 from src.views.ui.button import Button
 from src.views.ui.button_group import ButtonGroup
 from src.views.utils.theme import Theme
@@ -66,6 +69,7 @@ class MainPage(Page):
         map_zoom_out_button = Button(icon="minus")
         map_zoom_in_button = Button(icon="plus")
 
+        change_map_button.clicked.connect(lambda: self.__change_map(map_view))
         reset_map_button.clicked.connect(map_view.fit_map)
         map_zoom_out_button.clicked.connect(map_view.zoom_out)
         map_zoom_in_button.clicked.connect(map_view.zoom_in)
@@ -88,3 +92,8 @@ class MainPage(Page):
             map_zoom_out_button,
             map_zoom_in_button,
         )
+
+    def __change_map(self, map_view: MapView) -> None:
+        TourService.instance().clear()
+        MapService.instance().clear()
+        get_main_page_navigator().replace(MainPageNavigationRoutes.LOAD_MAP)

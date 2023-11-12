@@ -15,7 +15,7 @@ class AddDeliveryManFormView(Page):
         layout = QVBoxLayout()
         title_label = Text("Create a deliveryman", TextSize.H2)
 
-        name_label = QLabel("Name")
+        name_label = Text("Name", TextSize.label)
         name_input = QLineEdit()
 
         buttons_layout = QHBoxLayout()
