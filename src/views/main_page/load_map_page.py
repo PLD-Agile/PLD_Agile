@@ -23,7 +23,7 @@ class LoadMapPage(Page):
 
         options_label = Text("Select an option", TextSize.H2)
 
-        load_map_default_label = QLabel("Load from our default maps:")
+        load_map_default_label = Text("Load from our default maps:", TextSize.H3)
         default_buttons = []
         for name, path in DEFAULT_BUTTONS:
             button = Button(name)
