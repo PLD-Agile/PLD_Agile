@@ -437,15 +437,15 @@ class MapView(QGraphicsView):
         direction /= math.sqrt(direction.x() ** 2 + direction.y() ** 2)
 
         # Define origin as the middle of the segment
-        origin = (line.p1() + line.p2()) / 2 - (direction * size / 2)
+        origin = (line.p1() + line.p2()) / 2 + (direction * size / 2)
 
         tangent = QPointF(direction.y(), -direction.x())
 
         return QPolygonF(
             [
-                origin + (direction * size) + (tangent * -size / 2),
+                origin - (direction * size) - (tangent * -size / 2),
                 origin,
-                origin + (direction * size) + (tangent * size / 2),
+                origin - (direction * size) - (tangent * size / 2),
             ]
         )
 
