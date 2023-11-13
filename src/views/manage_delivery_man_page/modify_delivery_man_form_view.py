@@ -1,10 +1,20 @@
 from typing import Dict, List
-from PyQt6.QtCore import Qt
-from PyQt6.QtWidgets import QHBoxLayout, QLabel, QMessageBox, QVBoxLayout, QLineEdit, QComboBox, QLayout, QCheckBox
-from models.delivery_man.delivery_man import DeliveryMan
-from src.services.delivery_man.delivery_man_service import DeliveryManService
 
+from PyQt6.QtCore import Qt
+from PyQt6.QtWidgets import (
+    QCheckBox,
+    QComboBox,
+    QHBoxLayout,
+    QLabel,
+    QLayout,
+    QLineEdit,
+    QMessageBox,
+    QVBoxLayout,
+)
+
+from models.delivery_man.delivery_man import DeliveryMan
 from src.controllers.navigator.page import Page
+from src.services.delivery_man.delivery_man_service import DeliveryManService
 from src.views.ui import Button, Text, TextSize
 
 
@@ -33,13 +43,15 @@ class ModifyDeliveryManFormView(Page):
 
         self.setLayout(layout)
 
-        DeliveryManService.instance().delivery_men.subscribe(self.__update_delivery_man_combobox)
+        DeliveryManService.instance().delivery_men.subscribe(
+            self.__update_delivery_man_combobox
+        )
 
     def __build_delivery_man_combobox(self) -> QLayout:
         delivery_man_combobox_layout = QVBoxLayout()
         delivery_man_label = QLabel("Delivery man")
         self.__delivery_man_control = QComboBox()
-        
+
         # Add components in the screen
         delivery_man_combobox_layout.addWidget(delivery_man_label)
         delivery_man_combobox_layout.addWidget(self.__delivery_man_control)
@@ -48,11 +60,13 @@ class ModifyDeliveryManFormView(Page):
         delivery_man_combobox_layout.setAlignment(Qt.AlignmentFlag.AlignTop)
 
         self.__delivery_man_control.currentIndexChanged.connect(
-            lambda: self.__update_delivery_man_inputs(self.__delivery_man_control.currentData())
+            lambda: self.__update_delivery_man_inputs(
+                self.__delivery_man_control.currentData()
+            )
         )
 
         return delivery_man_combobox_layout
-    
+
     def __build_delivery_man_inputs(self) -> QLayout:
         input_layout = QHBoxLayout()
         name_layout = QVBoxLayout()
@@ -61,11 +75,11 @@ class ModifyDeliveryManFormView(Page):
         name_label = QLabel("Name")
         self.__name_input = QLineEdit()
         self.__availabilities_checkboxes = [QCheckBox(f"{i} am") for i in range(8, 12)]
-        
+
         input_layout = QHBoxLayout()
         name_layout = QVBoxLayout()
         availabilities_layout = QVBoxLayout()
-        
+
         # Add components in the screen
         name_layout.addWidget(name_label)
         name_layout.addWidget(self.__name_input)
@@ -89,23 +103,36 @@ class ModifyDeliveryManFormView(Page):
             return
 
         name = self.__name_input.text()
-        availabilities = [i for i in range(8, 12) if self.__availabilities_checkboxes[i - 8].isChecked()]
+        availabilities = [
+            i
+            for i in range(8, 12)
+            if self.__availabilities_checkboxes[i - 8].isChecked()
+        ]
 
-        if name == selected_delivery_man.name and availabilities == selected_delivery_man.availabilities:
+        if (
+            name == selected_delivery_man.name
+            and availabilities == selected_delivery_man.availabilities
+        ):
             return  # No changes were made
 
         delivery_man_info = {"name": name, "availabilities": availabilities}
-        modified_delivery_man = DeliveryManService.instance().modify_delivery_man(selected_delivery_man, delivery_man_info)
+        modified_delivery_man = DeliveryManService.instance().modify_delivery_man(
+            selected_delivery_man, delivery_man_info
+        )
 
         # Show a popup with the changes
         message_box = QMessageBox()
         message_box.setWindowTitle("Success")
-        message_box.setText(f"Delivery man '{modified_delivery_man.name}' modified successfully.")
+        message_box.setText(
+            f"Delivery man '{modified_delivery_man.name}' modified successfully."
+        )
         message_box.setIcon(QMessageBox.Icon.Information)
         message_box.setStandardButtons(QMessageBox.StandardButton.Ok)
         message_box.exec()
-    
-    def __update_delivery_man_combobox(self, delivery_men: Dict[str, DeliveryMan]) -> None:
+
+    def __update_delivery_man_combobox(
+        self, delivery_men: Dict[str, DeliveryMan]
+    ) -> None:
         current_value = self.__delivery_man_control.currentData()
         self.__delivery_man_control.clear()
 
