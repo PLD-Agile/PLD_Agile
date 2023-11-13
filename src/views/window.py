@@ -1,5 +1,6 @@
 from PyQt6.QtWidgets import QGridLayout, QMainWindow, QWidget
 
+from src.services.command.commands_shortcuts import init_commands_shortcuts
 from src.views.layout import Header
 from src.views.modules.app_navigator.navigator import get_app_navigator
 from src.views.utils.theme import Color, Theme
@@ -12,11 +13,13 @@ class MainWindow(QMainWindow):
         self.setMinimumSize(1000, 630)
         self.setContentsMargins(0, 0, 0, 0)
 
-        self.setWindowTitle("My App")
+        self.setWindowTitle("Delivery System v1.0")
 
         self.setCentralWidget(self.build_central_widget())
 
         Theme.set_background_color(self, Color.BACKGROUND)
+
+        init_commands_shortcuts(self)
 
     def build_central_widget(self) -> QWidget:
         widget = QWidget()

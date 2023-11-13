@@ -1,4 +1,4 @@
-from typing import List
+from typing import Dict, List
 import time
 
 from PyQt6.QtCore import Qt
@@ -9,19 +9,20 @@ from PyQt6.QtWidgets import (
     QTableWidget,
     QTableWidgetItem,
     QVBoxLayout,
+    QWidget,
     QMessageBox,
 )
 
 from src.controllers.navigator.page import Page
 from src.models.delivery_man.delivery_man import DeliveryMan
-from src.models.tour import TourRequest
+from src.models.tour import DeliveryRequest, TourRequest
+from src.services.command.command_service import CommandService
+from src.services.command.commands.remove_delivery_request_command import (
+    RemoveDeliveryRequestCommand,
+)
+from src.services.delivery_man.delivery_man_service import DeliveryManService
 from src.services.tour.tour_service import TourService
 from src.views.ui import Button, Callout, Separator, Text, TextSize
-
-DELIVERY_MAN: List[DeliveryMan] = [
-    DeliveryMan("Josué stcyr", [8, 9, 10, 11]),
-    DeliveryMan("clem farhat", [8, 9]),
-]
 
 
 class DeliveryFormPage(Page):
@@ -32,67 +33,71 @@ class DeliveryFormPage(Page):
     def __init__(self):
         super().__init__()
 
+        # Define components to be used in this screen
         layout = QVBoxLayout()
-
-        layout.addWidget(Text("Add deliveries", TextSize.H1))
-        layout.addLayout(self.__build_delivery_man_form())
-        layout.addWidget(
-            Callout(
-                "Double-click on the map to add deliveries with the selected delivery man and time"
-            )
+        warehouse_location_label = Text("Warehouse Location", TextSize.H2)
+        add_deliveries_label = Text("Add deliveries", TextSize.H2)
+        add_deliveries_click = Callout(
+            "Double-click on the map to add deliveries with the selected deliveryman and time"
         )
-        layout.addWidget(Text("Deliveries", TextSize.H1))
+
+        deliveries_label = Text("Deliveries", TextSize.H2)
+
+        # Add components in the screen
+        layout.addWidget(warehouse_location_label)
+        layout.addLayout(self.__build_warehouse_location())
+        layout.addWidget(Separator())
+        layout.addWidget(add_deliveries_label)
+        layout.addLayout(self.__build_delivery_man_form())
+        layout.addWidget(add_deliveries_click)
+
+        layout.addWidget(deliveries_label)
         layout.addLayout(self.__build_delivery_table())
         layout.addWidget(Separator())
-        layout.addLayout(self.__build_load_tour())
-        layout.addLayout(self.__build_save_tour_button()) 
+        layout.addLayout(self.__build_load_tours())
 
         self.setLayout(layout)
 
-        self.address_list = []
+        # UNUSED self.address_list = []
 
-        self.__update_delivery_man_combobox(DELIVERY_MAN)
+        DeliveryManService.instance().delivery_men.subscribe(
+            self.__update_delivery_man_combobox
+        )
         TourService.instance().tour_requests.subscribe(self.__update_delivery_table)
 
     def compute_tour(self):
-        pass
+        TourService.instance().compute_tours()
 
-    def remove_address(self, row):
-        pass
-    
-    def save_tour(self):
-        
-        selected_delivery_man = self.__delivery_man_control.currentData()
-        selected_time_window = self.__time_window_control.currentData()
+    def remove_delivery(self, delivery: DeliveryRequest, delivery_man: DeliveryMan):
+        CommandService.instance().execute(
+            RemoveDeliveryRequestCommand(
+                delivery_request=delivery,
+                delivery_man=delivery_man,
+            )
+        )
+        # TourService.instance().remove_delivery_request(delivery, delivery_man)
 
-        if selected_delivery_man and selected_time_window:
-            delivery_man_name = selected_delivery_man.name
-            time_window_str = f"{selected_time_window}:00 - {selected_time_window + 1}:00"
-            message = f"Tour saved for {delivery_man_name} with time window {time_window_str}"
-           
-            self.show_popup("Tour Saved", message)
-        else:
-            self.show_popup("Error", "Please select a delivery man and time window before saving the tour")
-    
-    def show_popup(self, title, message):
-        popup = QMessageBox()
-        popup.setWindowTitle(title)
-        popup.setText(message)
-        popup.exec()
+    def __build_warehouse_location(self) -> QLayout:
+        # Define components to be used in this screen
+        layout = QHBoxLayout()
+
+        warehouse_address_label = Text("20 avenue Albert Einstein", TextSize.label)
+
+        layout.addWidget(warehouse_address_label)
+
+        return layout
 
     def __build_delivery_man_form(self) -> QLayout:
+        # Define components to be used in this screen
         layout = QHBoxLayout()
 
         delivery_man_layout = QVBoxLayout()
-        delivery_man_label = Text("Delivery man", TextSize.label)
         delivery_man_combobox = QComboBox()
+        delivery_man_label = Text("Deliveryman", TextSize.label)
 
         time_window_layout = QVBoxLayout()
-        time_window_label = Text("Time window", TextSize.label)
         time_window_combobox = QComboBox()
-
-        
-       
+        time_window_label = Text("Time window", TextSize.label)
 
         delivery_man_layout.addWidget(delivery_man_label)
         delivery_man_layout.addWidget(delivery_man_combobox)
@@ -119,57 +124,78 @@ class DeliveryFormPage(Page):
             )
         )
 
+        delivery_man_combobox.currentIndexChanged.connect(
+            lambda: DeliveryManService.instance().set_selected_delivery_man(
+                delivery_man_combobox.currentData().name
+                if delivery_man_combobox.currentData()
+                else None
+            )
+        )
+        time_window_combobox.currentIndexChanged.connect(
+            lambda: DeliveryManService.instance().set_selected_time_window(
+                time_window_combobox.currentData()
+            )
+        )
+
         return layout
 
     def __build_delivery_table(self) -> QLayout:
+        # Define components to be used in this screen
         layout = QVBoxLayout()
 
         table = QTableWidget()
-        table.setColumnCount(3)
+        table.setColumnCount(4)
         table.setHorizontalHeaderLabels(
-            ["Delivery Address", "Time Window", "Delivery Man"]
+            ["Delivery Address", "Time Window", "Delivery Man", ""]
         )
         table.setEditTriggers(QTableWidget.EditTrigger.NoEditTriggers)
+        table.setSelectionMode(QTableWidget.SelectionMode.SingleSelection)
 
         self.__delivery_table = table
 
         buttons_layout = QHBoxLayout()
         buttons_layout.setAlignment(Qt.AlignmentFlag.AlignCenter)
 
-        compute_tour_button = Button("Compute Tour")
-        compute_tour_button.clicked.connect(self.compute_tour)
+        """ compute_tour_button = Button("Compute Tour")
+        compute_tour_button.clicked.connect(self.compute_tour) """
 
-        buttons_layout.addWidget(compute_tour_button)
+        save_tour_button = Button("Save Tour")
+        save_tour_button.clicked.connect(self.__save_tour)
+
+        # Add components in the screen
+        # buttons_layout.addWidget(compute_tour_button)
+        buttons_layout.addWidget(save_tour_button)
 
         layout.addWidget(table)
         layout.addLayout(buttons_layout)
 
         return layout
 
-    def __build_load_tour(self) -> QLayout:
+    def __build_load_tours(self) -> QLayout:
+        # Define components to be used in this screen
         layout = QVBoxLayout()
+
+        load_tour_label = Callout(
+            "Or load an existing tour to the current deliveryman and current delivery window"
+        )
 
         buttons_layout = QHBoxLayout()
         buttons_layout.setAlignment(Qt.AlignmentFlag.AlignCenter)
+        load_tour_button = Button("Load Tour")
+        buttons_layout.addWidget(load_tour_button)
 
-        compute_tour_button = Button("Load Tour")
-
-        buttons_layout.addWidget(compute_tour_button)
-
-        layout.addWidget(
-            Callout(
-                "Or load an existing tour (this will overwrite any destinations above)"
-            )
-        )
+        layout.addWidget(load_tour_label)
         layout.addLayout(buttons_layout)
 
         return layout
 
-    def __update_delivery_man_combobox(self, delivery_mans: List[DeliveryMan]) -> None:
+    def __update_delivery_man_combobox(
+        self, delivery_men: Dict[str, DeliveryMan]
+    ) -> None:
         current_value = self.__delivery_man_control.currentData()
         self.__delivery_man_control.clear()
 
-        for delivery_man in delivery_mans:
+        for delivery_man in delivery_men.values():
             self.__delivery_man_control.addItem(delivery_man.name, delivery_man)
 
         new_index = max(self.__delivery_man_control.findData(current_value), 0)
@@ -179,6 +205,9 @@ class DeliveryFormPage(Page):
     def __update_time_window_combobox(self, delivery_man: DeliveryMan) -> None:
         current_value = self.__time_window_control.currentData()
         self.__time_window_control.clear()
+
+        if not delivery_man:
+            return
 
         for time_window in delivery_man.availabilities:
             self.__time_window_control.addItem(
@@ -193,34 +222,70 @@ class DeliveryFormPage(Page):
     def __update_delivery_table(self, tours: List[TourRequest]) -> None:
         self.__delivery_table.setRowCount(0)
 
-        for tour in tours:
-            for delivery in tour.deliveries:
-                row_position = self.__delivery_table.rowCount()
+        self.table_rows = [
+            (tour, delivery) for tour in tours for delivery in tour.deliveries
+        ]
 
-                timeWindow = f"{delivery.timeWindow}:00 - {delivery.timeWindow + 1}:00"
+        for tour, delivery in self.table_rows:
+            row_position = self.__delivery_table.rowCount()
 
-                self.__delivery_table.insertRow(row_position)
-                self.__delivery_table.setItem(
-                    row_position, 0, QTableWidgetItem(delivery.location.segment.name)
-                )
-                self.__delivery_table.setItem(
-                    row_position, 1, QTableWidgetItem(timeWindow)
-                )
-                self.__delivery_table.setItem(
-                    row_position, 2, QTableWidgetItem(tour.delivery_man.name)
-                )
-    def __build_save_tour_button(self) -> QLayout:
-        layout = QVBoxLayout()
+            timeWindow = f"{delivery.timeWindow}:00 - {delivery.timeWindow + 1}:00"
 
-        buttons_layout = QHBoxLayout()
-        buttons_layout.setAlignment(Qt.AlignmentFlag.AlignCenter)
+            actions_widget = QWidget()
+            actions_layout = QHBoxLayout()
+            remove_btn = Button("Remove")
 
-        save_tour_button = Button("Save Tour")
-        save_tour_button.clicked.connect(self.save_tour)  
+            remove_btn.clicked.connect(
+                lambda: self.remove_delivery(delivery, tour.delivery_man)
+            )
 
-        buttons_layout.addWidget(save_tour_button)
+            actions_layout.setContentsMargins(2, 2, 2, 2)
 
-        layout.addLayout(buttons_layout)
+            actions_layout.addWidget(remove_btn)
+            actions_widget.setLayout(actions_layout)
 
-        return layout
+            self.__delivery_table.insertRow(row_position)
+
+            self.__delivery_table.setItem(
+                row_position, 0, QTableWidgetItem(delivery.location.segment.name)
+            )
+            self.__delivery_table.setItem(row_position, 1, QTableWidgetItem(timeWindow))
+            self.__delivery_table.setItem(
+                row_position, 2, QTableWidgetItem(tour.delivery_man.name)
+            )
+            self.__delivery_table.setCellWidget(
+                row_position,
+                3,
+                actions_widget,
+            )
+
+        def select_delivery_request(row_index: int) -> None:
+            TourService.instance().select_delivery_request(
+                self.table_rows[row_index][1].location
+            )
+
+        self.__delivery_table.itemSelectionChanged.connect(
+            lambda: select_delivery_request(self.__delivery_table.currentRow())
+        )
+
+        self.__delivery_table.clearSelection()
+        TourService.instance().select_delivery_request(None)
+
+    def __save_tour(self):
+        selected_delivery_man: DeliveryMan = self.__delivery_man_control.currentData()
+        selected_time_window: int = self.__time_window_control.currentData()
+
+        if selected_delivery_man and selected_time_window:
+            delivery_man_name = selected_delivery_man.name
+            time_window_str = f"{selected_time_window}:00 - {selected_time_window + 1}:00"
+            message = f"Tour saved for {delivery_man_name} with time window {time_window_str}"
+
+            self.__show_popup("Tour Saved", message)
+        else:
+            self.__show_popup("Error", "Please select a delivery man and time window before saving the tour")
     
+    def __show_popup(self, title, message):
+        popup = QMessageBox()
+        popup.setWindowTitle(title)
+        popup.setText(message)
+        popup.exec()

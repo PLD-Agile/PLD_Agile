@@ -132,6 +132,9 @@ class Navigator(Generic[RouteName]):
 
         self.__history_stack.on_next(self.__history_stack.value[:-1] + [name])
 
+    def get_current_route_name(self) -> RouteName:
+        return self.__history_stack.value[-1]
+
     def get_router_outlet(self) -> QWidget:
         """Build a router outlet that shows the current route's widget
 

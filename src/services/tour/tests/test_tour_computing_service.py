@@ -1,6 +1,10 @@
+from typing import List
+
 import networkx as nx
 from pytest import fixture
 
+from src.models.map import Intersection, Segment
+from src.models.tour import DeliveryLocation, DeliveryRequest
 from src.services.tour.tour_computing_service import TourComputingService
 
 
@@ -27,7 +31,15 @@ def test_compute_shortest_path_graph(tour_service):
     G.add_edge(3, 4, length=2.5)
 
     # Define a set of delivery locations
-    delivery_locations = [1, 2, 4]
+    delivery_locations: List[DeliveryRequest] = [
+        DeliveryRequest(
+            DeliveryLocation(
+                Segment("", Intersection(0, 0, i), Intersection(0, 0, i), 0), 0
+            ),
+            0,
+        )
+        for i in [1, 2, 4]
+    ]
 
     # Compute the shortest path graph
     shortest_path_graph = tour_service.compute_shortest_path_graph(
@@ -45,3 +57,42 @@ def test_compute_shortest_path_graph(tour_service):
     assert shortest_path_graph[1][2]["path"] == [1, 2]
     assert shortest_path_graph[1][4]["path"] == [1, 3, 4]
     assert shortest_path_graph[2][4]["path"] == [2, 3, 4]
+
+
+def test_solve_tsp_should_return_solution(tour_service):
+    # Create a sample complete directed graph
+    G = nx.DiGraph()
+    G.add_node(0)
+    G.add_node(1)
+    G.add_node(2)
+
+    G.add_edge(0, 1, length=1.0, path=[0, 23, 56, 1])
+    G.add_edge(1, 0, length=2.0, path=[1, 12, 16, 0])
+    G.add_edge(0, 2, length=3.0, path=[0, 5, 33, 2])
+    G.add_edge(2, 0, length=4.0, path=[2, 42, 27, 0])
+    G.add_edge(1, 2, length=5.0, path=[1, 7, 6, 2])
+
+    path = tour_service.solve_tsp(G)
+
+    # Check if the above graph is a valid NetworkX DiGraph
+    assert isinstance(G, nx.DiGraph)
+    assert path == [0, 23, 56, 1, 7, 6, 2, 42, 27, 0]
+
+
+def test_solve_tsp_should_return_empty_solution_if_cul_de_sac(tour_service):
+    # Create a sample complete directed graph
+    G = nx.DiGraph()
+    G.add_node(0)
+    G.add_node(1)
+    G.add_node(2)
+
+    G.add_edge(0, 1, length=1.0, path=[0, 23, 56, 1])
+    G.add_edge(1, 0, length=2.0, path=[1, 12, 16, 0])
+    G.add_edge(0, 2, length=3.0, path=[0, 5, 33, 2])
+    G.add_edge(1, 2, length=5.0, path=[1, 7, 6, 2])
+
+    path = tour_service.solve_tsp(G)
+
+    # Check if the above graph is a valid NetworkX DiGraph
+    assert isinstance(G, nx.DiGraph)
+    assert path == []

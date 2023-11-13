@@ -1,48 +1,59 @@
 from PyQt6.QtCore import Qt
-from PyQt6.QtWidgets import QHBoxLayout, QLabel, QLineEdit, QPushButton, QVBoxLayout
+from PyQt6.QtWidgets import QHBoxLayout, QLabel, QLineEdit, QMessageBox, QVBoxLayout
+from reactivex import Observable
 
 from src.controllers.navigator.page import Page
+from src.services.delivery_man.delivery_man_service import DeliveryManService
+from src.views.ui import Button, Text, TextSize
 
 
 class AddDeliveryManFormView(Page):
     def __init__(self):
         super().__init__()
 
-        title_label = QLabel("<b><font size='6'>Add Delivery Man</font></b>")
+        # Define components to be used in this screen
+        layout = QVBoxLayout()
+        title_label = Text("Create a deliveryman", TextSize.H2)
 
-        name_label = QLabel("<b>Name:</b>")
+        name_label = Text("Name", TextSize.label)
         name_input = QLineEdit()
 
-        phone_label = QLabel("<b>Phone:</b>")
-        phone_input = QLineEdit()
+        buttons_layout = QHBoxLayout()
+        add_button = Button("Create")
 
-        add_button = QPushButton("Add Delivery Man")
-        add_button.setFixedWidth(150)
+        # Connect the 'clicked' signal to the handler function
+        add_button.clicked.connect(self.add_delivery_man)
 
-        layout = QVBoxLayout()
+        # Add components in the screen
+        layout.setAlignment(Qt.AlignmentFlag.AlignTop)
+        layout.addWidget(title_label)
+        layout.addWidget(name_label)
+        layout.addWidget(name_input)
 
-        for widget in [title_label, name_label, name_input, phone_label, phone_input]:
-            widget.setStyleSheet("color: black;")
-            layout.addWidget(widget)
+        buttons_layout.setAlignment(Qt.AlignmentFlag.AlignRight)
+        buttons_layout.addWidget(add_button)
 
-        layout.addWidget(add_button, alignment=Qt.AlignmentFlag.AlignRight)
-
-        style_sheet = """
-            QPushButton {
-                background-color: #FFC0CB;  /* Pink */
-                border: none;
-                color: white;
-                padding: 10px 20px;
-                text-align: center;
-                text-decoration: none;
-                font-size: 16px;
-                margin: 4px 2px;
-                border-radius: 8px;
-            }
-            QPushButton:hover {
-                background-color: #FF69B4;  /* Hot Pink on hover */
-            }
-        """
-        self.setStyleSheet(style_sheet)
+        layout.addLayout(buttons_layout)
 
         self.setLayout(layout)
+
+    def add_delivery_man(self):
+        name_input = self.findChild(QLineEdit)
+        name = name_input.text()
+
+        if not name:
+            return  # Don't proceed if the name is empty
+
+        # Call the service to create a delivery man
+        delivery_man = DeliveryManService.instance().create_delivery_man(name)
+
+        # Show a pop-up message
+        message_box = QMessageBox()
+        message_box.setWindowTitle("Success")
+        message_box.setText(f"Delivery man '{delivery_man.name}' added successfully.")
+        message_box.setIcon(QMessageBox.Icon.Information)
+        message_box.setStandardButtons(QMessageBox.StandardButton.Ok)
+        message_box.exec()
+
+        # Clear the input field
+        name_input.clear()

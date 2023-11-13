@@ -3,6 +3,8 @@ from typing import Optional
 
 from PyQt6.QtWidgets import QGraphicsOpacityEffect, QLabel, QWidget
 
+from src.views.utils.theme import Color
+
 
 class TextSize(Enum):
     H1 = 1
@@ -22,6 +24,7 @@ class Text(QLabel):
             f"""
             font-weight: {self.get_font_weight(size)};
             font-size: {self.get_font_size(size)}px;
+            color: {self.__get_color()};
         """
         )
         self.set_effects(size)
@@ -47,6 +50,9 @@ class Text(QLabel):
             return 600
         else:
             return 400
+
+    def __get_color(self) -> str:
+        return Color.PRIMARY_CONTRAST.value
 
     def set_effects(self, size: TextSize) -> None:
         if size == TextSize.label:

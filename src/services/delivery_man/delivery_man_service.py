@@ -1,40 +1,75 @@
+from typing import Dict, List, Optional, Tuple
+
+from reactivex import Observable, combine_latest
+from reactivex.subject import BehaviorSubject
+
 from src.models.delivery_man.delivery_man import DeliveryMan
 from src.models.delivery_man.errors import DeliveryManError
 from src.services.singleton import Singleton
 
 
 class DeliveryManService(Singleton):
-    def create_delivery_man(self, delivery_man_info) -> DeliveryMan:
+    __delivery_men: BehaviorSubject[Dict[str, DeliveryMan]] = BehaviorSubject(
+        {
+            "Josué stcyr": DeliveryMan("Josué stcyr", [8, 9, 10, 11]),
+            "clem farhat": DeliveryMan("clem farhat", [8, 9, 10, 11]),
+        }
+    )
+    __selected_delivery_man: BehaviorSubject[Optional[DeliveryMan]] = BehaviorSubject(
+        None
+    )
+    __selected_time_window: BehaviorSubject[Optional[int]] = BehaviorSubject(None)
+
+    @property
+    def delivery_men(self) -> Observable[Dict[str, DeliveryMan]]:
+        """Returns every Delivery Men.
+
+        Args:
+           No args.
+
+        Returns:
+            Observable[Dict[DeliveryMan]]: DeliveryMen dictionnary observable instance
+        """
+
+        return self.__delivery_men
+
+    @property
+    def selected_values(
+        self,
+    ) -> Observable[Tuple[Optional[DeliveryMan], Optional[int]]]:
+        """Returns selected delivery man and time window.
+
+        Returns:
+            Observable[Tuple[Optional[DeliveryMan], Optional[int]]]: _description_
+        """
+        return combine_latest(self.__selected_delivery_man, self.__selected_time_window)
+
+    def create_delivery_man(self, name: str) -> None:
         """Creates a Delivery Man and pass it back.
 
         Args:
-            delivery_man_info: A dictionary containing the name,
-            availabilities and speed (optional) of the deliveryman
-            to be created.
+            name: a string that represents the name of the delivery name that'll be created
 
         Returns:
-            DeliveryMan: DeliveryMan instance
+            None
         """
 
-        name = delivery_man_info.get("name")
-        availabilities = delivery_man_info.get("availabilities")
-        speed = delivery_man_info.get("speed")
+        availabilities = [8, 9, 10, 11]
 
-        if (name is not None) and (availabilities is not None):
-            if speed is not None:
-                deliveryman = DeliveryMan(name, availabilities, speed)
-            else:
-                deliveryman = DeliveryMan(name, availabilities)
-
-        else:
+        if name is None:
             raise DeliveryManError("No name or availabilities provided")
+
+        deliveryman = DeliveryMan(name, availabilities)
+
+        self.__delivery_men.value[deliveryman.name] = deliveryman
+        self.__delivery_men.on_next(self.__delivery_men.value)
 
         return deliveryman
 
     def modify_delivery_man(
         self, delivery_man: DeliveryMan, delivery_man_info
     ) -> DeliveryMan:
-        """Updates a Delivery Man and pass it back.
+        """Updates a Deliveryman and pass it back.
 
         Args:
             delivery_man: A DeliveryMan instance to be updated
@@ -44,6 +79,9 @@ class DeliveryManService(Singleton):
         Returns:
             DeliveryMan: DeliveryMan instance
         """
+
+        delivery_man = self.__delivery_men.value[delivery_man.name]
+
         name = delivery_man_info.get("name")
         availabilities = delivery_man_info.get("availabilities")
         speed = delivery_man_info.get("speed")
@@ -54,18 +92,41 @@ class DeliveryManService(Singleton):
         if availabilities is not None:
             delivery_man.availabilities = availabilities
 
-        if speed is not None:
-            delivery_man.speed = speed
+        self.__delivery_men.on_next(self.__delivery_men.value)
 
         return delivery_man
 
     def remove_delivery_man(self, delivery_man: DeliveryMan) -> None:
-        """Deletes a Delivery Man.
+        """Deletes a Deliveryman.
 
         Args:
             delivery_man: A DeliveryMan instance to be deleted
         """
 
-        del delivery_man
+        del self.__delivery_men.value[delivery_man.name]
+        self.__delivery_men.on_next(self.__delivery_men.value)
 
         return
+
+    def set_selected_delivery_man(self, delivery_man_name: Optional[str]) -> None:
+        """Set currently selected delivery man.
+
+        Args:
+            delivery_man_name (str): Name of the delivery man to be selected
+        """
+        self.__selected_delivery_man.on_next(
+            self.__delivery_men.value[delivery_man_name]
+            if delivery_man_name is not None
+            else None
+        )
+
+    def set_selected_time_window(self, time_window: Optional[int]) -> None:
+        """Set currently selected time window.
+
+        Args:
+            time_window (int): Time window to be selected
+        """
+        self.__selected_time_window.on_next(time_window)
+
+    def get_selected_values(self) -> Tuple[Optional[DeliveryMan], Optional[int]]:
+        return (self.__selected_delivery_man.value, self.__selected_time_window.value)
