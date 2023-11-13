@@ -110,15 +110,15 @@ class DeliveryManService(Singleton):
 
         return
 
-    def set_selected_delivery_man(self, delivery_man_name: Optional[str]) -> None:
+    def set_selected_delivery_man(self, delivery_man_id: Optional[int]) -> None:
         """Set currently selected delivery man.
 
         Args:
             delivery_man_name (str): Name of the delivery man to be selected
         """
         self.__selected_delivery_man.on_next(
-            self.__delivery_men.value[delivery_man_name]
-            if delivery_man_name is not None
+            self.__delivery_men.value[delivery_man_id]
+            if delivery_man_id is not None
             else None
         )
 
