@@ -23,7 +23,7 @@ class TourComputingService(Singleton):
         """Compute tours for a list of tour requests."""
         map_graph = self.create_graph_from_map(map)
         warehouse = DeliveryRequest(
-            DeliveryLocation(-1, Segment(-1, "", map.warehouse, map.warehouse, 0), 0), 8
+            DeliveryLocation(Segment(-1, "", map.warehouse, map.warehouse, 0), 0), 8
         )
 
         return [

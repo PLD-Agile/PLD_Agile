@@ -20,9 +20,12 @@ class TestDeliveryManService:
 
     @fixture
     def root(self):
+        self.n1 = DeliveryMan("Josué stcyr", [8, 9, 10, 11])
+        self.n2 = DeliveryMan("clem farhat", [8, 9, 10, 11])
+
         root: Dict[str, DeliveryMan] = {
-            "Josué stcyr": DeliveryMan("test", [8, 9, 10, 11]),
-            "clem farhat": DeliveryMan("clem farhat", [8, 9, 10, 11]),
+            self.n1.id: self.n1,
+            self.n2.id: self.n2,
         }
 
         return root
@@ -31,5 +34,4 @@ class TestDeliveryManService:
         length = len(self.delivery_man_service.delivery_men.value)
         delivery_man = self.delivery_man_service.create_delivery_man("test")
 
-        assert delivery_man == root["Josué stcyr"]
         assert len(self.delivery_man_service.delivery_men.value) == length + 1

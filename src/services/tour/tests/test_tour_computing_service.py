@@ -34,7 +34,7 @@ def test_compute_shortest_path_graph(tour_service):
     delivery_locations: List[DeliveryRequest] = [
         DeliveryRequest(
             DeliveryLocation(
-                Segment("", Intersection(0, 0, i), Intersection(0, 0, i), 0), 0
+                Segment(-1, "", Intersection(0, 0, i), Intersection(0, 0, i), 0), 0
             ),
             8,
         )
