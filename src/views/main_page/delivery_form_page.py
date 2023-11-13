@@ -1,16 +1,16 @@
-from typing import Dict, List
 import time
+from typing import Dict, List
 
 from PyQt6.QtCore import Qt
 from PyQt6.QtWidgets import (
     QComboBox,
     QHBoxLayout,
     QLayout,
+    QMessageBox,
     QTableWidget,
     QTableWidgetItem,
     QVBoxLayout,
     QWidget,
-    QMessageBox,
 )
 
 from src.controllers.navigator.page import Page
@@ -107,7 +107,6 @@ class DeliveryFormPage(Page):
 
         layout.addLayout(delivery_man_layout)
         layout.addLayout(time_window_layout)
-        
 
         layout.setContentsMargins(0, 0, 0, 0)
         delivery_man_layout.setContentsMargins(0, 0, 0, 0)
@@ -277,13 +276,20 @@ class DeliveryFormPage(Page):
 
         if selected_delivery_man and selected_time_window:
             delivery_man_name = selected_delivery_man.name
-            time_window_str = f"{selected_time_window}:00 - {selected_time_window + 1}:00"
-            message = f"Tour saved for {delivery_man_name} with time window {time_window_str}"
+            time_window_str = (
+                f"{selected_time_window}:00 - {selected_time_window + 1}:00"
+            )
+            message = (
+                f"Tour saved for {delivery_man_name} with time window {time_window_str}"
+            )
 
             self.__show_popup("Tour Saved", message)
         else:
-            self.__show_popup("Error", "Please select a delivery man and time window before saving the tour")
-    
+            self.__show_popup(
+                "Error",
+                "Please select a delivery man and time window before saving the tour",
+            )
+
     def __show_popup(self, title, message):
         popup = QMessageBox()
         popup.setWindowTitle(title)
