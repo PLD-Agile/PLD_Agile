@@ -27,7 +27,7 @@ class TestMapService:
 
     def test_should_clear_map(self):
         self.map_service.set_map("MAP")
-        self.map_service.clear_map()
+        self.map_service.clear()
 
         def on_next(map):
             assert map is None

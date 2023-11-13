@@ -6,6 +6,7 @@ from PyQt6.QtWidgets import QLabel, QWidget
 
 class Callout(QLabel):
     STYLE_SHEET = """
+        color: #ffffff;
         background-color: #515764;
         font-weight: 500;
         padding: 12px;
