@@ -1,40 +1,26 @@
 import itertools
-import xml.etree.ElementTree as ET
-from typing import List, Tuple
+from typing import List
 
 import networkx as nx
 
-from src.models.delivery_man.delivery_man import DeliveryMan
 from src.models.map import Map, Segment
-from src.models.tour import (
-    ComputedDelivery,
-    ComputedTour,
-    DeliveryLocation,
-    DeliveryRequest,
-    TourRequest,
-)
+from src.models.tour import DeliveryLocation, DeliveryRequest, TourRequest
 from src.services.singleton import Singleton
 
 
 class TourComputingService(Singleton):
-    def compute_tours(
-        self, tour_requests: List[TourRequest], map: Map
-    ) -> List[List[int]]:
+    def compute_tour(self, tour_request: TourRequest, map: Map) -> List[int]:
         """Compute tours for a list of tour requests."""
         map_graph = self.create_graph_from_map(map)
         warehouse = DeliveryRequest(
             DeliveryLocation(Segment(-1, "", map.warehouse, map.warehouse, 0), 0), 8
         )
 
-        return [
-            self.solve_tsp(
-                self.compute_shortest_path_graph(
-                    map_graph, [warehouse] + tour_request.deliveries
-                )
+        return self.solve_tsp(
+            self.compute_shortest_path_graph(
+                map_graph, [warehouse] + list(tour_request.deliveries.values())
             )
-            for tour_request in tour_requests
-            if tour_request.deliveries
-        ]
+        )
 
     #  Replace this with the data from the Map model
     def create_graph_from_map(self, map: Map) -> nx.Graph:
@@ -65,7 +51,7 @@ class TourComputingService(Singleton):
         # Add delivery locations as nodes
         for delivery in deliveries:
             G.add_node(
-                delivery.location.segment.origin.id, timewindow=delivery.timeWindow
+                delivery.location.segment.origin.id, timewindow=delivery.time_window
             )
 
         # Compute the shortest path distances and paths between delivery locations
@@ -74,7 +60,7 @@ class TourComputingService(Singleton):
                 if source != target:
                     # add time windows constraints
                     if (
-                        target.timeWindow + 1 <= source.timeWindow
+                        target.time_window + 1 <= source.time_window
                         and target != deliveries[0]
                     ):
                         continue

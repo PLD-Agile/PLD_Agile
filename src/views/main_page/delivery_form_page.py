@@ -1,10 +1,10 @@
-import time
 from typing import Dict, List
 
 from PyQt6.QtCore import Qt
 from PyQt6.QtWidgets import (
     QComboBox,
     QHBoxLayout,
+    QLabel,
     QLayout,
     QMessageBox,
     QTableWidget,
@@ -15,7 +15,16 @@ from PyQt6.QtWidgets import (
 
 from src.controllers.navigator.page import Page
 from src.models.delivery_man.delivery_man import DeliveryMan
-from src.models.tour import DeliveryRequest, TourRequest
+from src.models.tour import (
+    ComputedDelivery,
+    ComputedTour,
+    Delivery,
+    DeliveryID,
+    Tour,
+    TourID,
+    TourRequest,
+    DeliveryRequest,
+)
 from src.services.command.command_service import CommandService
 from src.services.command.commands.remove_delivery_request_command import (
     RemoveDeliveryRequestCommand,
@@ -63,19 +72,20 @@ class DeliveryFormPage(Page):
         DeliveryManService.instance().delivery_men.subscribe(
             self.__update_delivery_man_combobox
         )
-        TourService.instance().tour_requests.subscribe(self.__update_delivery_table)
+        TourService.instance().all_tours.subscribe(self.__update_delivery_table)
 
     def compute_tour(self):
         TourService.instance().compute_tours()
 
-    def remove_delivery(self, delivery: DeliveryRequest, delivery_man: DeliveryMan):
+    def remove_delivery_location(
+        self, delivery_request_id: DeliveryID, tour_id: TourID
+    ):
         CommandService.instance().execute(
             RemoveDeliveryRequestCommand(
-                delivery_request=delivery,
-                delivery_man=delivery_man,
+                delivery_request_id=delivery_request_id,
+                tour_id=tour_id,
             )
         )
-        # TourService.instance().remove_delivery_request(delivery, delivery_man)
 
     def __build_warehouse_location(self) -> QLayout:
         # Define components to be used in this screen
@@ -145,7 +155,7 @@ class DeliveryFormPage(Page):
         table = QTableWidget()
         table.setColumnCount(4)
         table.setHorizontalHeaderLabels(
-            ["Delivery Address", "Time Window", "Delivery Man", ""]
+            ["Delivery Address", "Time", "Delivery Man", ""]
         )
         table.setEditTriggers(QTableWidget.EditTrigger.NoEditTriggers)
         table.setSelectionMode(QTableWidget.SelectionMode.SingleSelection)
@@ -218,44 +228,32 @@ class DeliveryFormPage(Page):
                 max(self.__time_window_control.findData(current_value), 0)
             )
 
-    def __update_delivery_table(self, tours: List[TourRequest]) -> None:
+    def __update_delivery_table(self, tours: List[TourRequest | ComputedTour]) -> None:
         self.__delivery_table.setRowCount(0)
 
         self.table_rows = [
-            (tour, delivery) for tour in tours for delivery in tour.deliveries
+            (tour, delivery) for tour in tours for delivery in tour.deliveries.values()
         ]
 
         for tour, delivery in self.table_rows:
             row_position = self.__delivery_table.rowCount()
-
-            timeWindow = f"{delivery.timeWindow}:00 - {delivery.timeWindow + 1}:00"
-
-            actions_widget = QWidget()
-            actions_layout = QHBoxLayout()
-            remove_btn = Button("Remove")
-
-            remove_btn.clicked.connect(
-                lambda: self.remove_delivery(delivery, tour.delivery_man)
-            )
-
-            actions_layout.setContentsMargins(2, 2, 2, 2)
-
-            actions_layout.addWidget(remove_btn)
-            actions_widget.setLayout(actions_layout)
-
             self.__delivery_table.insertRow(row_position)
 
             self.__delivery_table.setItem(
                 row_position, 0, QTableWidgetItem(delivery.location.segment.name)
             )
-            self.__delivery_table.setItem(row_position, 1, QTableWidgetItem(timeWindow))
             self.__delivery_table.setItem(
-                row_position, 2, QTableWidgetItem(tour.delivery_man.name)
+                row_position,
+                1,
+                self.__build_time_table_item(delivery),
+            )
+            self.__delivery_table.setCellWidget(
+                row_position, 2, self.__build_delivery_man_table_item(tour)
             )
             self.__delivery_table.setCellWidget(
                 row_position,
                 3,
-                actions_widget,
+                self.__build_actions_table_item(delivery, tour),
             )
 
         def select_delivery_request(row_index: int) -> None:
@@ -263,12 +261,61 @@ class DeliveryFormPage(Page):
                 self.table_rows[row_index][1].location
             )
 
-        self.__delivery_table.itemSelectionChanged.connect(
+        self.__delivery_table.itemClicked.connect(
             lambda: select_delivery_request(self.__delivery_table.currentRow())
         )
 
         self.__delivery_table.clearSelection()
         TourService.instance().select_delivery_request(None)
+
+    def __build_delivery_man_table_item(self, tour: Tour) -> QWidget:
+        delivery_man_widget = QWidget()
+        delivery_man_layout = QHBoxLayout()
+
+        delivery_man_label = QLabel(tour.delivery_man.name)
+        delivery_man_label.setStyleSheet(
+            f"""
+            background-color: {tour.color if isinstance(tour, ComputedTour) else "#222222"};
+            border-radius: 5px;
+            color: white;
+            text-align: center;
+            font-weight: 500;
+            font-size: 12px;
+        """
+        )
+        delivery_man_label.setAlignment(Qt.AlignmentFlag.AlignCenter)
+        delivery_man_label.setContentsMargins(6, 0, 6, 0)
+
+        delivery_man_layout.setContentsMargins(2, 6, 2, 6)
+        delivery_man_layout.setAlignment(Qt.AlignmentFlag.AlignHCenter)
+        delivery_man_layout.addWidget(delivery_man_label)
+        delivery_man_widget.setLayout(delivery_man_layout)
+
+        return delivery_man_widget
+
+    def __build_actions_table_item(self, delivery: Delivery, tour: Tour) -> QWidget:
+        actions_widget = QWidget()
+        actions_layout = QHBoxLayout()
+
+        remove_btn = Button("Remove")
+        remove_btn.clicked.connect(
+            lambda _, delivery=delivery, tour=tour: self.remove_delivery_location(
+                delivery_request_id=delivery.id, tour_id=tour.id
+            )
+        )
+
+        actions_layout.setContentsMargins(2, 2, 2, 2)
+        actions_layout.addWidget(remove_btn)
+        actions_widget.setLayout(actions_layout)
+
+        return actions_widget
+
+    def __build_time_table_item(self, delivery: Delivery) -> QWidget:
+        return QTableWidgetItem(
+            delivery.time.strftime("%H:%M")
+            if isinstance(delivery, ComputedDelivery)
+            else f"{delivery.time_window}:00 - {delivery.time_window + 1}:00" if isinstance(delivery, DeliveryRequest) else "ERROR"
+        )
 
     def __save_tour(self):
         selected_delivery_man: DeliveryMan = self.__delivery_man_control.currentData()
