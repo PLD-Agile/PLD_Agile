@@ -97,6 +97,7 @@ def test_solve_tsp_should_return_empty_solution_if_cul_de_sac(tour_service):
     assert isinstance(G, nx.DiGraph)
     assert path == []
 
+
 # Test for time window constraints
 def test_solve_tsp_should_fail_if_delivery_not_in_time_window(tour_service):
     # Create a sample complete directed graph
@@ -116,7 +117,6 @@ def test_solve_tsp_should_fail_if_delivery_not_in_time_window(tour_service):
     G.add_edge(3, 2, length=7.0, path=[3, 4, 19, 2])
     G.add_edge(2, 3, length=8.0, path=[2, 4, 7, 3])
     G.add_edge(3, 0, length=555.0, path=[3, 2, 99, 33, 0])
-
 
     path = tour_service.solve_tsp(G)
 
@@ -143,7 +143,6 @@ def test_solve_tsp_should_pass_if_delivery_in_time_window(tour_service):
     G.add_edge(3, 2, length=7.0, path=[3, 4, 19, 2])
     G.add_edge(2, 3, length=8.0, path=[2, 4, 7, 3])
     G.add_edge(3, 0, length=555.0, path=[3, 2, 99, 33, 0])
-
 
     path = tour_service.solve_tsp(G)
 

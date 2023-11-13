@@ -23,7 +23,7 @@ class TourComputingService(Singleton):
         """Compute tours for a list of tour requests."""
         map_graph = self.create_graph_from_map(map)
         warehouse = DeliveryRequest(
-            DeliveryLocation(Segment("", map.warehouse, map.warehouse, 0), 0), 8
+            DeliveryLocation(-1, Segment("", map.warehouse, map.warehouse, 0), 0), 8
         )
 
         return [
@@ -64,14 +64,19 @@ class TourComputingService(Singleton):
         G = nx.DiGraph()
         # Add delivery locations as nodes
         for delivery in deliveries:
-            G.add_node(delivery.location.segment.origin.id, timewindow=delivery.timeWindow)
+            G.add_node(
+                delivery.location.segment.origin.id, timewindow=delivery.timeWindow
+            )
 
         # Compute the shortest path distances and paths between delivery locations
         for source in deliveries:
             for target in deliveries:
                 if source != target:
                     # add time windows constraints
-                    if target.timeWindow + 1 <= source.timeWindow and target != deliveries[0]:
+                    if (
+                        target.timeWindow + 1 <= source.timeWindow
+                        and target != deliveries[0]
+                    ):
                         continue
                     try:
                         shortest_path_length, shortest_path = nx.single_source_dijkstra(
@@ -90,7 +95,6 @@ class TourComputingService(Singleton):
                     )
 
         return G
-
 
     def solve_tsp(self, shortest_path_graph: nx.Graph) -> List[int]:
         shortest_cycle_length = float("inf")
@@ -118,7 +122,9 @@ class TourComputingService(Singleton):
 
                 # Check if the delivery time is within the time window
                 time_window = shortest_path_graph.nodes[target]["timewindow"] * 60
-                travel_time = (travel_distance / 15000) * 60  # Convert meters to minutes based on speed (15 km/h)
+                travel_time = (
+                    travel_distance / 15000
+                ) * 60  # Convert meters to minutes based on speed (15 km/h)
                 arrival_time = current_time + travel_time
 
                 if arrival_time < time_window:
