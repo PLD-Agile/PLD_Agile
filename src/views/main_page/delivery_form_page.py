@@ -1,4 +1,5 @@
 from typing import List
+import time
 
 from PyQt6.QtCore import Qt
 from PyQt6.QtWidgets import (
@@ -8,6 +9,7 @@ from PyQt6.QtWidgets import (
     QTableWidget,
     QTableWidgetItem,
     QVBoxLayout,
+    QMessageBox,
 )
 
 from src.controllers.navigator.page import Page
@@ -43,6 +45,7 @@ class DeliveryFormPage(Page):
         layout.addLayout(self.__build_delivery_table())
         layout.addWidget(Separator())
         layout.addLayout(self.__build_load_tour())
+        layout.addLayout(self.__build_save_tour_button()) 
 
         self.setLayout(layout)
 
@@ -56,6 +59,26 @@ class DeliveryFormPage(Page):
 
     def remove_address(self, row):
         pass
+    
+    def save_tour(self):
+        
+        selected_delivery_man = self.__delivery_man_control.currentData()
+        selected_time_window = self.__time_window_control.currentData()
+
+        if selected_delivery_man and selected_time_window:
+            delivery_man_name = selected_delivery_man.name
+            time_window_str = f"{selected_time_window}:00 - {selected_time_window + 1}:00"
+            message = f"Tour saved for {delivery_man_name} with time window {time_window_str}"
+           
+            self.show_popup("Tour Saved", message)
+        else:
+            self.show_popup("Error", "Please select a delivery man and time window before saving the tour")
+    
+    def show_popup(self, title, message):
+        popup = QMessageBox()
+        popup.setWindowTitle(title)
+        popup.setText(message)
+        popup.exec()
 
     def __build_delivery_man_form(self) -> QLayout:
         layout = QHBoxLayout()
@@ -68,6 +91,9 @@ class DeliveryFormPage(Page):
         time_window_label = Text("Time window", TextSize.label)
         time_window_combobox = QComboBox()
 
+        
+       
+
         delivery_man_layout.addWidget(delivery_man_label)
         delivery_man_layout.addWidget(delivery_man_combobox)
 
@@ -76,6 +102,7 @@ class DeliveryFormPage(Page):
 
         layout.addLayout(delivery_man_layout)
         layout.addLayout(time_window_layout)
+        
 
         layout.setContentsMargins(0, 0, 0, 0)
         delivery_man_layout.setContentsMargins(0, 0, 0, 0)
@@ -182,3 +209,18 @@ class DeliveryFormPage(Page):
                 self.__delivery_table.setItem(
                     row_position, 2, QTableWidgetItem(tour.delivery_man.name)
                 )
+    def __build_save_tour_button(self) -> QLayout:
+        layout = QVBoxLayout()
+
+        buttons_layout = QHBoxLayout()
+        buttons_layout.setAlignment(Qt.AlignmentFlag.AlignCenter)
+
+        save_tour_button = Button("Save Tour")
+        save_tour_button.clicked.connect(self.save_tour)  
+
+        buttons_layout.addWidget(save_tour_button)
+
+        layout.addLayout(buttons_layout)
+
+        return layout
+    
