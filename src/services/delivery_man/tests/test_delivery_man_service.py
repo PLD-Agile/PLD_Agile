@@ -22,7 +22,7 @@ class TestDeliveryManService:
     def root(self):
         self.n1 = DeliveryMan("Josué stcyr", [8, 9, 10, 11])
         self.n2 = DeliveryMan("clem farhat", [8, 9, 10, 11])
-        
+
         root: Dict[str, DeliveryMan] = {
             self.n1.id: self.n1,
             self.n2.id: self.n2,
