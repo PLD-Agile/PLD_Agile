@@ -23,7 +23,7 @@ class TourComputingService(Singleton):
         """Compute tours for a list of tour requests."""
         map_graph = self.create_graph_from_map(map)
         warehouse = DeliveryRequest(
-            DeliveryLocation(Segment("", map.warehouse, map.warehouse, 0), 0), 0
+            DeliveryLocation(Segment("", map.warehouse, map.warehouse, 0), 0), 8
         )
 
         return [
@@ -62,15 +62,17 @@ class TourComputingService(Singleton):
     ) -> nx.DiGraph:
         """Compute the shortest path graph between delivery locations."""
         G = nx.DiGraph()
-
         # Add delivery locations as nodes
         for delivery in deliveries:
-            G.add_node(delivery.location.segment.origin.id)
+            G.add_node(delivery.location.segment.origin.id, timewindow=delivery.timeWindow)
 
         # Compute the shortest path distances and paths between delivery locations
         for source in deliveries:
             for target in deliveries:
                 if source != target:
+                    # add time windows constraints
+                    if target.timeWindow + 1 <= source.timeWindow and target != deliveries[0]:
+                        continue
                     try:
                         shortest_path_length, shortest_path = nx.single_source_dijkstra(
                             graph,
@@ -89,7 +91,6 @@ class TourComputingService(Singleton):
 
         return G
 
-    # TODO : solve the tsp algorithm from the shortest path graph, return the route and the length
 
     def solve_tsp(self, shortest_path_graph: nx.Graph) -> List[int]:
         shortest_cycle_length = float("inf")
@@ -104,13 +105,32 @@ class TourComputingService(Singleton):
             permuted_points = list(permuted_points)
             permuted_points = [warehouse_id] + permuted_points
             cycle_length = 0
+            current_time = 8 * 60  # Starting time at the warehouse (8 a.m.)
+
             for i in range(len(permuted_points) - 1):
                 source = permuted_points[i]
                 target = permuted_points[i + 1]
                 if not shortest_path_graph.has_edge(source, target):
                     is_valid_tuple = False
                     break
-                cycle_length += shortest_path_graph[source][target]["length"]
+                travel_distance = shortest_path_graph[source][target]["length"]
+                cycle_length += travel_distance
+
+                # Check if the delivery time is within the time window
+                time_window = shortest_path_graph.nodes[target]["timewindow"] * 60
+                travel_time = (travel_distance / 15000) * 60  # Convert meters to minutes based on speed (15 km/h)
+                arrival_time = current_time + travel_time
+
+                if arrival_time < time_window:
+                    # Courier arrives before the time window, wait until it starts
+                    current_time = time_window + 5  # Add 5 minutes for delivery
+                elif arrival_time <= time_window + 60:
+                    # Courier arrives within the time window
+                    current_time = arrival_time + 5  # Add 5 minutes for delivery
+                else:
+                    # Courier arrives after the time window, this tuple is invalid
+                    is_valid_tuple = False
+                    break
 
             if not is_valid_tuple:
                 continue
@@ -127,7 +147,7 @@ class TourComputingService(Singleton):
                 shortest_cycle_length = cycle_length
                 shortest_cycle = permuted_points
 
-                # Compute the actual route from the shortest cycle
+        # Compute the actual route from the shortest cycle
         if shortest_cycle == []:
             return []
         for i in range(len(shortest_cycle) - 1):
