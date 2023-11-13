@@ -160,6 +160,7 @@ class MapView(QGraphicsView):
         icon_shape = self.__scene.addPixmap(icon_pixmap)
         icon_shape.setPos(icon_position)
         icon_shape.setScale(marker_size / self.MARKER_RESOLUTION_RESOLUTION)
+        icon_shape.setZValue(10000)
 
         marker = MapMarker(icon_shape, align_bottom, scale)
 
