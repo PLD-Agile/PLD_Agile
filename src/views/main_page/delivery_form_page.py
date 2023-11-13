@@ -50,14 +50,11 @@ class DeliveryFormPage(Page):
         layout.addLayout(self.__build_delivery_table())
         layout.addWidget(separator2)
         layout.addLayout(self.__build_save_load_tours())
-
         self.setLayout(layout)
 
         # UNUSED self.address_list = []
 
-        DeliveryManService.instance().delivery_men.subscribe(
-            self.__update_delivery_man_combobox
-        )
+        DeliveryManService.instance().delivery_men.subscribe(self.__update_delivery_man_combobox)
         TourService.instance().tour_requests.subscribe(self.__update_delivery_table)
 
     def compute_tour(self):
@@ -162,9 +159,7 @@ class DeliveryFormPage(Page):
 
         return layout
 
-    def __update_delivery_man_combobox(
-        self, delivery_men: Dict[str, DeliveryMan]
-    ) -> None:
+    def __update_delivery_man_combobox(self, delivery_men: Dict[str, DeliveryMan]) -> None:
         current_value = self.__delivery_man_control.currentData()
         self.__delivery_man_control.clear()
 

@@ -9,10 +9,12 @@ from src.services.singleton import Singleton
 
 
 class DeliveryManService(Singleton):
+    n1 = DeliveryMan("Josué stcyr", [8, 9, 10, 11])
+    n2 = DeliveryMan("clem farhat", [8, 9, 10, 11])
     __delivery_men: BehaviorSubject[Dict[str, DeliveryMan]] = BehaviorSubject(
         {
-            "Josué stcyr": DeliveryMan("Josué stcyr", [8, 9, 10, 11]),
-            "clem farhat": DeliveryMan("clem farhat", [8, 9, 10, 11]),
+            n1.id: n1,
+            n2.id: n2,
         }
     )
 
@@ -46,7 +48,7 @@ class DeliveryManService(Singleton):
 
         deliveryman = DeliveryMan(name, availabilities)
 
-        self.__delivery_men.value[deliveryman.name] = deliveryman
+        self.__delivery_men.value[deliveryman.id] = deliveryman
         self.__delivery_men.on_next(self.__delivery_men.value)
 
         return deliveryman
@@ -65,7 +67,7 @@ class DeliveryManService(Singleton):
             DeliveryMan: DeliveryMan instance
         """
 
-        delivery_man = self.__delivery_men.value[delivery_man.name]
+        delivery_man = self.__delivery_men.value[delivery_man.id]
 
         name = delivery_man_info.get("name")
         availabilities = delivery_man_info.get("availabilities")
