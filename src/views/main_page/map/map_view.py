@@ -1,4 +1,5 @@
 from typing import List, Literal, Optional, Tuple
+import math
 
 from PyQt6.QtCore import QPointF, QRectF, Qt
 from PyQt6.QtGui import (
@@ -9,6 +10,7 @@ from PyQt6.QtGui import (
     QPen,
     QTransform,
     QWheelEvent,
+    QPolygonF,
 )
 from PyQt6.QtWidgets import QFrame, QGraphicsScene, QGraphicsView, QSizePolicy, QWidget
 from reactivex import Observable
@@ -33,6 +35,7 @@ from src.views.main_page.map.map_annotation_collection import (
 from src.views.main_page.map.map_marker import AlignBottom, MapMarker
 from src.views.utils.icon import get_icon_pixmap
 from src.views.utils.theme import Theme
+from views.main_page.map.map_segment import MapSegment
 
 
 class MapView(QGraphicsView):
@@ -61,6 +64,9 @@ class MapView(QGraphicsView):
     """
     SEGMENT_ZOOM_ADJUSTMENT = -0.075
     """Amount of zoom adjustment for the segments (1 = segment stays the same size, 0 = segment scales with the map)
+    """
+    MIN_SEGMENT_LENGTH_FOR_ARROW = 50
+    """Minimum length of a segment to display an arrow
     """
 
     __scene: Optional[QGraphicsScene] = None
@@ -245,17 +251,25 @@ class MapView(QGraphicsView):
     def __on_update_computed_tours(self, computed_tours: List[ComputedTour]):
         for maker in self.__map_annotations.segments.get(SegmentTypes.Tour):
             self.__scene.removeItem(maker.shape)
+            if maker.arrow_shape:
+                self.__scene.removeItem(maker.arrow_shape)
 
         self.__map_annotations.segments.clear(SegmentTypes.Tour)
 
+        i = 0
         for computed_tour in computed_tours:
             for segment in computed_tour.route:
+                segment_can_be_added = segment.length > self.MIN_SEGMENT_LENGTH_FOR_ARROW
+                
                 self.__add_segment(
                     segment=segment,
                     color=QColor(computed_tour.color),
-                    scale=2.5,
+                    scale=2,
                     segment_type=SegmentTypes.Tour,
+                    show_arrow=(i % 3 == 0) and segment_can_be_added,
                 )
+                
+                i += 1 if segment_can_be_added else 0
 
     def __add_segment(
         self,
@@ -263,6 +277,7 @@ class MapView(QGraphicsView):
         color: QColor = QColor("#9c9c9c"),
         scale: float = 1,
         segment_type: SegmentTypes = SegmentTypes.Default,
+        show_arrow: bool = False,
     ) -> None:
         """Add a segment on the map
 
@@ -280,11 +295,26 @@ class MapView(QGraphicsView):
                 self.__get_pen_size() * scale,
                 Qt.PenStyle.SolidLine,
                 Qt.PenCapStyle.RoundCap,
+                Qt.PenJoinStyle.RoundJoin,
             ),
         )
+        
+        arrow_shape = None
+        if show_arrow:
+            arrow_shape = self.__scene.addPolygon(
+                self.__calculate_arrow(segment),
+                QPen(
+                    QBrush(color),
+                    self.__get_pen_size() * scale,
+                    Qt.PenStyle.SolidLine,
+                    Qt.PenCapStyle.RoundCap,
+                    Qt.PenJoinStyle.RoundJoin,
+                ),
+                brush=QBrush(color),
+            )
 
         self.__map_annotations.segments.append(
-            segment_type, MapAnnotation(segmentLine, scale)
+            segment_type, MapSegment(segmentLine, scale, arrow_shape)
         )
 
     def __scale_map(self, factor: float):
@@ -316,6 +346,7 @@ class MapView(QGraphicsView):
             pen = segment.shape.pen()
             pen.setWidthF(self.__get_pen_size() * segment.scale)
             segment.shape.setPen(pen)
+            segment.arrow_shape.setPen(pen) if segment.arrow_shape else None
 
         for marker in self.__map_annotations.markers.get_all():
             self.__adjust_marker(marker)
@@ -380,6 +411,25 @@ class MapView(QGraphicsView):
             )
             * scale
         )
+        
+    def __calculate_arrow(self, segment: Segment, size: float = 0.0002) -> QPolygonF:
+        p1 = QPointF(segment.origin.longitude, segment.origin.latitude)
+        p2 = QPointF(segment.destination.longitude, segment.destination.latitude)
+        
+        # Get and normalize direction of the segment
+        direction = (p2 - p1)
+        direction /= math.sqrt(direction.x() ** 2 + direction.y() ** 2)
+        
+        # Define origin as the middle of the segment
+        origin = (p1 + p2) / 2 - (direction * size / 2)
+        
+        tangent = QPointF(direction.y(), -direction.x())
+        
+        return QPolygonF([
+            origin + (direction * size) + (tangent * -size / 2),
+            origin,
+            origin + (direction * size) + (tangent * size / 2),
+        ])
 
     def __set_config(self):
         """Initiate config for the view."""
