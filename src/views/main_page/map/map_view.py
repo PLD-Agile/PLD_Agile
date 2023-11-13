@@ -1,19 +1,26 @@
-from typing import Dict, List, Literal, Optional, Tuple
 import math
+from typing import Dict, List, Literal, Optional, Tuple
 
-from PyQt6.QtCore import QPointF, QRectF, QLineF, Qt
+from PyQt6.QtCore import QLineF, QPointF, QRectF, Qt
 from PyQt6.QtGui import (
     QBrush,
     QColor,
     QIcon,
+    QLinearGradient,
     QMouseEvent,
     QPen,
+    QPolygonF,
     QTransform,
     QWheelEvent,
-    QPolygonF,
-    QLinearGradient,
 )
-from PyQt6.QtWidgets import QFrame, QGraphicsScene, QGraphicsView, QSizePolicy, QWidget, QAbstractGraphicsShapeItem
+from PyQt6.QtWidgets import (
+    QAbstractGraphicsShapeItem,
+    QFrame,
+    QGraphicsScene,
+    QGraphicsView,
+    QSizePolicy,
+    QWidget,
+)
 from reactivex import Observable
 from reactivex.subject import BehaviorSubject
 
@@ -256,19 +263,19 @@ class MapView(QGraphicsView):
                 self.__scene.removeItem(maker.arrow_shape)
 
         self.__map_annotations.segments.clear(SegmentTypes.Tour)
-        
+
         segments: Dict[int, Tuple[Segment, List[ComputedTour]]] = {}
-        
+
         for computed_tour in computed_tours:
             for segment in computed_tour.route:
                 if segment.id not in segments:
                     segments[segment.id] = (segment, [])
                 segments[segment.id][1].append(computed_tour)
-                
+
         i = 0
-        for (_, (segment, tours)) in segments.items():
+        for _, (segment, tours) in segments.items():
             segment_can_be_added = segment.length > self.MIN_SEGMENT_LENGTH_FOR_ARROW
-                
+
             self.__add_segment(
                 segment=segment,
                 color=[QColor(tour.color) for tour in tours],
@@ -294,14 +301,14 @@ class MapView(QGraphicsView):
             color (QColor, optional): Color. Defaults to Qt.GlobalColor.black.
         """
         colors = [color] if isinstance(color, QColor) else color
-        
+
         line = QLineF(
             segment.origin.longitude,
             segment.origin.latitude,
             segment.destination.longitude,
-            segment.destination.latitude
+            segment.destination.latitude,
         )
-        
+
         segmentLine = self.__scene.addLine(
             line,
             QPen(
@@ -312,9 +319,9 @@ class MapView(QGraphicsView):
                 Qt.PenJoinStyle.RoundJoin,
             ),
         )
-        
+
         self.__set_brush_for_segment(segmentLine, line, colors)
-        
+
         arrow_shape = None
         if show_arrow:
             arrow_shape = self.__scene.addPolygon(
@@ -322,7 +329,7 @@ class MapView(QGraphicsView):
                 pen=segmentLine.pen(),
                 brush=segmentLine.pen().brush(),
             )
-            
+
             arrow_shape.setZValue(100)
 
         self.__map_annotations.segments.append(
@@ -423,35 +430,42 @@ class MapView(QGraphicsView):
             )
             * scale
         )
-        
+
     def __calculate_arrow(self, line: QLineF, size: float = 0.0002) -> QPolygonF:
         # Get and normalize direction of the segment
-        direction = (line.p2() - line.p1())
+        direction = line.p2() - line.p1()
         direction /= math.sqrt(direction.x() ** 2 + direction.y() ** 2)
-        
+
         # Define origin as the middle of the segment
         origin = (line.p1() + line.p2()) / 2 - (direction * size / 2)
-        
+
         tangent = QPointF(direction.y(), -direction.x())
-        
-        return QPolygonF([
-            origin + (direction * size) + (tangent * -size / 2),
-            origin,
-            origin + (direction * size) + (tangent * size / 2),
-        ])
-        
-    def __set_brush_for_segment(self, segment_shape: QAbstractGraphicsShapeItem, line: QLineF, colors: List[QColor]) -> QBrush:
+
+        return QPolygonF(
+            [
+                origin + (direction * size) + (tangent * -size / 2),
+                origin,
+                origin + (direction * size) + (tangent * size / 2),
+            ]
+        )
+
+    def __set_brush_for_segment(
+        self,
+        segment_shape: QAbstractGraphicsShapeItem,
+        line: QLineF,
+        colors: List[QColor],
+    ) -> QBrush:
         if len(colors) == 1:
             return QBrush(colors[0])
-                
+
         brush = QLinearGradient(line.p1(), line.p2())
-        
+
         count = math.floor(line.length() * 5000)
-        
+
         for i in range(count):
             brush.setColorAt(i / count, colors[i % len(colors)])
             brush.setColorAt(i / count + 0.0000001, colors[(i + 1) % len(colors)])
-        
+
         segment_pen = segment_shape.pen()
         segment_pen.setBrush(brush)
         segment_shape.setPen(segment_pen)

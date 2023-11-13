@@ -39,7 +39,7 @@ class Segment:
             raise MapLoadingError(
                 f"No intersection with ID {element.attrib['destination']} for destination on {element.tag} {name}"
             )
-            
+
         id = hash((origin.id, destination.id))
 
         return Segment(
