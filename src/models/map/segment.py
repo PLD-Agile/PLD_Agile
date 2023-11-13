@@ -8,6 +8,7 @@ from src.models.map.intersection import Intersection
 
 @dataclass
 class Segment:
+    id: int
     name: str
     origin: Intersection
     destination: Intersection
@@ -39,7 +40,10 @@ class Segment:
                 f"No intersection with ID {element.attrib['destination']} for destination on {element.tag} {name}"
             )
 
+        id = hash((origin.id, destination.id))
+
         return Segment(
+            id=id,
             name=name,
             origin=origin,
             destination=destination,

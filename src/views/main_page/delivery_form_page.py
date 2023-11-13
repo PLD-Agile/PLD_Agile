@@ -1,3 +1,4 @@
+import time
 from typing import Dict, List
 
 from PyQt6.QtCore import Qt
@@ -5,6 +6,7 @@ from PyQt6.QtWidgets import (
     QComboBox,
     QHBoxLayout,
     QLayout,
+    QMessageBox,
     QTableWidget,
     QTableWidgetItem,
     QVBoxLayout,
@@ -40,21 +42,20 @@ class DeliveryFormPage(Page):
         )
 
         deliveries_label = Text("Deliveries", TextSize.H2)
-        separator1 = Separator()
-        separator2 = Separator()
 
         # Add components in the screen
         layout.addWidget(warehouse_location_label)
         layout.addLayout(self.__build_warehouse_location())
-        layout.addWidget(separator1)
+        layout.addWidget(Separator())
         layout.addWidget(add_deliveries_label)
         layout.addLayout(self.__build_delivery_man_form())
         layout.addWidget(add_deliveries_click)
 
         layout.addWidget(deliveries_label)
         layout.addLayout(self.__build_delivery_table())
-        layout.addWidget(separator2)
-        layout.addLayout(self.__build_save_load_tours())
+        layout.addWidget(Separator())
+        layout.addLayout(self.__build_load_tours())
+
         self.setLayout(layout)
 
         # UNUSED self.address_list = []
@@ -96,7 +97,6 @@ class DeliveryFormPage(Page):
         time_window_combobox = QComboBox()
         time_window_label = Text("Time window", TextSize.label)
 
-        # Add components in the screen
         delivery_man_layout.addWidget(delivery_man_label)
         delivery_man_layout.addWidget(delivery_man_combobox)
 
@@ -157,6 +157,7 @@ class DeliveryFormPage(Page):
         compute_tour_button.clicked.connect(self.compute_tour) """
 
         save_tour_button = Button("Save Tour")
+        save_tour_button.clicked.connect(self.__save_tour)
 
         # Add components in the screen
         # buttons_layout.addWidget(compute_tour_button)
@@ -167,7 +168,7 @@ class DeliveryFormPage(Page):
 
         return layout
 
-    def __build_save_load_tours(self) -> QLayout:
+    def __build_load_tours(self) -> QLayout:
         # Define components to be used in this screen
         layout = QVBoxLayout()
 
@@ -177,9 +178,7 @@ class DeliveryFormPage(Page):
 
         buttons_layout = QHBoxLayout()
         buttons_layout.setAlignment(Qt.AlignmentFlag.AlignCenter)
-        save_tours_button = Button("Save Tours")
         load_tour_button = Button("Load Tour")
-        buttons_layout.addWidget(save_tours_button)
         buttons_layout.addWidget(load_tour_button)
 
         layout.addWidget(load_tour_label)
@@ -266,3 +265,29 @@ class DeliveryFormPage(Page):
 
         self.__delivery_table.clearSelection()
         TourService.instance().select_delivery_request(None)
+
+    def __save_tour(self):
+        selected_delivery_man: DeliveryMan = self.__delivery_man_control.currentData()
+        selected_time_window: int = self.__time_window_control.currentData()
+
+        if selected_delivery_man and selected_time_window:
+            delivery_man_name = selected_delivery_man.name
+            time_window_str = (
+                f"{selected_time_window}:00 - {selected_time_window + 1}:00"
+            )
+            message = (
+                f"Tour saved for {delivery_man_name} with time window {time_window_str}"
+            )
+
+            self.__show_popup("Tour Saved", message)
+        else:
+            self.__show_popup(
+                "Error",
+                "Please select a delivery man and time window before saving the tour",
+            )
+
+    def __show_popup(self, title, message):
+        popup = QMessageBox()
+        popup.setWindowTitle(title)
+        popup.setText(message)
+        popup.exec()
