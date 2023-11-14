@@ -13,7 +13,7 @@ from src.models.tour.delivery_location import DeliveryLocation
 class TestDeliveryLocation(unittest.TestCase):
     def test_should_create(self):
         intersection = Intersection(1.0, 1.0, 1.0)
-        segment = Segment("", intersection, intersection, 1.0)
+        segment = Segment(0, "", intersection, intersection, 1.0)
         assert DeliveryLocation(segment, 0.0)
 
     def test_should_not_create(self):
@@ -23,13 +23,21 @@ class TestDeliveryLocation(unittest.TestCase):
 
 class TestDeliveryRequest(unittest.TestCase):
     def test_should_create(self):
-        assert DeliveryRequest()
+        intersection = Intersection(1.0, 1.0, 1.0)
+        segment = Segment(0, "", intersection, intersection, 1.0)
+        location = DeliveryLocation(segment, 0.0)
+        assert DeliveryRequest(location, 0)
+        
+        
+    def test_should_not_create(self):
+        with self.assertRaises(TypeError):
+            DeliveryRequest()
 
 
 class TestComputedDelivery(unittest.TestCase):
     def test_should_create(self):
         intersection = Intersection(1.0, 1.0, 1.0)
-        segment = Segment("", intersection, intersection, 1.0)
+        segment = Segment(0, "", intersection, intersection, 1.0)
         delivery_location = DeliveryLocation(segment, 0.0)
         assert ComputedDelivery(delivery_location, 0.0)
 
@@ -41,7 +49,7 @@ class TestComputedDelivery(unittest.TestCase):
 class TestTourRequest(unittest.TestCase):
     def test_should_create(self):
         delivery_man = DeliveryMan("", [])
-        assert TourRequest([], delivery_man)
+        assert TourRequest([], {}, delivery_man, 'red')
 
     def test_should_not_create(self):
         with self.assertRaises(TypeError):
