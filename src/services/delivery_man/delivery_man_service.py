@@ -58,7 +58,7 @@ class DeliveryManService(Singleton):
         """
         return self.__delivery_men.value[id]
 
-    def create_delivery_man(self, name: str) -> None:
+    def create_delivery_man(self, name: str) -> DeliveryMan:
         """Creates a Delivery Man and pass it back.
 
         Args:
