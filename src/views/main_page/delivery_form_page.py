@@ -20,10 +20,10 @@ from src.models.tour import (
     ComputedTour,
     Delivery,
     DeliveryID,
+    DeliveryRequest,
     Tour,
     TourID,
     TourRequest,
-    DeliveryRequest,
 )
 from src.services.command.command_service import CommandService
 from src.services.command.commands.remove_delivery_request_command import (
@@ -314,7 +314,9 @@ class DeliveryFormPage(Page):
         return QTableWidgetItem(
             delivery.time.strftime("%H:%M")
             if isinstance(delivery, ComputedDelivery)
-            else f"{delivery.time_window}:00 - {delivery.time_window + 1}:00" if isinstance(delivery, DeliveryRequest) else "ERROR"
+            else f"{delivery.time_window}:00 - {delivery.time_window + 1}:00"
+            if isinstance(delivery, DeliveryRequest)
+            else "ERROR"
         )
 
     def __save_tour(self):

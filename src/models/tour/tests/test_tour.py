@@ -3,10 +3,7 @@ import unittest
 from src.models.delivery_man.delivery_man import DeliveryMan
 from src.models.map.intersection import Intersection
 from src.models.map.segment import Segment
-from src.models.tour import ComputedDelivery
-from src.models.tour import ComputedTour
-from src.models.tour import DeliveryRequest
-from src.models.tour import TourRequest
+from src.models.tour import ComputedDelivery, ComputedTour, DeliveryRequest, TourRequest
 from src.models.tour.delivery_location import DeliveryLocation
 
 
@@ -27,8 +24,7 @@ class TestDeliveryRequest(unittest.TestCase):
         segment = Segment(0, "", intersection, intersection, 1.0)
         location = DeliveryLocation(segment, 0.0)
         assert DeliveryRequest(location, 0)
-        
-        
+
     def test_should_not_create(self):
         with self.assertRaises(TypeError):
             DeliveryRequest()
@@ -49,7 +45,7 @@ class TestComputedDelivery(unittest.TestCase):
 class TestTourRequest(unittest.TestCase):
     def test_should_create(self):
         delivery_man = DeliveryMan("", [])
-        assert TourRequest([], {}, delivery_man, 'red')
+        assert TourRequest([], {}, delivery_man, "red")
 
     def test_should_not_create(self):
         with self.assertRaises(TypeError):

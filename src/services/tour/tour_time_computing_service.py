@@ -31,7 +31,12 @@ class TourTimeComputingService(Singleton):
 
         return ComputedTour.create_from_request(
             tour_request=tour_request,
-            deliveries={delivery.id: delivery for delivery in self.__compute_time_for_deliveries(tour_request, segment_route)},
+            deliveries={
+                delivery.id: delivery
+                for delivery in self.__compute_time_for_deliveries(
+                    tour_request, segment_route
+                )
+            },
             route=segment_route,
         )
 

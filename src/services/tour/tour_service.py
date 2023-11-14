@@ -175,7 +175,9 @@ class TourService(Singleton):
         computed_tours = {
             id: TourTimeComputingService.instance().get_computed_tour_from_route_ids(
                 self.__tour_requests.value[id], tour_intersection_ids
-            ) if tour_intersection_ids else None
+            )
+            if tour_intersection_ids
+            else None
             for (id, tour_intersection_ids) in tours_intersection_ids.items()
         }
 
