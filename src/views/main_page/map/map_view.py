@@ -131,7 +131,7 @@ class MapView(QGraphicsView):
         self.add_marker(
             position=map.warehouse,
             icon="warehouse",
-            color=QColor("#1e8239"),
+            color=QColor("#105723"),
             align_bottom=False,
             scale=1,
         )
