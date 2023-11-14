@@ -45,6 +45,26 @@ class TourRequest(Tour):
     """Map of delivery requests of the tour identified by their ID
     """
 
+    @staticmethod
+    def create_from_computed(computed_tour: "ComputedTour") -> "TourRequest":
+        """Creates an instance of TourRequest from a ComputedTour.
+
+        Args:
+            computed_tour (ComputedTour): Computed tour to create the tour request from
+
+        Returns:
+            TourRequest: Created instance
+        """
+        return TourRequest(
+            id=computed_tour.id,
+            deliveries={
+                id: DeliveryRequest.create_from_computed(delivery)
+                for id, delivery in computed_tour.deliveries.items()
+            },
+            delivery_man=computed_tour.delivery_man,
+            color=computed_tour.color,
+        )
+
 
 @dataclass
 class ComputedTour(Tour):

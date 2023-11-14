@@ -164,6 +164,7 @@ class DeliveryFormPage(Page):
         buttons_layout = QHBoxLayout()
         buttons_layout.setAlignment(Qt.AlignmentFlag.AlignCenter)
         load_tour_button = Button("Load Tour")
+        load_tour_button.clicked.connect(self.__load_tour)
         buttons_layout.addWidget(load_tour_button)
 
         layout.addWidget(load_tour_label)
@@ -236,24 +237,10 @@ class DeliveryFormPage(Page):
                 self.__errors_container.addWidget(error_widget)
 
     def __save_tour(self):
-        selected_delivery_man: DeliveryMan = self.__delivery_man_control.currentData()
-        selected_time_window: int = self.__time_window_control.currentData()
+        TourService.instance().save_tours("test.tour")
 
-        if selected_delivery_man and selected_time_window:
-            delivery_man_name = selected_delivery_man.name
-            time_window_str = (
-                f"{selected_time_window}:00 - {selected_time_window + 1}:00"
-            )
-            message = (
-                f"Tour saved for {delivery_man_name} with time window {time_window_str}"
-            )
-
-            self.__show_popup("Tour Saved", message)
-        else:
-            self.__show_popup(
-                "Error",
-                "Please select a delivery man and time window before saving the tour",
-            )
+    def __load_tour(self):
+        TourService.instance().load_tours("test.tour")
 
     def __show_popup(self, title, message):
         popup = QMessageBox()

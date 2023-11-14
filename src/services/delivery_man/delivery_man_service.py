@@ -144,3 +144,6 @@ class DeliveryManService(Singleton):
 
     def get_selected_values(self) -> Tuple[Optional[DeliveryMan], Optional[int]]:
         return (self.__selected_delivery_man.value, self.__selected_time_window.value)
+
+    def overwrite(self, delivery_men: Dict[UUID, DeliveryMan]):
+        self.__delivery_men.on_next(delivery_men)
