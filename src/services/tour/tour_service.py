@@ -12,6 +12,7 @@ from src.models.tour import (
     DeliveryID,
     DeliveryLocation,
     DeliveryRequest,
+    NonComputedTour,
     Tour,
     TourID,
     TourRequest,
@@ -24,12 +25,25 @@ from src.services.tour.tour_computing_service import TourComputingService
 from src.services.tour.tour_saving_service import TourSavingService
 from src.services.tour.tour_time_computing_service import TourTimeComputingService
 
-COLORS = ["#6929c4", "#1192e8", "#005d5d", "#9f1853", "#198038", "#012749", "#b28600"]
+COLORS = [
+    "#598BB4",
+    "#E1BC6C",
+    "#D5745A",
+    "#89BA9C",
+    "#9573C1",
+    "#7FBBDB",
+    "#757592",
+    "#A77E56",
+    "#A49F9C",
+    "#B7D273",
+    "#935772",
+    "#D17775",
+]
 
 
 class TourService(Singleton):
     __tour_requests: BehaviorSubject[Dict[TourID, TourRequest]]
-    __computed_tours: BehaviorSubject[Dict[TourID, ComputedTour]]
+    __computed_tours: BehaviorSubject[Dict[TourID, Tour]]
     __selected_delivery: BehaviorSubject[Optional[Delivery]]
 
     def __init__(self) -> None:
@@ -64,24 +78,8 @@ class TourService(Singleton):
         )
 
     @property
-    def computed_tours(self) -> Observable[Dict[TourID, ComputedTour]]:
+    def computed_tours(self) -> Observable[Dict[TourID, Tour]]:
         return self.__computed_tours
-
-    @property
-    def all_tours(self) -> Observable[List[Tour]]:
-        return combine_latest(
-            self.__tour_requests,
-            self.__computed_tours,
-        ).pipe(
-            map(
-                lambda tours: [
-                    (computed_tour if computed_tour else tour_request)
-                    for (tour_request, computed_tour) in zip(
-                        tours[0].values(), tours[1].values()
-                    )
-                ]
-            )
-        )
 
     def clear(self) -> None:
         self.__tour_requests.on_next({})
@@ -143,6 +141,9 @@ class TourService(Singleton):
 
         del tour_request.deliveries[delivery_request_id]
 
+        if len(tour_request.deliveries) == 0:
+            del self.__tour_requests.value[tour_request.id]
+
         self.__tour_requests.on_next(self.__tour_requests.value)
 
         if self.__selected_delivery.value == tour_request:
@@ -183,6 +184,9 @@ class TourService(Singleton):
             delivery_request_id
         ] = delivery_request
 
+        if len(tour_request.deliveries) == 0:
+            del self.__tour_requests.value[tour_request.id]
+
         self.__tour_requests.on_next(self.__tour_requests.value)
 
         return previous_delivery_man_id
@@ -195,19 +199,35 @@ class TourService(Singleton):
 
         map = MapService.instance().get_map()
 
-        tours_intersection_ids = {
-            id: TourComputingService.instance().compute_tour(tour_request, map)
-            for (id, tour_request) in self.__tour_requests.value.items()
-        }
+        tours_intersection_ids: Dict[TourID, List[UUID]] = {}
 
-        computed_tours = {
-            id: TourTimeComputingService.instance().get_computed_tour_from_route_ids(
-                self.__tour_requests.value[id], tour_intersection_ids
-            )
-            if tour_intersection_ids
-            else None
-            for (id, tour_intersection_ids) in tours_intersection_ids.items()
-        }
+        for id, tour_request in self.__tour_requests.value.items():
+            try:
+                tours_intersection_ids[
+                    id
+                ] = TourComputingService.instance().compute_tour(tour_request, map)
+            except Exception as e:
+                tours_intersection_ids[id] = []
+
+        computed_tours: Dict[TourID, Tour] = {}
+
+        for id, tour_intersection_ids in tours_intersection_ids.items():
+            if tour_intersection_ids:
+                try:
+                    computed_tours[
+                        id
+                    ] = TourTimeComputingService.instance().get_computed_tour_from_route_ids(
+                        self.__tour_requests.value[id], tour_intersection_ids
+                    )
+                except Exception as e:
+                    computed_tours[id] = NonComputedTour.create_from_request(
+                        self.__tour_requests.value[id],
+                        [f"Erreur lors du calcul du temps de parcours : {e}"],
+                    )
+            else:
+                computed_tours[id] = NonComputedTour.create_from_request(
+                    self.__tour_requests.value[id], ["Impossible de trouver un chemin."]
+                )
 
         self.__computed_tours.on_next(computed_tours)
 
