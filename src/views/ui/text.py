@@ -15,6 +15,22 @@ class TextSize(Enum):
 
 
 class Text(QLabel):
+    """A custom QLabel widget that allows for easy styling of text.
+
+    Args:
+        text (str): The text to display.
+        size (TextSize): The size of the text.
+        parent (Optional[QWidget]): The parent widget.
+
+    Attributes:
+        None
+
+    Methods:
+        get_font_size(size: TextSize) -> int: Returns the font size based on the given TextSize.
+        get_font_weight(size: TextSize) -> int: Returns the font weight based on the given TextSize.
+        __get_color() -> str: Returns the color of the text.
+        set_effects(size: TextSize) -> None: Sets the graphics effect for the text.
+    """
     def __init__(
         self, text: str, size: TextSize = TextSize.H1, parent: Optional[QWidget] = None
     ) -> None:

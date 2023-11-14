@@ -12,6 +12,15 @@ ButtonCorners = Enum("ButtonCorners", ["ALL", "LEFT", "RIGHT", "TOP", "BOTTOM", 
 
 
 class Button(QPushButton):
+    """A custom QPushButton with additional features such as rounded corners and custom styling.
+
+    Args:
+        text (Optional[str]): The text to display on the button. Defaults to None.
+        icon (Optional[QIcon | str]): The icon to display on the button. Can be a QIcon object or a string representing a FontAwesome icon name. Defaults to None.
+        corners (ButtonCorners): The corners of the button to round. Defaults to ButtonCorners.ALL.
+        parent (Optional[QWidget]): The parent widget of the button. Defaults to None.
+    """
+    
     __disabled: bool = False
     __corners: ButtonCorners = ButtonCorners.ALL
 
