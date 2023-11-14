@@ -274,9 +274,12 @@ class MapView(QGraphicsView):
                 continue
 
             for segment in computed_tour.route:
-                if segment.id not in segments:
-                    segments[segment.id] = (segment, [])
-                segments[segment.id][1].append(computed_tour)
+                # We get an unique identifier for the segment regardless of the direction
+                segment_id = f'{min(segment.origin.id, segment.destination.id)}-{max(segment.origin.id, segment.destination.id)}'
+                
+                if segment_id not in segments:
+                    segments[segment_id] = (segment, [])
+                segments[segment_id][1].append(computed_tour)
 
         i = 0
         for _, (segment, tours) in segments.items():
