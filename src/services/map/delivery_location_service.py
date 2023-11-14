@@ -46,6 +46,9 @@ class DeliveryLocationService(Singleton):
         found_distance: float = sys.maxsize
 
         for intersection in MapService.instance().get_map().intersections.values():
+            if self.__is_invalid_intersection(intersection):
+                continue
+
             distance = intersection.distance_to(position)
             if distance < found_distance:
                 found = intersection
@@ -63,3 +66,17 @@ class DeliveryLocationService(Singleton):
             List[Segment]: A list of segments connected to the given intersection.
         """
         return list(MapService.instance().get_map().segments[intersection.id].values())
+
+    def __is_invalid_intersection(self, intersection: Intersection) -> bool:
+        map = MapService().instance().get_map()
+
+        if intersection.id not in map.segments:
+            return True
+
+        segments = list(map.segments[intersection.id].values())
+
+        # Detect if the intersections is a the end of a one-way dead-end
+        if all(segment.destination.id not in map.segments for segment in segments):
+            return True
+
+        return False

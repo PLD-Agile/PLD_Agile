@@ -1,8 +1,8 @@
-from typing import List, Tuple
+from typing import Dict, List, Tuple
 
 from PyQt6.QtWidgets import QTableWidget
 
-from src.models.tour import Delivery, Tour
+from src.models.tour import Delivery, Tour, TourID
 from src.services.tour.tour_service import TourService
 from src.views.main_page.form.tours_table_column import ToursTableColumn
 from src.views.main_page.form.tours_table_column_items import (
@@ -45,11 +45,13 @@ class ToursTable(QTableWidget):
 
         self.cellClicked.connect(lambda: self.__on_item_clicked())
 
-    def update_content(self, tours: List[Tour]) -> None:
+    def update_content(self, tours: Dict[TourID, Tour]) -> None:
         self.setRowCount(0)
 
         self.__values = [
-            (tour, delivery) for tour in tours for delivery in tour.deliveries.values()
+            (tour, delivery)
+            for tour in tours.values()
+            for delivery in tour.deliveries.values()
         ]
 
         for tour, delivery in self.__values:

@@ -82,3 +82,36 @@ class ComputedTour(Tour):
             route=route,
             color=tour_request.color,
         )
+
+
+@dataclass
+class NonComputedTour(TourRequest):
+    """Represent a tour that could not be computed."""
+
+    errors: List[str] = field(default_factory=list)
+    """List of error messages
+    """
+
+    @staticmethod
+    def create_from_request(
+        tour_request: TourRequest,
+        errors: List[str],
+    ) -> "ComputedTour":
+        """Creates an instance of ComputedTour from a TourRequest, a list of computed deliveries and a route.
+
+        Args:
+            tour_request (TourRequest): Tour request to create the computed tour from
+            deliveries (Dict[DeliveryID, ComputedDelivery]): Map of computed deliveries of the tour identified by their ID
+            route (List[Segment]): List of segments of the route
+
+        Returns:
+            ComputedTour: Created instance
+        """
+
+        return NonComputedTour(
+            id=tour_request.id,
+            deliveries=tour_request.deliveries,
+            delivery_man=tour_request.delivery_man,
+            color=tour_request.color,
+            errors=errors,
+        )

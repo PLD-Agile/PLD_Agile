@@ -10,4 +10,9 @@ RouteName = TypeVar("RouteName", Enum, str)
 @dataclass
 class Route(Generic[RouteName]):
     name: RouteName
+    """Name of the route.
+    """
+
     widget: Type[QWidget]
+    """Qt widget to display as the page.
+    """

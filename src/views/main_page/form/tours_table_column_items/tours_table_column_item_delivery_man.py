@@ -32,7 +32,7 @@ class ToursTableColumnItemDeliveryMan(QWidget):
             )
         )
 
-        self.destroyed.connect(lambda: delivery_man_subscription.dispose())
+        self.destroyed.connect(delivery_man_subscription.dispose)
 
     def __build(self):
         self.__build_delivery_men_control()
