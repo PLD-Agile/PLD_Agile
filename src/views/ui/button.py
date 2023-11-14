@@ -20,7 +20,7 @@ class Button(QPushButton):
         corners (ButtonCorners): The corners of the button to round. Defaults to ButtonCorners.ALL.
         parent (Optional[QWidget]): The parent widget of the button. Defaults to None.
     """
-    
+
     __disabled: bool = False
     __corners: ButtonCorners = ButtonCorners.ALL
 

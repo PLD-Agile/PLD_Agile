@@ -1,0 +1,721 @@
+<!doctype html>
+<html lang="en">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1, minimum-scale=1" />
+<meta name="generator" content="pdoc 0.10.0" />
+<title>src.services.tour.tour_computing_service API documentation</title>
+<meta name="description" content="" />
+<link rel="preload stylesheet" as="style" href="https://cdnjs.cloudflare.com/ajax/libs/10up-sanitize.css/11.0.1/sanitize.min.css" integrity="sha256-PK9q560IAAa6WVRRh76LtCaI8pjTJ2z11v0miyNNjrs=" crossorigin>
+<link rel="preload stylesheet" as="style" href="https://cdnjs.cloudflare.com/ajax/libs/10up-sanitize.css/11.0.1/typography.min.css" integrity="sha256-7l/o7C8jubJiy74VsKTidCy1yBkRtiUGbVkYBylBqUg=" crossorigin>
+<link rel="stylesheet preload" as="style" href="https://cdnjs.cloudflare.com/ajax/libs/highlight.js/10.1.1/styles/github.min.css" crossorigin>
+<style>:root{--highlight-color:#fe9}.flex{display:flex !important}body{line-height:1.5em}#content{padding:20px}#sidebar{padding:30px;overflow:hidden}#sidebar > *:last-child{margin-bottom:2cm}.http-server-breadcrumbs{font-size:130%;margin:0 0 15px 0}#footer{font-size:.75em;padding:5px 30px;border-top:1px solid #ddd;text-align:right}#footer p{margin:0 0 0 1em;display:inline-block}#footer p:last-child{margin-right:30px}h1,h2,h3,h4,h5{font-weight:300}h1{font-size:2.5em;line-height:1.1em}h2{font-size:1.75em;margin:1em 0 .50em 0}h3{font-size:1.4em;margin:25px 0 10px 0}h4{margin:0;font-size:105%}h1:target,h2:target,h3:target,h4:target,h5:target,h6:target{background:var(--highlight-color);padding:.2em 0}a{color:#058;text-decoration:none;transition:color .3s ease-in-out}a:hover{color:#e82}.title code{font-weight:bold}h2[id^="header-"]{margin-top:2em}.ident{color:#900}pre code{background:#f8f8f8;font-size:.8em;line-height:1.4em}code{background:#f2f2f1;padding:1px 4px;overflow-wrap:break-word}h1 code{background:transparent}pre{background:#f8f8f8;border:0;border-top:1px solid #ccc;border-bottom:1px solid #ccc;margin:1em 0;padding:1ex}#http-server-module-list{display:flex;flex-flow:column}#http-server-module-list div{display:flex}#http-server-module-list dt{min-width:10%}#http-server-module-list p{margin-top:0}.toc ul,#index{list-style-type:none;margin:0;padding:0}#index code{background:transparent}#index h3{border-bottom:1px solid #ddd}#index ul{padding:0}#index h4{margin-top:.6em;font-weight:bold}@media (min-width:200ex){#index .two-column{column-count:2}}@media (min-width:300ex){#index .two-column{column-count:3}}dl{margin-bottom:2em}dl dl:last-child{margin-bottom:4em}dd{margin:0 0 1em 3em}#header-classes + dl > dd{margin-bottom:3em}dd dd{margin-left:2em}dd p{margin:10px 0}.name{background:#eee;font-weight:bold;font-size:.85em;padding:5px 10px;display:inline-block;min-width:40%}.name:hover{background:#e0e0e0}dt:target .name{background:var(--highlight-color)}.name > span:first-child{white-space:nowrap}.name.class > span:nth-child(2){margin-left:.4em}.inherited{color:#999;border-left:5px solid #eee;padding-left:1em}.inheritance em{font-style:normal;font-weight:bold}.desc h2{font-weight:400;font-size:1.25em}.desc h3{font-size:1em}.desc dt code{background:inherit}.source summary,.git-link-div{color:#666;text-align:right;font-weight:400;font-size:.8em;text-transform:uppercase}.source summary > *{white-space:nowrap;cursor:pointer}.git-link{color:inherit;margin-left:1em}.source pre{max-height:500px;overflow:auto;margin:0}.source pre code{font-size:12px;overflow:visible}.hlist{list-style:none}.hlist li{display:inline}.hlist li:after{content:',\2002'}.hlist li:last-child:after{content:none}.hlist .hlist{display:inline;padding-left:1em}img{max-width:100%}td{padding:0 .5em}.admonition{padding:.1em .5em;margin-bottom:1em}.admonition-title{font-weight:bold}.admonition.note,.admonition.info,.admonition.important{background:#aef}.admonition.todo,.admonition.versionadded,.admonition.tip,.admonition.hint{background:#dfd}.admonition.warning,.admonition.versionchanged,.admonition.deprecated{background:#fd4}.admonition.error,.admonition.danger,.admonition.caution{background:lightpink}</style>
+<style media="screen and (min-width: 700px)">@media screen and (min-width:700px){#sidebar{width:30%;height:100vh;overflow:auto;position:sticky;top:0}#content{width:70%;max-width:100ch;padding:3em 4em;border-left:1px solid #ddd}pre code{font-size:1em}.item .name{font-size:1em}main{display:flex;flex-direction:row-reverse;justify-content:flex-end}.toc ul ul,#index ul{padding-left:1.5em}.toc > ul > li{margin-top:.5em}}</style>
+<style media="print">@media print{#sidebar h1{page-break-before:always}.source{display:none}}@media print{*{background:transparent !important;color:#000 !important;box-shadow:none !important;text-shadow:none !important}a[href]:after{content:" (" attr(href) ")";font-size:90%}a[href][title]:after{content:none}abbr[title]:after{content:" (" attr(title) ")"}.ir a:after,a[href^="javascript:"]:after,a[href^="#"]:after{content:""}pre,blockquote{border:1px solid #999;page-break-inside:avoid}thead{display:table-header-group}tr,img{page-break-inside:avoid}img{max-width:100% !important}@page{margin:0.5cm}p,h2,h3{orphans:3;widows:3}h1,h2,h3,h4,h5,h6{page-break-after:avoid}}</style>
+<script defer src="https://cdnjs.cloudflare.com/ajax/libs/highlight.js/10.1.1/highlight.min.js" integrity="sha256-Uv3H6lx7dJmRfRvH8TH6kJD1TSK1aFcwgx+mdg3epi8=" crossorigin></script>
+<script>window.addEventListener('DOMContentLoaded', () => hljs.initHighlighting())</script>
+</head>
+<body>
+<main>
+<article id="content">
+<header>
+<h1 class="title">Module <code>src.services.tour.tour_computing_service</code></h1>
+</header>
+<section id="section-intro">
+<details class="source">
+<summary>
+<span>Expand source code</span>
+</summary>
+<pre><code class="python">import itertools
+from typing import List
+
+import networkx as nx
+
+from src.models.map import Map, Segment
+from src.models.tour import DeliveryLocation, DeliveryRequest, TourRequest
+from src.services.singleton import Singleton
+
+
+class TourComputingService(Singleton):
+    def compute_tour(self, tour_request: TourRequest, map: Map) -&gt; List[int]:
+        &#34;&#34;&#34;Compute tours for a list of tour requests.
+
+        Args:
+            tour_request (TourRequest): The tour request to compute the tour for.
+            map (Map): The map to compute the tour on.
+
+        Returns:
+            List[int]: The computed tour as a list of delivery IDs.
+        &#34;&#34;&#34;
+        map_graph = self.create_graph_from_map(map)
+        warehouse = DeliveryRequest(
+            DeliveryLocation(Segment(-1, &#34;&#34;, map.warehouse, map.warehouse, 0), 0), 8
+        )
+
+        return self.solve_tsp(
+            self.compute_shortest_path_graph(
+                map_graph, [warehouse] + list(tour_request.deliveries.values())
+            )
+        )
+
+    #  Replace this with the data from the Map model
+    def create_graph_from_map(self, map: Map) -&gt; nx.Graph:
+        &#34;&#34;&#34;Create a directed graph from a Map object.
+
+        Args:
+            map (Map): The Map object to create the graph from.
+
+        Returns:
+            nx.Graph: The directed graph created from the Map object.
+        &#34;&#34;&#34;
+        graph = nx.DiGraph()
+
+        graph.add_node(map.warehouse.id)
+
+        for intersection in map.intersections.values():
+            graph.add_node(
+                intersection.id,
+                latitude=float(intersection.latitude),
+                longitude=float(intersection.longitude),
+            )
+
+        for segment in map.get_all_segments():
+            graph.add_edge(
+                segment.origin.id, segment.destination.id, length=segment.length
+            )
+
+        return graph
+
+    def compute_shortest_path_graph(
+        self, graph: nx.Graph, deliveries: List[DeliveryRequest]
+    ) -&gt; nx.DiGraph:
+        &#34;&#34;&#34;Compute the shortest path graph between delivery locations.
+
+        Args:
+            graph (nx.Graph): The graph to compute the shortest path distances and paths between delivery locations.
+            deliveries (List[DeliveryRequest]): The list of delivery requests.
+
+        Returns:
+            nx.DiGraph: The directed graph with the shortest path distances and paths between delivery locations.
+        &#34;&#34;&#34;
+        G = nx.DiGraph()
+        # Add delivery locations as nodes
+        for delivery in deliveries:
+            G.add_node(
+                delivery.location.segment.origin.id, timewindow=delivery.time_window
+            )
+
+        # Compute the shortest path distances and paths between delivery locations
+        for source in deliveries:
+            for target in deliveries:
+                if source != target:
+                    # add time windows constraints
+                    if (
+                        target.time_window + 1 &lt;= source.time_window
+                        and target != deliveries[0]
+                    ):
+                        continue
+                    try:
+                        shortest_path_length, shortest_path = nx.single_source_dijkstra(
+                            graph,
+                            source.location.segment.origin.id,
+                            target.location.segment.origin.id,
+                            weight=&#34;length&#34;,
+                        )
+                    except nx.NetworkXNoPath:
+                        continue
+                    G.add_edge(
+                        source.location.segment.origin.id,
+                        target.location.segment.origin.id,
+                        length=shortest_path_length,
+                        path=shortest_path,
+                    )
+
+        return G
+
+    def solve_tsp(self, shortest_path_graph: nx.Graph) -&gt; List[int]:
+        &#34;&#34;&#34;Solves the Traveling Salesman Problem (TSP) for a given graph of delivery points and returns the shortest route.
+
+        Args:
+            shortest_path_graph (nx.Graph): A graph representing the shortest path between delivery points.
+
+        Returns:
+            List[int]: A list of integers representing the order of delivery points in the shortest route.
+        &#34;&#34;&#34;
+
+    def solve_tsp(self, shortest_path_graph: nx.Graph) -&gt; List[int]:
+        shortest_cycle_length = float(&#34;inf&#34;)
+        shortest_cycle = []
+        route = []
+
+        # Generate all permutations of delivery points to find the shortest cycle
+        delivery_points = list(shortest_path_graph.nodes())
+        warehouse_id = delivery_points.pop(0)
+        for permuted_points in itertools.permutations(delivery_points):
+            is_valid_tuple = True
+            permuted_points = list(permuted_points)
+            permuted_points = [warehouse_id] + permuted_points
+            cycle_length = 0
+            current_time = 8 * 60  # Starting time at the warehouse (8 a.m.)
+
+            for i in range(len(permuted_points) - 1):
+                source = permuted_points[i]
+                target = permuted_points[i + 1]
+                if not shortest_path_graph.has_edge(source, target):
+                    is_valid_tuple = False
+                    break
+                travel_distance = shortest_path_graph[source][target][&#34;length&#34;]
+                cycle_length += travel_distance
+
+                # Check if the delivery time is within the time window
+                time_window = shortest_path_graph.nodes[target][&#34;timewindow&#34;] * 60
+                travel_time = (
+                    travel_distance / 15000
+                ) * 60  # Convert meters to minutes based on speed (15 km/h)
+                arrival_time = current_time + travel_time
+
+                if arrival_time &lt; time_window:
+                    # Courier arrives before the time window, wait until it starts
+                    current_time = time_window + 5  # Add 5 minutes for delivery
+                elif arrival_time &lt;= time_window + 60:
+                    # Courier arrives within the time window
+                    current_time = arrival_time + 5  # Add 5 minutes for delivery
+                else:
+                    # Courier arrives after the time window, this tuple is invalid
+                    is_valid_tuple = False
+                    break
+
+            if not is_valid_tuple:
+                continue
+            # Add the length of the last edge back to the starting point to complete the cycle
+            if not shortest_path_graph.has_edge(
+                permuted_points[-1], permuted_points[0]
+            ):
+                continue
+            cycle_length += shortest_path_graph[permuted_points[-1]][
+                permuted_points[0]
+            ][&#34;length&#34;]
+
+            if cycle_length &lt; shortest_cycle_length:
+                shortest_cycle_length = cycle_length
+                shortest_cycle = permuted_points
+
+        # Compute the actual route from the shortest cycle
+        if shortest_cycle == []:
+            return []
+        for i in range(len(shortest_cycle) - 1):
+            source = shortest_cycle[i]
+            target = shortest_cycle[i + 1]
+            dijkstra_path = shortest_path_graph[source][target][&#34;path&#34;]
+            route = route + dijkstra_path
+            route.pop()
+
+        # Complete the route with the path from the last delivery point to the first
+        dijkstra_path = shortest_path_graph[shortest_cycle[-1]][shortest_cycle[0]][
+            &#34;path&#34;
+        ]
+
+        route = route + dijkstra_path
+
+        return route</code></pre>
+</details>
+</section>
+<section>
+</section>
+<section>
+</section>
+<section>
+</section>
+<section>
+<h2 class="section-title" id="header-classes">Classes</h2>
+<dl>
+<dt id="src.services.tour.tour_computing_service.TourComputingService"><code class="flex name class">
+<span>class <span class="ident">TourComputingService</span></span>
+</code></dt>
+<dd>
+<div class="desc"><p>Helper class that provides a standard way to create an ABC using
+inheritance.</p></div>
+<details class="source">
+<summary>
+<span>Expand source code</span>
+</summary>
+<pre><code class="python">class TourComputingService(Singleton):
+    def compute_tour(self, tour_request: TourRequest, map: Map) -&gt; List[int]:
+        &#34;&#34;&#34;Compute tours for a list of tour requests.
+
+        Args:
+            tour_request (TourRequest): The tour request to compute the tour for.
+            map (Map): The map to compute the tour on.
+
+        Returns:
+            List[int]: The computed tour as a list of delivery IDs.
+        &#34;&#34;&#34;
+        map_graph = self.create_graph_from_map(map)
+        warehouse = DeliveryRequest(
+            DeliveryLocation(Segment(-1, &#34;&#34;, map.warehouse, map.warehouse, 0), 0), 8
+        )
+
+        return self.solve_tsp(
+            self.compute_shortest_path_graph(
+                map_graph, [warehouse] + list(tour_request.deliveries.values())
+            )
+        )
+
+    #  Replace this with the data from the Map model
+    def create_graph_from_map(self, map: Map) -&gt; nx.Graph:
+        &#34;&#34;&#34;Create a directed graph from a Map object.
+
+        Args:
+            map (Map): The Map object to create the graph from.
+
+        Returns:
+            nx.Graph: The directed graph created from the Map object.
+        &#34;&#34;&#34;
+        graph = nx.DiGraph()
+
+        graph.add_node(map.warehouse.id)
+
+        for intersection in map.intersections.values():
+            graph.add_node(
+                intersection.id,
+                latitude=float(intersection.latitude),
+                longitude=float(intersection.longitude),
+            )
+
+        for segment in map.get_all_segments():
+            graph.add_edge(
+                segment.origin.id, segment.destination.id, length=segment.length
+            )
+
+        return graph
+
+    def compute_shortest_path_graph(
+        self, graph: nx.Graph, deliveries: List[DeliveryRequest]
+    ) -&gt; nx.DiGraph:
+        &#34;&#34;&#34;Compute the shortest path graph between delivery locations.
+
+        Args:
+            graph (nx.Graph): The graph to compute the shortest path distances and paths between delivery locations.
+            deliveries (List[DeliveryRequest]): The list of delivery requests.
+
+        Returns:
+            nx.DiGraph: The directed graph with the shortest path distances and paths between delivery locations.
+        &#34;&#34;&#34;
+        G = nx.DiGraph()
+        # Add delivery locations as nodes
+        for delivery in deliveries:
+            G.add_node(
+                delivery.location.segment.origin.id, timewindow=delivery.time_window
+            )
+
+        # Compute the shortest path distances and paths between delivery locations
+        for source in deliveries:
+            for target in deliveries:
+                if source != target:
+                    # add time windows constraints
+                    if (
+                        target.time_window + 1 &lt;= source.time_window
+                        and target != deliveries[0]
+                    ):
+                        continue
+                    try:
+                        shortest_path_length, shortest_path = nx.single_source_dijkstra(
+                            graph,
+                            source.location.segment.origin.id,
+                            target.location.segment.origin.id,
+                            weight=&#34;length&#34;,
+                        )
+                    except nx.NetworkXNoPath:
+                        continue
+                    G.add_edge(
+                        source.location.segment.origin.id,
+                        target.location.segment.origin.id,
+                        length=shortest_path_length,
+                        path=shortest_path,
+                    )
+
+        return G
+
+    def solve_tsp(self, shortest_path_graph: nx.Graph) -&gt; List[int]:
+        &#34;&#34;&#34;Solves the Traveling Salesman Problem (TSP) for a given graph of delivery points and returns the shortest route.
+
+        Args:
+            shortest_path_graph (nx.Graph): A graph representing the shortest path between delivery points.
+
+        Returns:
+            List[int]: A list of integers representing the order of delivery points in the shortest route.
+        &#34;&#34;&#34;
+
+    def solve_tsp(self, shortest_path_graph: nx.Graph) -&gt; List[int]:
+        shortest_cycle_length = float(&#34;inf&#34;)
+        shortest_cycle = []
+        route = []
+
+        # Generate all permutations of delivery points to find the shortest cycle
+        delivery_points = list(shortest_path_graph.nodes())
+        warehouse_id = delivery_points.pop(0)
+        for permuted_points in itertools.permutations(delivery_points):
+            is_valid_tuple = True
+            permuted_points = list(permuted_points)
+            permuted_points = [warehouse_id] + permuted_points
+            cycle_length = 0
+            current_time = 8 * 60  # Starting time at the warehouse (8 a.m.)
+
+            for i in range(len(permuted_points) - 1):
+                source = permuted_points[i]
+                target = permuted_points[i + 1]
+                if not shortest_path_graph.has_edge(source, target):
+                    is_valid_tuple = False
+                    break
+                travel_distance = shortest_path_graph[source][target][&#34;length&#34;]
+                cycle_length += travel_distance
+
+                # Check if the delivery time is within the time window
+                time_window = shortest_path_graph.nodes[target][&#34;timewindow&#34;] * 60
+                travel_time = (
+                    travel_distance / 15000
+                ) * 60  # Convert meters to minutes based on speed (15 km/h)
+                arrival_time = current_time + travel_time
+
+                if arrival_time &lt; time_window:
+                    # Courier arrives before the time window, wait until it starts
+                    current_time = time_window + 5  # Add 5 minutes for delivery
+                elif arrival_time &lt;= time_window + 60:
+                    # Courier arrives within the time window
+                    current_time = arrival_time + 5  # Add 5 minutes for delivery
+                else:
+                    # Courier arrives after the time window, this tuple is invalid
+                    is_valid_tuple = False
+                    break
+
+            if not is_valid_tuple:
+                continue
+            # Add the length of the last edge back to the starting point to complete the cycle
+            if not shortest_path_graph.has_edge(
+                permuted_points[-1], permuted_points[0]
+            ):
+                continue
+            cycle_length += shortest_path_graph[permuted_points[-1]][
+                permuted_points[0]
+            ][&#34;length&#34;]
+
+            if cycle_length &lt; shortest_cycle_length:
+                shortest_cycle_length = cycle_length
+                shortest_cycle = permuted_points
+
+        # Compute the actual route from the shortest cycle
+        if shortest_cycle == []:
+            return []
+        for i in range(len(shortest_cycle) - 1):
+            source = shortest_cycle[i]
+            target = shortest_cycle[i + 1]
+            dijkstra_path = shortest_path_graph[source][target][&#34;path&#34;]
+            route = route + dijkstra_path
+            route.pop()
+
+        # Complete the route with the path from the last delivery point to the first
+        dijkstra_path = shortest_path_graph[shortest_cycle[-1]][shortest_cycle[0]][
+            &#34;path&#34;
+        ]
+
+        route = route + dijkstra_path
+
+        return route</code></pre>
+</details>
+<h3>Ancestors</h3>
+<ul class="hlist">
+<li><a title="src.services.singleton.Singleton" href="../singleton.html#src.services.singleton.Singleton">Singleton</a></li>
+<li>abc.ABC</li>
+</ul>
+<h3>Methods</h3>
+<dl>
+<dt id="src.services.tour.tour_computing_service.TourComputingService.compute_shortest_path_graph"><code class="name flex">
+<span>def <span class="ident">compute_shortest_path_graph</span></span>(<span>self, graph: networkx.classes.graph.Graph, deliveries: List[<a title="src.models.tour.delivery.DeliveryRequest" href="../../models/tour/delivery.html#src.models.tour.delivery.DeliveryRequest">DeliveryRequest</a>]) ‑> networkx.classes.digraph.DiGraph</span>
+</code></dt>
+<dd>
+<div class="desc"><p>Compute the shortest path graph between delivery locations.</p>
+<h2 id="args">Args</h2>
+<dl>
+<dt><strong><code>graph</code></strong> :&ensp;<code>nx.Graph</code></dt>
+<dd>The graph to compute the shortest path distances and paths between delivery locations.</dd>
+<dt><strong><code>deliveries</code></strong> :&ensp;<code>List[DeliveryRequest]</code></dt>
+<dd>The list of delivery requests.</dd>
+</dl>
+<h2 id="returns">Returns</h2>
+<dl>
+<dt><code>nx.DiGraph</code></dt>
+<dd>The directed graph with the shortest path distances and paths between delivery locations.</dd>
+</dl></div>
+<details class="source">
+<summary>
+<span>Expand source code</span>
+</summary>
+<pre><code class="python">def compute_shortest_path_graph(
+    self, graph: nx.Graph, deliveries: List[DeliveryRequest]
+) -&gt; nx.DiGraph:
+    &#34;&#34;&#34;Compute the shortest path graph between delivery locations.
+
+    Args:
+        graph (nx.Graph): The graph to compute the shortest path distances and paths between delivery locations.
+        deliveries (List[DeliveryRequest]): The list of delivery requests.
+
+    Returns:
+        nx.DiGraph: The directed graph with the shortest path distances and paths between delivery locations.
+    &#34;&#34;&#34;
+    G = nx.DiGraph()
+    # Add delivery locations as nodes
+    for delivery in deliveries:
+        G.add_node(
+            delivery.location.segment.origin.id, timewindow=delivery.time_window
+        )
+
+    # Compute the shortest path distances and paths between delivery locations
+    for source in deliveries:
+        for target in deliveries:
+            if source != target:
+                # add time windows constraints
+                if (
+                    target.time_window + 1 &lt;= source.time_window
+                    and target != deliveries[0]
+                ):
+                    continue
+                try:
+                    shortest_path_length, shortest_path = nx.single_source_dijkstra(
+                        graph,
+                        source.location.segment.origin.id,
+                        target.location.segment.origin.id,
+                        weight=&#34;length&#34;,
+                    )
+                except nx.NetworkXNoPath:
+                    continue
+                G.add_edge(
+                    source.location.segment.origin.id,
+                    target.location.segment.origin.id,
+                    length=shortest_path_length,
+                    path=shortest_path,
+                )
+
+    return G</code></pre>
+</details>
+</dd>
+<dt id="src.services.tour.tour_computing_service.TourComputingService.compute_tour"><code class="name flex">
+<span>def <span class="ident">compute_tour</span></span>(<span>self, tour_request: <a title="src.models.tour.tour.TourRequest" href="../../models/tour/tour.html#src.models.tour.tour.TourRequest">TourRequest</a>, map: <a title="src.models.map.map.Map" href="../../models/map/map.html#src.models.map.map.Map">Map</a>) ‑> List[int]</span>
+</code></dt>
+<dd>
+<div class="desc"><p>Compute tours for a list of tour requests.</p>
+<h2 id="args">Args</h2>
+<dl>
+<dt><strong><code>tour_request</code></strong> :&ensp;<code>TourRequest</code></dt>
+<dd>The tour request to compute the tour for.</dd>
+<dt><strong><code>map</code></strong> :&ensp;<code>Map</code></dt>
+<dd>The map to compute the tour on.</dd>
+</dl>
+<h2 id="returns">Returns</h2>
+<dl>
+<dt><code>List[int]</code></dt>
+<dd>The computed tour as a list of delivery IDs.</dd>
+</dl></div>
+<details class="source">
+<summary>
+<span>Expand source code</span>
+</summary>
+<pre><code class="python">def compute_tour(self, tour_request: TourRequest, map: Map) -&gt; List[int]:
+    &#34;&#34;&#34;Compute tours for a list of tour requests.
+
+    Args:
+        tour_request (TourRequest): The tour request to compute the tour for.
+        map (Map): The map to compute the tour on.
+
+    Returns:
+        List[int]: The computed tour as a list of delivery IDs.
+    &#34;&#34;&#34;
+    map_graph = self.create_graph_from_map(map)
+    warehouse = DeliveryRequest(
+        DeliveryLocation(Segment(-1, &#34;&#34;, map.warehouse, map.warehouse, 0), 0), 8
+    )
+
+    return self.solve_tsp(
+        self.compute_shortest_path_graph(
+            map_graph, [warehouse] + list(tour_request.deliveries.values())
+        )
+    )</code></pre>
+</details>
+</dd>
+<dt id="src.services.tour.tour_computing_service.TourComputingService.create_graph_from_map"><code class="name flex">
+<span>def <span class="ident">create_graph_from_map</span></span>(<span>self, map: <a title="src.models.map.map.Map" href="../../models/map/map.html#src.models.map.map.Map">Map</a>) ‑> networkx.classes.graph.Graph</span>
+</code></dt>
+<dd>
+<div class="desc"><p>Create a directed graph from a Map object.</p>
+<h2 id="args">Args</h2>
+<dl>
+<dt><strong><code>map</code></strong> :&ensp;<code>Map</code></dt>
+<dd>The Map object to create the graph from.</dd>
+</dl>
+<h2 id="returns">Returns</h2>
+<dl>
+<dt><code>nx.Graph</code></dt>
+<dd>The directed graph created from the Map object.</dd>
+</dl></div>
+<details class="source">
+<summary>
+<span>Expand source code</span>
+</summary>
+<pre><code class="python">def create_graph_from_map(self, map: Map) -&gt; nx.Graph:
+    &#34;&#34;&#34;Create a directed graph from a Map object.
+
+    Args:
+        map (Map): The Map object to create the graph from.
+
+    Returns:
+        nx.Graph: The directed graph created from the Map object.
+    &#34;&#34;&#34;
+    graph = nx.DiGraph()
+
+    graph.add_node(map.warehouse.id)
+
+    for intersection in map.intersections.values():
+        graph.add_node(
+            intersection.id,
+            latitude=float(intersection.latitude),
+            longitude=float(intersection.longitude),
+        )
+
+    for segment in map.get_all_segments():
+        graph.add_edge(
+            segment.origin.id, segment.destination.id, length=segment.length
+        )
+
+    return graph</code></pre>
+</details>
+</dd>
+<dt id="src.services.tour.tour_computing_service.TourComputingService.solve_tsp"><code class="name flex">
+<span>def <span class="ident">solve_tsp</span></span>(<span>self, shortest_path_graph: networkx.classes.graph.Graph) ‑> List[int]</span>
+</code></dt>
+<dd>
+<div class="desc"></div>
+<details class="source">
+<summary>
+<span>Expand source code</span>
+</summary>
+<pre><code class="python">def solve_tsp(self, shortest_path_graph: nx.Graph) -&gt; List[int]:
+    shortest_cycle_length = float(&#34;inf&#34;)
+    shortest_cycle = []
+    route = []
+
+    # Generate all permutations of delivery points to find the shortest cycle
+    delivery_points = list(shortest_path_graph.nodes())
+    warehouse_id = delivery_points.pop(0)
+    for permuted_points in itertools.permutations(delivery_points):
+        is_valid_tuple = True
+        permuted_points = list(permuted_points)
+        permuted_points = [warehouse_id] + permuted_points
+        cycle_length = 0
+        current_time = 8 * 60  # Starting time at the warehouse (8 a.m.)
+
+        for i in range(len(permuted_points) - 1):
+            source = permuted_points[i]
+            target = permuted_points[i + 1]
+            if not shortest_path_graph.has_edge(source, target):
+                is_valid_tuple = False
+                break
+            travel_distance = shortest_path_graph[source][target][&#34;length&#34;]
+            cycle_length += travel_distance
+
+            # Check if the delivery time is within the time window
+            time_window = shortest_path_graph.nodes[target][&#34;timewindow&#34;] * 60
+            travel_time = (
+                travel_distance / 15000
+            ) * 60  # Convert meters to minutes based on speed (15 km/h)
+            arrival_time = current_time + travel_time
+
+            if arrival_time &lt; time_window:
+                # Courier arrives before the time window, wait until it starts
+                current_time = time_window + 5  # Add 5 minutes for delivery
+            elif arrival_time &lt;= time_window + 60:
+                # Courier arrives within the time window
+                current_time = arrival_time + 5  # Add 5 minutes for delivery
+            else:
+                # Courier arrives after the time window, this tuple is invalid
+                is_valid_tuple = False
+                break
+
+        if not is_valid_tuple:
+            continue
+        # Add the length of the last edge back to the starting point to complete the cycle
+        if not shortest_path_graph.has_edge(
+            permuted_points[-1], permuted_points[0]
+        ):
+            continue
+        cycle_length += shortest_path_graph[permuted_points[-1]][
+            permuted_points[0]
+        ][&#34;length&#34;]
+
+        if cycle_length &lt; shortest_cycle_length:
+            shortest_cycle_length = cycle_length
+            shortest_cycle = permuted_points
+
+    # Compute the actual route from the shortest cycle
+    if shortest_cycle == []:
+        return []
+    for i in range(len(shortest_cycle) - 1):
+        source = shortest_cycle[i]
+        target = shortest_cycle[i + 1]
+        dijkstra_path = shortest_path_graph[source][target][&#34;path&#34;]
+        route = route + dijkstra_path
+        route.pop()
+
+    # Complete the route with the path from the last delivery point to the first
+    dijkstra_path = shortest_path_graph[shortest_cycle[-1]][shortest_cycle[0]][
+        &#34;path&#34;
+    ]
+
+    route = route + dijkstra_path
+
+    return route</code></pre>
+</details>
+</dd>
+</dl>
+<h3>Inherited members</h3>
+<ul class="hlist">
+<li><code><b><a title="src.services.singleton.Singleton" href="../singleton.html#src.services.singleton.Singleton">Singleton</a></b></code>:
+<ul class="hlist">
+<li><code><a title="src.services.singleton.Singleton.instance" href="../singleton.html#src.services.singleton.Singleton.instance">instance</a></code></li>
+</ul>
+</li>
+</ul>
+</dd>
+</dl>
+</section>
+</article>
+<nav id="sidebar">
+<h1>Index</h1>
+<div class="toc">
+<ul></ul>
+</div>
+<ul id="index">
+<li><h3>Super-module</h3>
+<ul>
+<li><code><a title="src.services.tour" href="index.html">src.services.tour</a></code></li>
+</ul>
+</li>
+<li><h3><a href="#header-classes">Classes</a></h3>
+<ul>
+<li>
+<h4><code><a title="src.services.tour.tour_computing_service.TourComputingService" href="#src.services.tour.tour_computing_service.TourComputingService">TourComputingService</a></code></h4>
+<ul class="">
+<li><code><a title="src.services.tour.tour_computing_service.TourComputingService.compute_shortest_path_graph" href="#src.services.tour.tour_computing_service.TourComputingService.compute_shortest_path_graph">compute_shortest_path_graph</a></code></li>
+<li><code><a title="src.services.tour.tour_computing_service.TourComputingService.compute_tour" href="#src.services.tour.tour_computing_service.TourComputingService.compute_tour">compute_tour</a></code></li>
+<li><code><a title="src.services.tour.tour_computing_service.TourComputingService.create_graph_from_map" href="#src.services.tour.tour_computing_service.TourComputingService.create_graph_from_map">create_graph_from_map</a></code></li>
+<li><code><a title="src.services.tour.tour_computing_service.TourComputingService.solve_tsp" href="#src.services.tour.tour_computing_service.TourComputingService.solve_tsp">solve_tsp</a></code></li>
+</ul>
+</li>
+</ul>
+</li>
+</ul>
+</nav>
+</main>
+<footer id="footer">
+<p>Generated by <a href="https://pdoc3.github.io/pdoc" title="pdoc: Python API documentation generator"><cite>pdoc</cite> 0.10.0</a>.</p>
+</footer>
+</body>
+</html>

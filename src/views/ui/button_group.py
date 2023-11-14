@@ -12,6 +12,7 @@ class ButtonGroup(QWidget):
     Args:
         buttons (List[Button]): A list of buttons to be grouped together.
     """
+
     def __init__(self, buttons: List[Button]) -> None:
         super().__init__()
 

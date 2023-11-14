@@ -1,0 +1,967 @@
+<!doctype html>
+<html lang="en">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1, minimum-scale=1" />
+<meta name="generator" content="pdoc 0.10.0" />
+<title>src.models.tour.tour API documentation</title>
+<meta name="description" content="" />
+<link rel="preload stylesheet" as="style" href="https://cdnjs.cloudflare.com/ajax/libs/10up-sanitize.css/11.0.1/sanitize.min.css" integrity="sha256-PK9q560IAAa6WVRRh76LtCaI8pjTJ2z11v0miyNNjrs=" crossorigin>
+<link rel="preload stylesheet" as="style" href="https://cdnjs.cloudflare.com/ajax/libs/10up-sanitize.css/11.0.1/typography.min.css" integrity="sha256-7l/o7C8jubJiy74VsKTidCy1yBkRtiUGbVkYBylBqUg=" crossorigin>
+<link rel="stylesheet preload" as="style" href="https://cdnjs.cloudflare.com/ajax/libs/highlight.js/10.1.1/styles/github.min.css" crossorigin>
+<style>:root{--highlight-color:#fe9}.flex{display:flex !important}body{line-height:1.5em}#content{padding:20px}#sidebar{padding:30px;overflow:hidden}#sidebar > *:last-child{margin-bottom:2cm}.http-server-breadcrumbs{font-size:130%;margin:0 0 15px 0}#footer{font-size:.75em;padding:5px 30px;border-top:1px solid #ddd;text-align:right}#footer p{margin:0 0 0 1em;display:inline-block}#footer p:last-child{margin-right:30px}h1,h2,h3,h4,h5{font-weight:300}h1{font-size:2.5em;line-height:1.1em}h2{font-size:1.75em;margin:1em 0 .50em 0}h3{font-size:1.4em;margin:25px 0 10px 0}h4{margin:0;font-size:105%}h1:target,h2:target,h3:target,h4:target,h5:target,h6:target{background:var(--highlight-color);padding:.2em 0}a{color:#058;text-decoration:none;transition:color .3s ease-in-out}a:hover{color:#e82}.title code{font-weight:bold}h2[id^="header-"]{margin-top:2em}.ident{color:#900}pre code{background:#f8f8f8;font-size:.8em;line-height:1.4em}code{background:#f2f2f1;padding:1px 4px;overflow-wrap:break-word}h1 code{background:transparent}pre{background:#f8f8f8;border:0;border-top:1px solid #ccc;border-bottom:1px solid #ccc;margin:1em 0;padding:1ex}#http-server-module-list{display:flex;flex-flow:column}#http-server-module-list div{display:flex}#http-server-module-list dt{min-width:10%}#http-server-module-list p{margin-top:0}.toc ul,#index{list-style-type:none;margin:0;padding:0}#index code{background:transparent}#index h3{border-bottom:1px solid #ddd}#index ul{padding:0}#index h4{margin-top:.6em;font-weight:bold}@media (min-width:200ex){#index .two-column{column-count:2}}@media (min-width:300ex){#index .two-column{column-count:3}}dl{margin-bottom:2em}dl dl:last-child{margin-bottom:4em}dd{margin:0 0 1em 3em}#header-classes + dl > dd{margin-bottom:3em}dd dd{margin-left:2em}dd p{margin:10px 0}.name{background:#eee;font-weight:bold;font-size:.85em;padding:5px 10px;display:inline-block;min-width:40%}.name:hover{background:#e0e0e0}dt:target .name{background:var(--highlight-color)}.name > span:first-child{white-space:nowrap}.name.class > span:nth-child(2){margin-left:.4em}.inherited{color:#999;border-left:5px solid #eee;padding-left:1em}.inheritance em{font-style:normal;font-weight:bold}.desc h2{font-weight:400;font-size:1.25em}.desc h3{font-size:1em}.desc dt code{background:inherit}.source summary,.git-link-div{color:#666;text-align:right;font-weight:400;font-size:.8em;text-transform:uppercase}.source summary > *{white-space:nowrap;cursor:pointer}.git-link{color:inherit;margin-left:1em}.source pre{max-height:500px;overflow:auto;margin:0}.source pre code{font-size:12px;overflow:visible}.hlist{list-style:none}.hlist li{display:inline}.hlist li:after{content:',\2002'}.hlist li:last-child:after{content:none}.hlist .hlist{display:inline;padding-left:1em}img{max-width:100%}td{padding:0 .5em}.admonition{padding:.1em .5em;margin-bottom:1em}.admonition-title{font-weight:bold}.admonition.note,.admonition.info,.admonition.important{background:#aef}.admonition.todo,.admonition.versionadded,.admonition.tip,.admonition.hint{background:#dfd}.admonition.warning,.admonition.versionchanged,.admonition.deprecated{background:#fd4}.admonition.error,.admonition.danger,.admonition.caution{background:lightpink}</style>
+<style media="screen and (min-width: 700px)">@media screen and (min-width:700px){#sidebar{width:30%;height:100vh;overflow:auto;position:sticky;top:0}#content{width:70%;max-width:100ch;padding:3em 4em;border-left:1px solid #ddd}pre code{font-size:1em}.item .name{font-size:1em}main{display:flex;flex-direction:row-reverse;justify-content:flex-end}.toc ul ul,#index ul{padding-left:1.5em}.toc > ul > li{margin-top:.5em}}</style>
+<style media="print">@media print{#sidebar h1{page-break-before:always}.source{display:none}}@media print{*{background:transparent !important;color:#000 !important;box-shadow:none !important;text-shadow:none !important}a[href]:after{content:" (" attr(href) ")";font-size:90%}a[href][title]:after{content:none}abbr[title]:after{content:" (" attr(title) ")"}.ir a:after,a[href^="javascript:"]:after,a[href^="#"]:after{content:""}pre,blockquote{border:1px solid #999;page-break-inside:avoid}thead{display:table-header-group}tr,img{page-break-inside:avoid}img{max-width:100% !important}@page{margin:0.5cm}p,h2,h3{orphans:3;widows:3}h1,h2,h3,h4,h5,h6{page-break-after:avoid}}</style>
+<script defer src="https://cdnjs.cloudflare.com/ajax/libs/highlight.js/10.1.1/highlight.min.js" integrity="sha256-Uv3H6lx7dJmRfRvH8TH6kJD1TSK1aFcwgx+mdg3epi8=" crossorigin></script>
+<script>window.addEventListener('DOMContentLoaded', () => hljs.initHighlighting())</script>
+</head>
+<body>
+<main>
+<article id="content">
+<header>
+<h1 class="title">Module <code>src.models.tour.tour</code></h1>
+</header>
+<section id="section-intro">
+<details class="source">
+<summary>
+<span>Expand source code</span>
+</summary>
+<pre><code class="python">from dataclasses import dataclass, field
+from typing import Dict, List
+from uuid import UUID
+
+from src.models.delivery_man.delivery_man import DeliveryMan
+from src.models.map import Segment
+from src.models.tour.delivery import (
+    ComputedDelivery,
+    Delivery,
+    DeliveryID,
+    DeliveryRequest,
+)
+
+TourID = UUID
+&#34;&#34;&#34;Type alias for Tour ID
+&#34;&#34;&#34;
+
+
+@dataclass
+class Tour:
+    &#34;&#34;&#34;Base class for tour. This represent a tour that can be request or computed.&#34;&#34;&#34;
+
+    id: TourID
+    &#34;&#34;&#34;ID of the tour. This ID is the same as its DeliveryMan ID.
+    &#34;&#34;&#34;
+
+    deliveries: Dict[DeliveryID, Delivery]
+    &#34;&#34;&#34;Map of deliveries of the tour identified by their ID
+    &#34;&#34;&#34;
+
+    delivery_man: DeliveryMan
+    &#34;&#34;&#34;Delivery man completing the tour
+    &#34;&#34;&#34;
+
+    color: str
+    &#34;&#34;&#34;Color to use to display the tour
+    &#34;&#34;&#34;
+
+
+@dataclass
+class TourRequest(Tour):
+    &#34;&#34;&#34;Represents a tour request that has a list of delivery requests.&#34;&#34;&#34;
+
+    deliveries: Dict[DeliveryID, DeliveryRequest]
+    &#34;&#34;&#34;Map of delivery requests of the tour identified by their ID
+    &#34;&#34;&#34;
+
+
+@dataclass
+class ComputedTour(Tour):
+    &#34;&#34;&#34;Represents a computed tour that has a list of computed deliveries and a route.&#34;&#34;&#34;
+
+    deliveries: Dict[DeliveryID, ComputedDelivery]
+    &#34;&#34;&#34;Map of computed deliveries of the tour identified by their ID
+    &#34;&#34;&#34;
+
+    route: List[Segment]
+    &#34;&#34;&#34;List of segments of the route
+    &#34;&#34;&#34;
+
+    @staticmethod
+    def create_from_request(
+        tour_request: TourRequest,
+        deliveries: Dict[DeliveryID, ComputedDelivery],
+        route: List[Segment],
+    ) -&gt; &#34;ComputedTour&#34;:
+        &#34;&#34;&#34;Creates an instance of ComputedTour from a TourRequest, a list of computed deliveries and a route.
+
+        Args:
+            tour_request (TourRequest): Tour request to create the computed tour from
+            deliveries (Dict[DeliveryID, ComputedDelivery]): Map of computed deliveries of the tour identified by their ID
+            route (List[Segment]): List of segments of the route
+
+        Returns:
+            ComputedTour: Created instance
+        &#34;&#34;&#34;
+
+        return ComputedTour(
+            id=tour_request.id,
+            deliveries=deliveries,
+            delivery_man=tour_request.delivery_man,
+            route=route,
+            color=tour_request.color,
+        )</code></pre>
+</details>
+</section>
+<section>
+</section>
+<section>
+</section>
+<section>
+</section>
+<section>
+<h2 class="section-title" id="header-classes">Classes</h2>
+<dl>
+<dt id="src.models.tour.tour.ComputedTour"><code class="flex name class">
+<span>class <span class="ident">ComputedTour</span></span>
+<span>(</span><span>id: uuid.UUID, deliveries: Dict[int, <a title="src.models.tour.delivery.ComputedDelivery" href="delivery.html#src.models.tour.delivery.ComputedDelivery">ComputedDelivery</a>], delivery_man: <a title="src.models.delivery_man.delivery_man.DeliveryMan" href="../delivery_man/delivery_man.html#src.models.delivery_man.delivery_man.DeliveryMan">DeliveryMan</a>, color: str, route: List[<a title="src.models.map.segment.Segment" href="../map/segment.html#src.models.map.segment.Segment">Segment</a>])</span>
+</code></dt>
+<dd>
+<div class="desc"><p>Represents a computed tour that has a list of computed deliveries and a route.</p></div>
+<details class="source">
+<summary>
+<span>Expand source code</span>
+</summary>
+<pre><code class="python">@dataclass
+class ComputedTour(Tour):
+    &#34;&#34;&#34;Represents a computed tour that has a list of computed deliveries and a route.&#34;&#34;&#34;
+
+    deliveries: Dict[DeliveryID, ComputedDelivery]
+    &#34;&#34;&#34;Map of computed deliveries of the tour identified by their ID
+    &#34;&#34;&#34;
+
+    route: List[Segment]
+    &#34;&#34;&#34;List of segments of the route
+    &#34;&#34;&#34;
+
+    @staticmethod
+    def create_from_request(
+        tour_request: TourRequest,
+        deliveries: Dict[DeliveryID, ComputedDelivery],
+        route: List[Segment],
+    ) -&gt; &#34;ComputedTour&#34;:
+        &#34;&#34;&#34;Creates an instance of ComputedTour from a TourRequest, a list of computed deliveries and a route.
+
+        Args:
+            tour_request (TourRequest): Tour request to create the computed tour from
+            deliveries (Dict[DeliveryID, ComputedDelivery]): Map of computed deliveries of the tour identified by their ID
+            route (List[Segment]): List of segments of the route
+
+        Returns:
+            ComputedTour: Created instance
+        &#34;&#34;&#34;
+
+        return ComputedTour(
+            id=tour_request.id,
+            deliveries=deliveries,
+            delivery_man=tour_request.delivery_man,
+            route=route,
+            color=tour_request.color,
+        )</code></pre>
+</details>
+<h3>Ancestors</h3>
+<ul class="hlist">
+<li><a title="src.models.tour.tour.Tour" href="#src.models.tour.tour.Tour">Tour</a></li>
+</ul>
+<h3>Class variables</h3>
+<dl>
+<dt id="src.models.tour.tour.ComputedTour.route"><code class="name">var <span class="ident">route</span> : List[<a title="src.models.map.segment.Segment" href="../map/segment.html#src.models.map.segment.Segment">Segment</a>]</code></dt>
+<dd>
+<div class="desc"><p>List of segments of the route</p></div>
+</dd>
+</dl>
+<h3>Static methods</h3>
+<dl>
+<dt id="src.models.tour.tour.ComputedTour.create_from_request"><code class="name flex">
+<span>def <span class="ident">create_from_request</span></span>(<span>tour_request: <a title="src.models.tour.tour.TourRequest" href="#src.models.tour.tour.TourRequest">TourRequest</a>, deliveries: Dict[int, <a title="src.models.tour.delivery.ComputedDelivery" href="delivery.html#src.models.tour.delivery.ComputedDelivery">ComputedDelivery</a>], route: List[<a title="src.models.map.segment.Segment" href="../map/segment.html#src.models.map.segment.Segment">Segment</a>]) ‑> <a title="src.models.tour.tour.ComputedTour" href="#src.models.tour.tour.ComputedTour">ComputedTour</a></span>
+</code></dt>
+<dd>
+<div class="desc"><p>Creates an instance of ComputedTour from a TourRequest, a list of computed deliveries and a route.</p>
+<h2 id="args">Args</h2>
+<dl>
+<dt><strong><code>tour_request</code></strong> :&ensp;<code><a title="src.models.tour.tour.TourRequest" href="#src.models.tour.tour.TourRequest">TourRequest</a></code></dt>
+<dd>Tour request to create the computed tour from</dd>
+<dt><strong><code>deliveries</code></strong> :&ensp;<code>Dict[DeliveryID, ComputedDelivery]</code></dt>
+<dd>Map of computed deliveries of the tour identified by their ID</dd>
+<dt><strong><code>route</code></strong> :&ensp;<code>List[Segment]</code></dt>
+<dd>List of segments of the route</dd>
+</dl>
+<h2 id="returns">Returns</h2>
+<dl>
+<dt><code><a title="src.models.tour.tour.ComputedTour" href="#src.models.tour.tour.ComputedTour">ComputedTour</a></code></dt>
+<dd>Created instance</dd>
+</dl></div>
+<details class="source">
+<summary>
+<span>Expand source code</span>
+</summary>
+<pre><code class="python">@staticmethod
+def create_from_request(
+    tour_request: TourRequest,
+    deliveries: Dict[DeliveryID, ComputedDelivery],
+    route: List[Segment],
+) -&gt; &#34;ComputedTour&#34;:
+    &#34;&#34;&#34;Creates an instance of ComputedTour from a TourRequest, a list of computed deliveries and a route.
+
+    Args:
+        tour_request (TourRequest): Tour request to create the computed tour from
+        deliveries (Dict[DeliveryID, ComputedDelivery]): Map of computed deliveries of the tour identified by their ID
+        route (List[Segment]): List of segments of the route
+
+    Returns:
+        ComputedTour: Created instance
+    &#34;&#34;&#34;
+
+    return ComputedTour(
+        id=tour_request.id,
+        deliveries=deliveries,
+        delivery_man=tour_request.delivery_man,
+        route=route,
+        color=tour_request.color,
+    )</code></pre>
+</details>
+</dd>
+</dl>
+<h3>Inherited members</h3>
+<ul class="hlist">
+<li><code><b><a title="src.models.tour.tour.Tour" href="#src.models.tour.tour.Tour">Tour</a></b></code>:
+<ul class="hlist">
+<li><code><a title="src.models.tour.tour.Tour.color" href="#src.models.tour.tour.Tour.color">color</a></code></li>
+<li><code><a title="src.models.tour.tour.Tour.deliveries" href="#src.models.tour.tour.Tour.deliveries">deliveries</a></code></li>
+<li><code><a title="src.models.tour.tour.Tour.delivery_man" href="#src.models.tour.tour.Tour.delivery_man">delivery_man</a></code></li>
+<li><code><a title="src.models.tour.tour.Tour.id" href="#src.models.tour.tour.Tour.id">id</a></code></li>
+</ul>
+</li>
+</ul>
+</dd>
+<dt id="src.models.tour.tour.Tour"><code class="flex name class">
+<span>class <span class="ident">Tour</span></span>
+<span>(</span><span>id: uuid.UUID, deliveries: Dict[int, <a title="src.models.tour.delivery.Delivery" href="delivery.html#src.models.tour.delivery.Delivery">Delivery</a>], delivery_man: <a title="src.models.delivery_man.delivery_man.DeliveryMan" href="../delivery_man/delivery_man.html#src.models.delivery_man.delivery_man.DeliveryMan">DeliveryMan</a>, color: str)</span>
+</code></dt>
+<dd>
+<div class="desc"><p>Base class for tour. This represent a tour that can be request or computed.</p></div>
+<details class="source">
+<summary>
+<span>Expand source code</span>
+</summary>
+<pre><code class="python">@dataclass
+class Tour:
+    &#34;&#34;&#34;Base class for tour. This represent a tour that can be request or computed.&#34;&#34;&#34;
+
+    id: TourID
+    &#34;&#34;&#34;ID of the tour. This ID is the same as its DeliveryMan ID.
+    &#34;&#34;&#34;
+
+    deliveries: Dict[DeliveryID, Delivery]
+    &#34;&#34;&#34;Map of deliveries of the tour identified by their ID
+    &#34;&#34;&#34;
+
+    delivery_man: DeliveryMan
+    &#34;&#34;&#34;Delivery man completing the tour
+    &#34;&#34;&#34;
+
+    color: str
+    &#34;&#34;&#34;Color to use to display the tour
+    &#34;&#34;&#34;</code></pre>
+</details>
+<h3>Subclasses</h3>
+<ul class="hlist">
+<li><a title="src.models.tour.tour.ComputedTour" href="#src.models.tour.tour.ComputedTour">ComputedTour</a></li>
+<li><a title="src.models.tour.tour.TourRequest" href="#src.models.tour.tour.TourRequest">TourRequest</a></li>
+</ul>
+<h3>Class variables</h3>
+<dl>
+<dt id="src.models.tour.tour.Tour.color"><code class="name">var <span class="ident">color</span> : str</code></dt>
+<dd>
+<div class="desc"><p>Color to use to display the tour</p></div>
+</dd>
+<dt id="src.models.tour.tour.Tour.deliveries"><code class="name">var <span class="ident">deliveries</span> : Dict[int, <a title="src.models.tour.delivery.Delivery" href="delivery.html#src.models.tour.delivery.Delivery">Delivery</a>]</code></dt>
+<dd>
+<div class="desc"><p>Map of deliveries of the tour identified by their ID</p></div>
+</dd>
+<dt id="src.models.tour.tour.Tour.delivery_man"><code class="name">var <span class="ident">delivery_man</span> : <a title="src.models.delivery_man.delivery_man.DeliveryMan" href="../delivery_man/delivery_man.html#src.models.delivery_man.delivery_man.DeliveryMan">DeliveryMan</a></code></dt>
+<dd>
+<div class="desc"><p>Delivery man completing the tour</p></div>
+</dd>
+<dt id="src.models.tour.tour.Tour.id"><code class="name">var <span class="ident">id</span> : uuid.UUID</code></dt>
+<dd>
+<div class="desc"><p>ID of the tour. This ID is the same as its DeliveryMan ID.</p></div>
+</dd>
+</dl>
+</dd>
+<dt id="src.models.tour.tour.TourRequest"><code class="flex name class">
+<span>class <span class="ident">TourRequest</span></span>
+<span>(</span><span>id: uuid.UUID, deliveries: Dict[int, <a title="src.models.tour.delivery.DeliveryRequest" href="delivery.html#src.models.tour.delivery.DeliveryRequest">DeliveryRequest</a>], delivery_man: <a title="src.models.delivery_man.delivery_man.DeliveryMan" href="../delivery_man/delivery_man.html#src.models.delivery_man.delivery_man.DeliveryMan">DeliveryMan</a>, color: str)</span>
+</code></dt>
+<dd>
+<div class="desc"><p>Represents a tour request that has a list of delivery requests.</p></div>
+<details class="source">
+<summary>
+<span>Expand source code</span>
+</summary>
+<pre><code class="python">@dataclass
+class TourRequest(Tour):
+    &#34;&#34;&#34;Represents a tour request that has a list of delivery requests.&#34;&#34;&#34;
+
+    deliveries: Dict[DeliveryID, DeliveryRequest]
+    &#34;&#34;&#34;Map of delivery requests of the tour identified by their ID
+    &#34;&#34;&#34;</code></pre>
+</details>
+<h3>Ancestors</h3>
+<ul class="hlist">
+<li><a title="src.models.tour.tour.Tour" href="#src.models.tour.tour.Tour">Tour</a></li>
+</ul>
+<h3>Inherited members</h3>
+<ul class="hlist">
+<li><code><b><a title="src.models.tour.tour.Tour" href="#src.models.tour.tour.Tour">Tour</a></b></code>:
+<ul class="hlist">
+<li><code><a title="src.models.tour.tour.Tour.color" href="#src.models.tour.tour.Tour.color">color</a></code></li>
+<li><code><a title="src.models.tour.tour.Tour.deliveries" href="#src.models.tour.tour.Tour.deliveries">deliveries</a></code></li>
+<li><code><a title="src.models.tour.tour.Tour.delivery_man" href="#src.models.tour.tour.Tour.delivery_man">delivery_man</a></code></li>
+<li><code><a title="src.models.tour.tour.Tour.id" href="#src.models.tour.tour.Tour.id">id</a></code></li>
+</ul>
+</li>
+</ul>
+</dd>
+<dt id="src.models.tour.tour.UUID"><code class="flex name class">
+<span>class <span class="ident">TourID</span></span>
+<span>(</span><span>hex=None, bytes=None, bytes_le=None, fields=None, int=None, version=None, *, is_safe=SafeUUID.unknown)</span>
+</code></dt>
+<dd>
+<div class="desc"><p>Instances of the UUID class represent UUIDs as specified in RFC 4122.
+UUID objects are immutable, hashable, and usable as dictionary keys.
+Converting a UUID to a string with str() yields something in the form
+'12345678-1234-1234-1234-123456789abc'.
+The UUID constructor accepts
+five possible forms: a similar string of hexadecimal digits, or a tuple
+of six integer fields (with 32-bit, 16-bit, 16-bit, 8-bit, 8-bit, and
+48-bit values respectively) as an argument named 'fields', or a string
+of 16 bytes (with all the integer fields in big-endian order) as an
+argument named 'bytes', or a string of 16 bytes (with the first three
+fields in little-endian order) as an argument named 'bytes_le', or a
+single 128-bit integer as an argument named 'int'.</p>
+<p>UUIDs have these read-only attributes:</p>
+<pre><code>bytes       the UUID as a 16-byte string (containing the six
+            integer fields in big-endian byte order)
+
+bytes_le    the UUID as a 16-byte string (with time_low, time_mid,
+            and time_hi_version in little-endian byte order)
+
+fields      a tuple of the six integer fields of the UUID,
+            which are also available as six individual attributes
+            and two derived attributes:
+
+    time_low                the first 32 bits of the UUID
+    time_mid                the next 16 bits of the UUID
+    time_hi_version         the next 16 bits of the UUID
+    clock_seq_hi_variant    the next 8 bits of the UUID
+    clock_seq_low           the next 8 bits of the UUID
+    node                    the last 48 bits of the UUID
+
+    time                    the 60-bit timestamp
+    clock_seq               the 14-bit sequence number
+
+hex         the UUID as a 32-character hexadecimal string
+
+int         the UUID as a 128-bit integer
+
+urn         the UUID as a URN as specified in RFC 4122
+
+variant     the UUID variant (one of the constants RESERVED_NCS,
+            RFC_4122, RESERVED_MICROSOFT, or RESERVED_FUTURE)
+
+version     the UUID version number (1 through 5, meaningful only
+            when the variant is RFC_4122)
+
+is_safe     An enum indicating whether the UUID has been generated in
+            a way that is safe for multiprocessing applications, via
+            uuid_generate_time_safe(3).
+</code></pre>
+<p>Create a UUID from either a string of 32 hexadecimal digits,
+a string of 16 bytes as the 'bytes' argument, a string of 16 bytes
+in little-endian order as the 'bytes_le' argument, a tuple of six
+integers (32-bit time_low, 16-bit time_mid, 16-bit time_hi_version,
+8-bit clock_seq_hi_variant, 8-bit clock_seq_low, 48-bit node) as
+the 'fields' argument, or a single 128-bit integer as the 'int'
+argument.
+When a string of hex digits is given, curly braces,
+hyphens, and a URN prefix are all optional.
+For example, these
+expressions all yield the same UUID:</p>
+<p>UUID('{12345678-1234-5678-1234-567812345678}')
+UUID('12345678123456781234567812345678')
+UUID('urn:uuid:12345678-1234-5678-1234-567812345678')
+UUID(bytes='\x12\x34\x56\x78'*4)
+UUID(bytes_le='\x78\x56\x34\x12\x34\x12\x78\x56' +
+'\x12\x34\x56\x78\x12\x34\x56\x78')
+UUID(fields=(0x12345678, 0x1234, 0x5678, 0x12, 0x34, 0x567812345678))
+UUID(int=0x12345678123456781234567812345678)</p>
+<p>Exactly one of 'hex', 'bytes', 'bytes_le', 'fields', or 'int' must
+be given.
+The 'version' argument is optional; if given, the resulting
+UUID will have its variant and version set according to RFC 4122,
+overriding the given 'hex', 'bytes', 'bytes_le', 'fields', or 'int'.</p>
+<p>is_safe is an enum exposed as an attribute on the instance.
+It
+indicates whether the UUID has been generated in a way that is safe
+for multiprocessing applications, via uuid_generate_time_safe(3).</p></div>
+<details class="source">
+<summary>
+<span>Expand source code</span>
+</summary>
+<pre><code class="python">class UUID:
+    &#34;&#34;&#34;Instances of the UUID class represent UUIDs as specified in RFC 4122.
+    UUID objects are immutable, hashable, and usable as dictionary keys.
+    Converting a UUID to a string with str() yields something in the form
+    &#39;12345678-1234-1234-1234-123456789abc&#39;.  The UUID constructor accepts
+    five possible forms: a similar string of hexadecimal digits, or a tuple
+    of six integer fields (with 32-bit, 16-bit, 16-bit, 8-bit, 8-bit, and
+    48-bit values respectively) as an argument named &#39;fields&#39;, or a string
+    of 16 bytes (with all the integer fields in big-endian order) as an
+    argument named &#39;bytes&#39;, or a string of 16 bytes (with the first three
+    fields in little-endian order) as an argument named &#39;bytes_le&#39;, or a
+    single 128-bit integer as an argument named &#39;int&#39;.
+
+    UUIDs have these read-only attributes:
+
+        bytes       the UUID as a 16-byte string (containing the six
+                    integer fields in big-endian byte order)
+
+        bytes_le    the UUID as a 16-byte string (with time_low, time_mid,
+                    and time_hi_version in little-endian byte order)
+
+        fields      a tuple of the six integer fields of the UUID,
+                    which are also available as six individual attributes
+                    and two derived attributes:
+
+            time_low                the first 32 bits of the UUID
+            time_mid                the next 16 bits of the UUID
+            time_hi_version         the next 16 bits of the UUID
+            clock_seq_hi_variant    the next 8 bits of the UUID
+            clock_seq_low           the next 8 bits of the UUID
+            node                    the last 48 bits of the UUID
+
+            time                    the 60-bit timestamp
+            clock_seq               the 14-bit sequence number
+
+        hex         the UUID as a 32-character hexadecimal string
+
+        int         the UUID as a 128-bit integer
+
+        urn         the UUID as a URN as specified in RFC 4122
+
+        variant     the UUID variant (one of the constants RESERVED_NCS,
+                    RFC_4122, RESERVED_MICROSOFT, or RESERVED_FUTURE)
+
+        version     the UUID version number (1 through 5, meaningful only
+                    when the variant is RFC_4122)
+
+        is_safe     An enum indicating whether the UUID has been generated in
+                    a way that is safe for multiprocessing applications, via
+                    uuid_generate_time_safe(3).
+    &#34;&#34;&#34;
+
+    __slots__ = (&#39;int&#39;, &#39;is_safe&#39;, &#39;__weakref__&#39;)
+
+    def __init__(self, hex=None, bytes=None, bytes_le=None, fields=None,
+                       int=None, version=None,
+                       *, is_safe=SafeUUID.unknown):
+        r&#34;&#34;&#34;Create a UUID from either a string of 32 hexadecimal digits,
+        a string of 16 bytes as the &#39;bytes&#39; argument, a string of 16 bytes
+        in little-endian order as the &#39;bytes_le&#39; argument, a tuple of six
+        integers (32-bit time_low, 16-bit time_mid, 16-bit time_hi_version,
+        8-bit clock_seq_hi_variant, 8-bit clock_seq_low, 48-bit node) as
+        the &#39;fields&#39; argument, or a single 128-bit integer as the &#39;int&#39;
+        argument.  When a string of hex digits is given, curly braces,
+        hyphens, and a URN prefix are all optional.  For example, these
+        expressions all yield the same UUID:
+
+        UUID(&#39;{12345678-1234-5678-1234-567812345678}&#39;)
+        UUID(&#39;12345678123456781234567812345678&#39;)
+        UUID(&#39;urn:uuid:12345678-1234-5678-1234-567812345678&#39;)
+        UUID(bytes=&#39;\x12\x34\x56\x78&#39;*4)
+        UUID(bytes_le=&#39;\x78\x56\x34\x12\x34\x12\x78\x56&#39; +
+                      &#39;\x12\x34\x56\x78\x12\x34\x56\x78&#39;)
+        UUID(fields=(0x12345678, 0x1234, 0x5678, 0x12, 0x34, 0x567812345678))
+        UUID(int=0x12345678123456781234567812345678)
+
+        Exactly one of &#39;hex&#39;, &#39;bytes&#39;, &#39;bytes_le&#39;, &#39;fields&#39;, or &#39;int&#39; must
+        be given.  The &#39;version&#39; argument is optional; if given, the resulting
+        UUID will have its variant and version set according to RFC 4122,
+        overriding the given &#39;hex&#39;, &#39;bytes&#39;, &#39;bytes_le&#39;, &#39;fields&#39;, or &#39;int&#39;.
+
+        is_safe is an enum exposed as an attribute on the instance.  It
+        indicates whether the UUID has been generated in a way that is safe
+        for multiprocessing applications, via uuid_generate_time_safe(3).
+        &#34;&#34;&#34;
+
+        if [hex, bytes, bytes_le, fields, int].count(None) != 4:
+            raise TypeError(&#39;one of the hex, bytes, bytes_le, fields, &#39;
+                            &#39;or int arguments must be given&#39;)
+        if hex is not None:
+            hex = hex.replace(&#39;urn:&#39;, &#39;&#39;).replace(&#39;uuid:&#39;, &#39;&#39;)
+            hex = hex.strip(&#39;{}&#39;).replace(&#39;-&#39;, &#39;&#39;)
+            if len(hex) != 32:
+                raise ValueError(&#39;badly formed hexadecimal UUID string&#39;)
+            int = int_(hex, 16)
+        if bytes_le is not None:
+            if len(bytes_le) != 16:
+                raise ValueError(&#39;bytes_le is not a 16-char string&#39;)
+            bytes = (bytes_le[4-1::-1] + bytes_le[6-1:4-1:-1] +
+                     bytes_le[8-1:6-1:-1] + bytes_le[8:])
+        if bytes is not None:
+            if len(bytes) != 16:
+                raise ValueError(&#39;bytes is not a 16-char string&#39;)
+            assert isinstance(bytes, bytes_), repr(bytes)
+            int = int_.from_bytes(bytes, byteorder=&#39;big&#39;)
+        if fields is not None:
+            if len(fields) != 6:
+                raise ValueError(&#39;fields is not a 6-tuple&#39;)
+            (time_low, time_mid, time_hi_version,
+             clock_seq_hi_variant, clock_seq_low, node) = fields
+            if not 0 &lt;= time_low &lt; 1&lt;&lt;32:
+                raise ValueError(&#39;field 1 out of range (need a 32-bit value)&#39;)
+            if not 0 &lt;= time_mid &lt; 1&lt;&lt;16:
+                raise ValueError(&#39;field 2 out of range (need a 16-bit value)&#39;)
+            if not 0 &lt;= time_hi_version &lt; 1&lt;&lt;16:
+                raise ValueError(&#39;field 3 out of range (need a 16-bit value)&#39;)
+            if not 0 &lt;= clock_seq_hi_variant &lt; 1&lt;&lt;8:
+                raise ValueError(&#39;field 4 out of range (need an 8-bit value)&#39;)
+            if not 0 &lt;= clock_seq_low &lt; 1&lt;&lt;8:
+                raise ValueError(&#39;field 5 out of range (need an 8-bit value)&#39;)
+            if not 0 &lt;= node &lt; 1&lt;&lt;48:
+                raise ValueError(&#39;field 6 out of range (need a 48-bit value)&#39;)
+            clock_seq = (clock_seq_hi_variant &lt;&lt; 8) | clock_seq_low
+            int = ((time_low &lt;&lt; 96) | (time_mid &lt;&lt; 80) |
+                   (time_hi_version &lt;&lt; 64) | (clock_seq &lt;&lt; 48) | node)
+        if int is not None:
+            if not 0 &lt;= int &lt; 1&lt;&lt;128:
+                raise ValueError(&#39;int is out of range (need a 128-bit value)&#39;)
+        if version is not None:
+            if not 1 &lt;= version &lt;= 5:
+                raise ValueError(&#39;illegal version number&#39;)
+            # Set the variant to RFC 4122.
+            int &amp;= ~(0xc000 &lt;&lt; 48)
+            int |= 0x8000 &lt;&lt; 48
+            # Set the version number.
+            int &amp;= ~(0xf000 &lt;&lt; 64)
+            int |= version &lt;&lt; 76
+        object.__setattr__(self, &#39;int&#39;, int)
+        object.__setattr__(self, &#39;is_safe&#39;, is_safe)
+
+    def __getstate__(self):
+        d = {&#39;int&#39;: self.int}
+        if self.is_safe != SafeUUID.unknown:
+            # is_safe is a SafeUUID instance.  Return just its value, so that
+            # it can be un-pickled in older Python versions without SafeUUID.
+            d[&#39;is_safe&#39;] = self.is_safe.value
+        return d
+
+    def __setstate__(self, state):
+        object.__setattr__(self, &#39;int&#39;, state[&#39;int&#39;])
+        # is_safe was added in 3.7; it is also omitted when it is &#34;unknown&#34;
+        object.__setattr__(self, &#39;is_safe&#39;,
+                           SafeUUID(state[&#39;is_safe&#39;])
+                           if &#39;is_safe&#39; in state else SafeUUID.unknown)
+
+    def __eq__(self, other):
+        if isinstance(other, UUID):
+            return self.int == other.int
+        return NotImplemented
+
+    # Q. What&#39;s the value of being able to sort UUIDs?
+    # A. Use them as keys in a B-Tree or similar mapping.
+
+    def __lt__(self, other):
+        if isinstance(other, UUID):
+            return self.int &lt; other.int
+        return NotImplemented
+
+    def __gt__(self, other):
+        if isinstance(other, UUID):
+            return self.int &gt; other.int
+        return NotImplemented
+
+    def __le__(self, other):
+        if isinstance(other, UUID):
+            return self.int &lt;= other.int
+        return NotImplemented
+
+    def __ge__(self, other):
+        if isinstance(other, UUID):
+            return self.int &gt;= other.int
+        return NotImplemented
+
+    def __hash__(self):
+        return hash(self.int)
+
+    def __int__(self):
+        return self.int
+
+    def __repr__(self):
+        return &#39;%s(%r)&#39; % (self.__class__.__name__, str(self))
+
+    def __setattr__(self, name, value):
+        raise TypeError(&#39;UUID objects are immutable&#39;)
+
+    def __str__(self):
+        hex = &#39;%032x&#39; % self.int
+        return &#39;%s-%s-%s-%s-%s&#39; % (
+            hex[:8], hex[8:12], hex[12:16], hex[16:20], hex[20:])
+
+    @property
+    def bytes(self):
+        return self.int.to_bytes(16, &#39;big&#39;)
+
+    @property
+    def bytes_le(self):
+        bytes = self.bytes
+        return (bytes[4-1::-1] + bytes[6-1:4-1:-1] + bytes[8-1:6-1:-1] +
+                bytes[8:])
+
+    @property
+    def fields(self):
+        return (self.time_low, self.time_mid, self.time_hi_version,
+                self.clock_seq_hi_variant, self.clock_seq_low, self.node)
+
+    @property
+    def time_low(self):
+        return self.int &gt;&gt; 96
+
+    @property
+    def time_mid(self):
+        return (self.int &gt;&gt; 80) &amp; 0xffff
+
+    @property
+    def time_hi_version(self):
+        return (self.int &gt;&gt; 64) &amp; 0xffff
+
+    @property
+    def clock_seq_hi_variant(self):
+        return (self.int &gt;&gt; 56) &amp; 0xff
+
+    @property
+    def clock_seq_low(self):
+        return (self.int &gt;&gt; 48) &amp; 0xff
+
+    @property
+    def time(self):
+        return (((self.time_hi_version &amp; 0x0fff) &lt;&lt; 48) |
+                (self.time_mid &lt;&lt; 32) | self.time_low)
+
+    @property
+    def clock_seq(self):
+        return (((self.clock_seq_hi_variant &amp; 0x3f) &lt;&lt; 8) |
+                self.clock_seq_low)
+
+    @property
+    def node(self):
+        return self.int &amp; 0xffffffffffff
+
+    @property
+    def hex(self):
+        return &#39;%032x&#39; % self.int
+
+    @property
+    def urn(self):
+        return &#39;urn:uuid:&#39; + str(self)
+
+    @property
+    def variant(self):
+        if not self.int &amp; (0x8000 &lt;&lt; 48):
+            return RESERVED_NCS
+        elif not self.int &amp; (0x4000 &lt;&lt; 48):
+            return RFC_4122
+        elif not self.int &amp; (0x2000 &lt;&lt; 48):
+            return RESERVED_MICROSOFT
+        else:
+            return RESERVED_FUTURE
+
+    @property
+    def version(self):
+        # The version bits are only meaningful for RFC 4122 UUIDs.
+        if self.variant == RFC_4122:
+            return int((self.int &gt;&gt; 76) &amp; 0xf)</code></pre>
+</details>
+<h3>Instance variables</h3>
+<dl>
+<dt id="src.models.tour.tour.UUID.bytes"><code class="name">var <span class="ident">bytes</span></code></dt>
+<dd>
+<div class="desc"></div>
+<details class="source">
+<summary>
+<span>Expand source code</span>
+</summary>
+<pre><code class="python">@property
+def bytes(self):
+    return self.int.to_bytes(16, &#39;big&#39;)</code></pre>
+</details>
+</dd>
+<dt id="src.models.tour.tour.UUID.bytes_le"><code class="name">var <span class="ident">bytes_le</span></code></dt>
+<dd>
+<div class="desc"></div>
+<details class="source">
+<summary>
+<span>Expand source code</span>
+</summary>
+<pre><code class="python">@property
+def bytes_le(self):
+    bytes = self.bytes
+    return (bytes[4-1::-1] + bytes[6-1:4-1:-1] + bytes[8-1:6-1:-1] +
+            bytes[8:])</code></pre>
+</details>
+</dd>
+<dt id="src.models.tour.tour.UUID.clock_seq"><code class="name">var <span class="ident">clock_seq</span></code></dt>
+<dd>
+<div class="desc"></div>
+<details class="source">
+<summary>
+<span>Expand source code</span>
+</summary>
+<pre><code class="python">@property
+def clock_seq(self):
+    return (((self.clock_seq_hi_variant &amp; 0x3f) &lt;&lt; 8) |
+            self.clock_seq_low)</code></pre>
+</details>
+</dd>
+<dt id="src.models.tour.tour.UUID.clock_seq_hi_variant"><code class="name">var <span class="ident">clock_seq_hi_variant</span></code></dt>
+<dd>
+<div class="desc"></div>
+<details class="source">
+<summary>
+<span>Expand source code</span>
+</summary>
+<pre><code class="python">@property
+def clock_seq_hi_variant(self):
+    return (self.int &gt;&gt; 56) &amp; 0xff</code></pre>
+</details>
+</dd>
+<dt id="src.models.tour.tour.UUID.clock_seq_low"><code class="name">var <span class="ident">clock_seq_low</span></code></dt>
+<dd>
+<div class="desc"></div>
+<details class="source">
+<summary>
+<span>Expand source code</span>
+</summary>
+<pre><code class="python">@property
+def clock_seq_low(self):
+    return (self.int &gt;&gt; 48) &amp; 0xff</code></pre>
+</details>
+</dd>
+<dt id="src.models.tour.tour.UUID.fields"><code class="name">var <span class="ident">fields</span></code></dt>
+<dd>
+<div class="desc"></div>
+<details class="source">
+<summary>
+<span>Expand source code</span>
+</summary>
+<pre><code class="python">@property
+def fields(self):
+    return (self.time_low, self.time_mid, self.time_hi_version,
+            self.clock_seq_hi_variant, self.clock_seq_low, self.node)</code></pre>
+</details>
+</dd>
+<dt id="src.models.tour.tour.UUID.hex"><code class="name">var <span class="ident">hex</span></code></dt>
+<dd>
+<div class="desc"></div>
+<details class="source">
+<summary>
+<span>Expand source code</span>
+</summary>
+<pre><code class="python">@property
+def hex(self):
+    return &#39;%032x&#39; % self.int</code></pre>
+</details>
+</dd>
+<dt id="src.models.tour.tour.UUID.int"><code class="name">var <span class="ident">int</span></code></dt>
+<dd>
+<div class="desc"><p>Return an attribute of instance, which is of type owner.</p></div>
+</dd>
+<dt id="src.models.tour.tour.UUID.is_safe"><code class="name">var <span class="ident">is_safe</span></code></dt>
+<dd>
+<div class="desc"><p>Return an attribute of instance, which is of type owner.</p></div>
+</dd>
+<dt id="src.models.tour.tour.UUID.node"><code class="name">var <span class="ident">node</span></code></dt>
+<dd>
+<div class="desc"></div>
+<details class="source">
+<summary>
+<span>Expand source code</span>
+</summary>
+<pre><code class="python">@property
+def node(self):
+    return self.int &amp; 0xffffffffffff</code></pre>
+</details>
+</dd>
+<dt id="src.models.tour.tour.UUID.time"><code class="name">var <span class="ident">time</span></code></dt>
+<dd>
+<div class="desc"></div>
+<details class="source">
+<summary>
+<span>Expand source code</span>
+</summary>
+<pre><code class="python">@property
+def time(self):
+    return (((self.time_hi_version &amp; 0x0fff) &lt;&lt; 48) |
+            (self.time_mid &lt;&lt; 32) | self.time_low)</code></pre>
+</details>
+</dd>
+<dt id="src.models.tour.tour.UUID.time_hi_version"><code class="name">var <span class="ident">time_hi_version</span></code></dt>
+<dd>
+<div class="desc"></div>
+<details class="source">
+<summary>
+<span>Expand source code</span>
+</summary>
+<pre><code class="python">@property
+def time_hi_version(self):
+    return (self.int &gt;&gt; 64) &amp; 0xffff</code></pre>
+</details>
+</dd>
+<dt id="src.models.tour.tour.UUID.time_low"><code class="name">var <span class="ident">time_low</span></code></dt>
+<dd>
+<div class="desc"></div>
+<details class="source">
+<summary>
+<span>Expand source code</span>
+</summary>
+<pre><code class="python">@property
+def time_low(self):
+    return self.int &gt;&gt; 96</code></pre>
+</details>
+</dd>
+<dt id="src.models.tour.tour.UUID.time_mid"><code class="name">var <span class="ident">time_mid</span></code></dt>
+<dd>
+<div class="desc"></div>
+<details class="source">
+<summary>
+<span>Expand source code</span>
+</summary>
+<pre><code class="python">@property
+def time_mid(self):
+    return (self.int &gt;&gt; 80) &amp; 0xffff</code></pre>
+</details>
+</dd>
+<dt id="src.models.tour.tour.UUID.urn"><code class="name">var <span class="ident">urn</span></code></dt>
+<dd>
+<div class="desc"></div>
+<details class="source">
+<summary>
+<span>Expand source code</span>
+</summary>
+<pre><code class="python">@property
+def urn(self):
+    return &#39;urn:uuid:&#39; + str(self)</code></pre>
+</details>
+</dd>
+<dt id="src.models.tour.tour.UUID.variant"><code class="name">var <span class="ident">variant</span></code></dt>
+<dd>
+<div class="desc"></div>
+<details class="source">
+<summary>
+<span>Expand source code</span>
+</summary>
+<pre><code class="python">@property
+def variant(self):
+    if not self.int &amp; (0x8000 &lt;&lt; 48):
+        return RESERVED_NCS
+    elif not self.int &amp; (0x4000 &lt;&lt; 48):
+        return RFC_4122
+    elif not self.int &amp; (0x2000 &lt;&lt; 48):
+        return RESERVED_MICROSOFT
+    else:
+        return RESERVED_FUTURE</code></pre>
+</details>
+</dd>
+<dt id="src.models.tour.tour.UUID.version"><code class="name">var <span class="ident">version</span></code></dt>
+<dd>
+<div class="desc"></div>
+<details class="source">
+<summary>
+<span>Expand source code</span>
+</summary>
+<pre><code class="python">@property
+def version(self):
+    # The version bits are only meaningful for RFC 4122 UUIDs.
+    if self.variant == RFC_4122:
+        return int((self.int &gt;&gt; 76) &amp; 0xf)</code></pre>
+</details>
+</dd>
+</dl>
+</dd>
+</dl>
+</section>
+</article>
+<nav id="sidebar">
+<h1>Index</h1>
+<div class="toc">
+<ul></ul>
+</div>
+<ul id="index">
+<li><h3>Super-module</h3>
+<ul>
+<li><code><a title="src.models.tour" href="index.html">src.models.tour</a></code></li>
+</ul>
+</li>
+<li><h3><a href="#header-classes">Classes</a></h3>
+<ul>
+<li>
+<h4><code><a title="src.models.tour.tour.ComputedTour" href="#src.models.tour.tour.ComputedTour">ComputedTour</a></code></h4>
+<ul class="">
+<li><code><a title="src.models.tour.tour.ComputedTour.create_from_request" href="#src.models.tour.tour.ComputedTour.create_from_request">create_from_request</a></code></li>
+<li><code><a title="src.models.tour.tour.ComputedTour.route" href="#src.models.tour.tour.ComputedTour.route">route</a></code></li>
+</ul>
+</li>
+<li>
+<h4><code><a title="src.models.tour.tour.Tour" href="#src.models.tour.tour.Tour">Tour</a></code></h4>
+<ul class="">
+<li><code><a title="src.models.tour.tour.Tour.color" href="#src.models.tour.tour.Tour.color">color</a></code></li>
+<li><code><a title="src.models.tour.tour.Tour.deliveries" href="#src.models.tour.tour.Tour.deliveries">deliveries</a></code></li>
+<li><code><a title="src.models.tour.tour.Tour.delivery_man" href="#src.models.tour.tour.Tour.delivery_man">delivery_man</a></code></li>
+<li><code><a title="src.models.tour.tour.Tour.id" href="#src.models.tour.tour.Tour.id">id</a></code></li>
+</ul>
+</li>
+<li>
+<h4><code><a title="src.models.tour.tour.TourRequest" href="#src.models.tour.tour.TourRequest">TourRequest</a></code></h4>
+</li>
+<li>
+<h4><code><a title="src.models.tour.tour.UUID" href="#src.models.tour.tour.UUID">UUID</a></code></h4>
+<ul class="">
+<li><code><a title="src.models.tour.tour.UUID.bytes" href="#src.models.tour.tour.UUID.bytes">bytes</a></code></li>
+<li><code><a title="src.models.tour.tour.UUID.bytes_le" href="#src.models.tour.tour.UUID.bytes_le">bytes_le</a></code></li>
+<li><code><a title="src.models.tour.tour.UUID.clock_seq" href="#src.models.tour.tour.UUID.clock_seq">clock_seq</a></code></li>
+<li><code><a title="src.models.tour.tour.UUID.clock_seq_hi_variant" href="#src.models.tour.tour.UUID.clock_seq_hi_variant">clock_seq_hi_variant</a></code></li>
+<li><code><a title="src.models.tour.tour.UUID.clock_seq_low" href="#src.models.tour.tour.UUID.clock_seq_low">clock_seq_low</a></code></li>
+<li><code><a title="src.models.tour.tour.UUID.fields" href="#src.models.tour.tour.UUID.fields">fields</a></code></li>
+<li><code><a title="src.models.tour.tour.UUID.hex" href="#src.models.tour.tour.UUID.hex">hex</a></code></li>
+<li><code><a title="src.models.tour.tour.UUID.int" href="#src.models.tour.tour.UUID.int">int</a></code></li>
+<li><code><a title="src.models.tour.tour.UUID.is_safe" href="#src.models.tour.tour.UUID.is_safe">is_safe</a></code></li>
+<li><code><a title="src.models.tour.tour.UUID.node" href="#src.models.tour.tour.UUID.node">node</a></code></li>
+<li><code><a title="src.models.tour.tour.UUID.time" href="#src.models.tour.tour.UUID.time">time</a></code></li>
+<li><code><a title="src.models.tour.tour.UUID.time_hi_version" href="#src.models.tour.tour.UUID.time_hi_version">time_hi_version</a></code></li>
+<li><code><a title="src.models.tour.tour.UUID.time_low" href="#src.models.tour.tour.UUID.time_low">time_low</a></code></li>
+<li><code><a title="src.models.tour.tour.UUID.time_mid" href="#src.models.tour.tour.UUID.time_mid">time_mid</a></code></li>
+<li><code><a title="src.models.tour.tour.UUID.urn" href="#src.models.tour.tour.UUID.urn">urn</a></code></li>
+<li><code><a title="src.models.tour.tour.UUID.variant" href="#src.models.tour.tour.UUID.variant">variant</a></code></li>
+<li><code><a title="src.models.tour.tour.UUID.version" href="#src.models.tour.tour.UUID.version">version</a></code></li>
+</ul>
+</li>
+</ul>
+</li>
+</ul>
+</nav>
+</main>
+<footer id="footer">
+<p>Generated by <a href="https://pdoc3.github.io/pdoc" title="pdoc: Python API documentation generator"><cite>pdoc</cite> 0.10.0</a>.</p>
+</footer>
+</body>
+</html>

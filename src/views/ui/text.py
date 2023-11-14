@@ -31,6 +31,7 @@ class Text(QLabel):
         __get_color() -> str: Returns the color of the text.
         set_effects(size: TextSize) -> None: Sets the graphics effect for the text.
     """
+
     def __init__(
         self, text: str, size: TextSize = TextSize.H1, parent: Optional[QWidget] = None
     ) -> None:

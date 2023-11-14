@@ -7,7 +7,7 @@ __pycache__/
 *.so
 
 # Documentation
-docs
+# docs
 
 # Distribution / packaging
 .Python
