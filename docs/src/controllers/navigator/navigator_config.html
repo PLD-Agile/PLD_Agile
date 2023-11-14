@@ -31,8 +31,15 @@
 
 @dataclass
 class NavigatorConfig:
+    &#34;&#34;&#34;Class for navigator configuration.&#34;&#34;&#34;
+
     allow_push_same_route: bool = False
-    allow_replace_same_route: bool = False</code></pre>
+    &#34;&#34;&#34;Allow push a route that is already the current route.
+    &#34;&#34;&#34;
+
+    allow_replace_same_route: bool = False
+    &#34;&#34;&#34;Allow replace a route that is already the current route.
+    &#34;&#34;&#34;</code></pre>
 </details>
 </section>
 <section>
@@ -49,25 +56,32 @@ class NavigatorConfig:
 <span>(</span><span>allow_push_same_route: bool = False, allow_replace_same_route: bool = False)</span>
 </code></dt>
 <dd>
-<div class="desc"><p>NavigatorConfig(allow_push_same_route: bool = False, allow_replace_same_route: bool = False)</p></div>
+<div class="desc"><p>Class for navigator configuration.</p></div>
 <details class="source">
 <summary>
 <span>Expand source code</span>
 </summary>
 <pre><code class="python">@dataclass
 class NavigatorConfig:
+    &#34;&#34;&#34;Class for navigator configuration.&#34;&#34;&#34;
+
     allow_push_same_route: bool = False
-    allow_replace_same_route: bool = False</code></pre>
+    &#34;&#34;&#34;Allow push a route that is already the current route.
+    &#34;&#34;&#34;
+
+    allow_replace_same_route: bool = False
+    &#34;&#34;&#34;Allow replace a route that is already the current route.
+    &#34;&#34;&#34;</code></pre>
 </details>
 <h3>Class variables</h3>
 <dl>
 <dt id="src.controllers.navigator.navigator_config.NavigatorConfig.allow_push_same_route"><code class="name">var <span class="ident">allow_push_same_route</span> : bool</code></dt>
 <dd>
-<div class="desc"></div>
+<div class="desc"><p>Allow push a route that is already the current route.</p></div>
 </dd>
 <dt id="src.controllers.navigator.navigator_config.NavigatorConfig.allow_replace_same_route"><code class="name">var <span class="ident">allow_replace_same_route</span> : bool</code></dt>
 <dd>
-<div class="desc"></div>
+<div class="desc"><p>Allow replace a route that is already the current route.</p></div>
 </dd>
 </dl>
 </dd>

@@ -57,6 +57,15 @@ class Navigator(Generic[RouteName]):
 
     @staticmethod
     def get_navigator(name: str) -&gt; &#34;Navigator&#34;:
+        &#34;&#34;&#34;Get the navigator with the given name
+
+        Args:
+            name (str): Name of the navigator
+
+        Returns:
+            Navigator: Navigator with the given name
+        &#34;&#34;&#34;
+
         navigator = Navigator.__navigators.get(name)
 
         if navigator is None:
@@ -264,6 +273,15 @@ return default</p></div>
 
     @staticmethod
     def get_navigator(name: str) -&gt; &#34;Navigator&#34;:
+        &#34;&#34;&#34;Get the navigator with the given name
+
+        Args:
+            name (str): Name of the navigator
+
+        Returns:
+            Navigator: Navigator with the given name
+        &#34;&#34;&#34;
+
         navigator = Navigator.__navigators.get(name)
 
         if navigator is None:
@@ -433,13 +451,32 @@ return default</p></div>
 <span>def <span class="ident">get_navigator</span></span>(<span>name: str) ‑> <a title="src.controllers.navigator.navigator.Navigator" href="#src.controllers.navigator.navigator.Navigator">Navigator</a></span>
 </code></dt>
 <dd>
-<div class="desc"></div>
+<div class="desc"><p>Get the navigator with the given name</p>
+<h2 id="args">Args</h2>
+<dl>
+<dt><strong><code>name</code></strong> :&ensp;<code>str</code></dt>
+<dd>Name of the navigator</dd>
+</dl>
+<h2 id="returns">Returns</h2>
+<dl>
+<dt><code><a title="src.controllers.navigator.navigator.Navigator" href="#src.controllers.navigator.navigator.Navigator">Navigator</a></code></dt>
+<dd>Navigator with the given name</dd>
+</dl></div>
 <details class="source">
 <summary>
 <span>Expand source code</span>
 </summary>
 <pre><code class="python">@staticmethod
 def get_navigator(name: str) -&gt; &#34;Navigator&#34;:
+    &#34;&#34;&#34;Get the navigator with the given name
+
+    Args:
+        name (str): Name of the navigator
+
+    Returns:
+        Navigator: Navigator with the given name
+    &#34;&#34;&#34;
+
     navigator = Navigator.__navigators.get(name)
 
     if navigator is None:

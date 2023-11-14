@@ -34,8 +34,16 @@ from uuid import UUID, uuid4
 @dataclass
 class DeliveryMan:
     name: str
+    &#34;&#34;&#34;Name of the delivery man (for display).
+    &#34;&#34;&#34;
     availabilities: List[int]
-    id: UUID = field(default_factory=uuid4)</code></pre>
+    &#34;&#34;&#34;List of number representing its availabilities.
+    
+    The number represent the start hour of the time window. For example, 8 means 8:00 AM to 9:00 AM.
+    &#34;&#34;&#34;
+    id: UUID = field(default_factory=uuid4)
+    &#34;&#34;&#34;ID of the delivery man
+    &#34;&#34;&#34;</code></pre>
 </details>
 </section>
 <section>
@@ -60,22 +68,31 @@ class DeliveryMan:
 <pre><code class="python">@dataclass
 class DeliveryMan:
     name: str
+    &#34;&#34;&#34;Name of the delivery man (for display).
+    &#34;&#34;&#34;
     availabilities: List[int]
-    id: UUID = field(default_factory=uuid4)</code></pre>
+    &#34;&#34;&#34;List of number representing its availabilities.
+    
+    The number represent the start hour of the time window. For example, 8 means 8:00 AM to 9:00 AM.
+    &#34;&#34;&#34;
+    id: UUID = field(default_factory=uuid4)
+    &#34;&#34;&#34;ID of the delivery man
+    &#34;&#34;&#34;</code></pre>
 </details>
 <h3>Class variables</h3>
 <dl>
 <dt id="src.models.delivery_man.delivery_man.DeliveryMan.availabilities"><code class="name">var <span class="ident">availabilities</span> : List[int]</code></dt>
 <dd>
-<div class="desc"></div>
+<div class="desc"><p>List of number representing its availabilities.</p>
+<p>The number represent the start hour of the time window. For example, 8 means 8:00 AM to 9:00 AM.</p></div>
 </dd>
 <dt id="src.models.delivery_man.delivery_man.DeliveryMan.id"><code class="name">var <span class="ident">id</span> : uuid.UUID</code></dt>
 <dd>
-<div class="desc"></div>
+<div class="desc"><p>ID of the delivery man</p></div>
 </dd>
 <dt id="src.models.delivery_man.delivery_man.DeliveryMan.name"><code class="name">var <span class="ident">name</span> : str</code></dt>
 <dd>
-<div class="desc"></div>
+<div class="desc"><p>Name of the delivery man (for display).</p></div>
 </dd>
 </dl>
 </dd>

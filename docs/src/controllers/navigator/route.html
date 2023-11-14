@@ -38,7 +38,12 @@ RouteName = TypeVar(&#34;RouteName&#34;, Enum, str)
 @dataclass
 class Route(Generic[RouteName]):
     name: RouteName
-    widget: Type[QWidget]</code></pre>
+    &#34;&#34;&#34;Name of the route.
+    &#34;&#34;&#34;
+
+    widget: Type[QWidget]
+    &#34;&#34;&#34;Qt widget to display as the page.
+    &#34;&#34;&#34;</code></pre>
 </details>
 </section>
 <section>
@@ -63,7 +68,12 @@ class Route(Generic[RouteName]):
 <pre><code class="python">@dataclass
 class Route(Generic[RouteName]):
     name: RouteName
-    widget: Type[QWidget]</code></pre>
+    &#34;&#34;&#34;Name of the route.
+    &#34;&#34;&#34;
+
+    widget: Type[QWidget]
+    &#34;&#34;&#34;Qt widget to display as the page.
+    &#34;&#34;&#34;</code></pre>
 </details>
 <h3>Ancestors</h3>
 <ul class="hlist">
@@ -73,11 +83,11 @@ class Route(Generic[RouteName]):
 <dl>
 <dt id="src.controllers.navigator.route.Route.name"><code class="name">var <span class="ident">name</span> : ~RouteName</code></dt>
 <dd>
-<div class="desc"></div>
+<div class="desc"><p>Name of the route.</p></div>
 </dd>
 <dt id="src.controllers.navigator.route.Route.widget"><code class="name">var <span class="ident">widget</span> : Type[PyQt6.QtWidgets.QWidget]</code></dt>
 <dd>
-<div class="desc"></div>
+<div class="desc"><p>Qt widget to display as the page.</p></div>
 </dd>
 </dl>
 </dd>

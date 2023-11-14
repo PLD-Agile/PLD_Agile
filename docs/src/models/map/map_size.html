@@ -37,6 +37,8 @@ T = TypeVar(&#34;T&#34;, bound=&#34;MapSize&#34;)
 
 @dataclass
 class MapSize:
+    &#34;&#34;&#34;Represents the size of a map.&#34;&#34;&#34;
+
     __min: Position
     __max: Position
     area: float
@@ -100,13 +102,15 @@ class MapSize:
 <span>(</span><span>min: <a title="src.models.map.position.Position" href="position.html#src.models.map.position.Position">Position</a>, max: <a title="src.models.map.position.Position" href="position.html#src.models.map.position.Position">Position</a>)</span>
 </code></dt>
 <dd>
-<div class="desc"><p>MapSize(min: src.models.map.position.Position, max: src.models.map.position.Position)</p></div>
+<div class="desc"><p>Represents the size of a map.</p></div>
 <details class="source">
 <summary>
 <span>Expand source code</span>
 </summary>
 <pre><code class="python">@dataclass
 class MapSize:
+    &#34;&#34;&#34;Represents the size of a map.&#34;&#34;&#34;
+
     __min: Position
     __max: Position
     area: float

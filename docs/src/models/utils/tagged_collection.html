@@ -33,21 +33,48 @@ Value = TypeVar(&#34;Value&#34;)
 
 
 class TaggedCollection(Generic[Tag, Value]):
+    &#34;&#34;&#34;Collection where values are indexed by tags.&#34;&#34;&#34;
+
     __collection: Dict[Tag, List[Value]] = {}
 
     def get(self, tag: Tag) -&gt; List[Value]:
+        &#34;&#34;&#34;Get all values indexed with a tag.
+
+        Args:
+            tag (Tag): Tag to search for
+
+        Returns:
+            List[Value]: List of values indexed with the given tag
+        &#34;&#34;&#34;
         return self.__collection.get(tag, [])
 
     def append(self, tag: Tag, value: Value) -&gt; None:
+        &#34;&#34;&#34;Append a value to the list of values indexed with the given tag.
+
+        Args:
+            tag (Tag): Tag to index the value with
+            value (Value): Value to append
+        &#34;&#34;&#34;
         self.__collection[tag] = self.get(tag) + [value]
 
     def clear(self, tag: Tag) -&gt; None:
+        &#34;&#34;&#34;Clear all values indexed with the given tag.
+
+        Args:
+            tag (Tag): Tag to clear
+        &#34;&#34;&#34;
         self.__collection[tag] = []
 
     def get_all(self) -&gt; List[Value]:
+        &#34;&#34;&#34;Get all values in the collection regardless of the tags.
+
+        Returns:
+            List[Value]: List of all values in the collection
+        &#34;&#34;&#34;
         return [value for values in self.__collection.values() for value in values]
 
     def clear_all(self) -&gt; None:
+        &#34;&#34;&#34;Clear all values in the collection for all tags.&#34;&#34;&#34;
         self.__collection = {}</code></pre>
 </details>
 </section>
@@ -64,40 +91,54 @@ class TaggedCollection(Generic[Tag, Value]):
 <span>class <span class="ident">TaggedCollection</span></span>
 </code></dt>
 <dd>
-<div class="desc"><p>Abstract base class for generic types.</p>
-<p>A generic type is typically declared by inheriting from
-this class parameterized with one or more type variables.
-For example, a generic mapping type might be defined as::</p>
-<p>class Mapping(Generic[KT, VT]):
-def <strong>getitem</strong>(self, key: KT) -&gt; VT:
-&hellip;
-# Etc.</p>
-<p>This class can then be used as follows::</p>
-<p>def lookup_name(mapping: Mapping[KT, VT], key: KT, default: VT) -&gt; VT:
-try:
-return mapping[key]
-except KeyError:
-return default</p></div>
+<div class="desc"><p>Collection where values are indexed by tags.</p></div>
 <details class="source">
 <summary>
 <span>Expand source code</span>
 </summary>
 <pre><code class="python">class TaggedCollection(Generic[Tag, Value]):
+    &#34;&#34;&#34;Collection where values are indexed by tags.&#34;&#34;&#34;
+
     __collection: Dict[Tag, List[Value]] = {}
 
     def get(self, tag: Tag) -&gt; List[Value]:
+        &#34;&#34;&#34;Get all values indexed with a tag.
+
+        Args:
+            tag (Tag): Tag to search for
+
+        Returns:
+            List[Value]: List of values indexed with the given tag
+        &#34;&#34;&#34;
         return self.__collection.get(tag, [])
 
     def append(self, tag: Tag, value: Value) -&gt; None:
+        &#34;&#34;&#34;Append a value to the list of values indexed with the given tag.
+
+        Args:
+            tag (Tag): Tag to index the value with
+            value (Value): Value to append
+        &#34;&#34;&#34;
         self.__collection[tag] = self.get(tag) + [value]
 
     def clear(self, tag: Tag) -&gt; None:
+        &#34;&#34;&#34;Clear all values indexed with the given tag.
+
+        Args:
+            tag (Tag): Tag to clear
+        &#34;&#34;&#34;
         self.__collection[tag] = []
 
     def get_all(self) -&gt; List[Value]:
+        &#34;&#34;&#34;Get all values in the collection regardless of the tags.
+
+        Returns:
+            List[Value]: List of all values in the collection
+        &#34;&#34;&#34;
         return [value for values in self.__collection.values() for value in values]
 
     def clear_all(self) -&gt; None:
+        &#34;&#34;&#34;Clear all values in the collection for all tags.&#34;&#34;&#34;
         self.__collection = {}</code></pre>
 </details>
 <h3>Ancestors</h3>
@@ -110,12 +151,25 @@ return default</p></div>
 <span>def <span class="ident">append</span></span>(<span>self, tag: ~Tag, value: ~Value) ‑> None</span>
 </code></dt>
 <dd>
-<div class="desc"></div>
+<div class="desc"><p>Append a value to the list of values indexed with the given tag.</p>
+<h2 id="args">Args</h2>
+<dl>
+<dt><strong><code>tag</code></strong> :&ensp;<code>Tag</code></dt>
+<dd>Tag to index the value with</dd>
+<dt><strong><code>value</code></strong> :&ensp;<code>Value</code></dt>
+<dd>Value to append</dd>
+</dl></div>
 <details class="source">
 <summary>
 <span>Expand source code</span>
 </summary>
 <pre><code class="python">def append(self, tag: Tag, value: Value) -&gt; None:
+    &#34;&#34;&#34;Append a value to the list of values indexed with the given tag.
+
+    Args:
+        tag (Tag): Tag to index the value with
+        value (Value): Value to append
+    &#34;&#34;&#34;
     self.__collection[tag] = self.get(tag) + [value]</code></pre>
 </details>
 </dd>
@@ -123,12 +177,22 @@ return default</p></div>
 <span>def <span class="ident">clear</span></span>(<span>self, tag: ~Tag) ‑> None</span>
 </code></dt>
 <dd>
-<div class="desc"></div>
+<div class="desc"><p>Clear all values indexed with the given tag.</p>
+<h2 id="args">Args</h2>
+<dl>
+<dt><strong><code>tag</code></strong> :&ensp;<code>Tag</code></dt>
+<dd>Tag to clear</dd>
+</dl></div>
 <details class="source">
 <summary>
 <span>Expand source code</span>
 </summary>
 <pre><code class="python">def clear(self, tag: Tag) -&gt; None:
+    &#34;&#34;&#34;Clear all values indexed with the given tag.
+
+    Args:
+        tag (Tag): Tag to clear
+    &#34;&#34;&#34;
     self.__collection[tag] = []</code></pre>
 </details>
 </dd>
@@ -136,12 +200,13 @@ return default</p></div>
 <span>def <span class="ident">clear_all</span></span>(<span>self) ‑> None</span>
 </code></dt>
 <dd>
-<div class="desc"></div>
+<div class="desc"><p>Clear all values in the collection for all tags.</p></div>
 <details class="source">
 <summary>
 <span>Expand source code</span>
 </summary>
 <pre><code class="python">def clear_all(self) -&gt; None:
+    &#34;&#34;&#34;Clear all values in the collection for all tags.&#34;&#34;&#34;
     self.__collection = {}</code></pre>
 </details>
 </dd>
@@ -149,12 +214,30 @@ return default</p></div>
 <span>def <span class="ident">get</span></span>(<span>self, tag: ~Tag) ‑> List[~Value]</span>
 </code></dt>
 <dd>
-<div class="desc"></div>
+<div class="desc"><p>Get all values indexed with a tag.</p>
+<h2 id="args">Args</h2>
+<dl>
+<dt><strong><code>tag</code></strong> :&ensp;<code>Tag</code></dt>
+<dd>Tag to search for</dd>
+</dl>
+<h2 id="returns">Returns</h2>
+<dl>
+<dt><code>List[Value]</code></dt>
+<dd>List of values indexed with the given tag</dd>
+</dl></div>
 <details class="source">
 <summary>
 <span>Expand source code</span>
 </summary>
 <pre><code class="python">def get(self, tag: Tag) -&gt; List[Value]:
+    &#34;&#34;&#34;Get all values indexed with a tag.
+
+    Args:
+        tag (Tag): Tag to search for
+
+    Returns:
+        List[Value]: List of values indexed with the given tag
+    &#34;&#34;&#34;
     return self.__collection.get(tag, [])</code></pre>
 </details>
 </dd>
@@ -162,12 +245,22 @@ return default</p></div>
 <span>def <span class="ident">get_all</span></span>(<span>self) ‑> List[~Value]</span>
 </code></dt>
 <dd>
-<div class="desc"></div>
+<div class="desc"><p>Get all values in the collection regardless of the tags.</p>
+<h2 id="returns">Returns</h2>
+<dl>
+<dt><code>List[Value]</code></dt>
+<dd>List of all values in the collection</dd>
+</dl></div>
 <details class="source">
 <summary>
 <span>Expand source code</span>
 </summary>
 <pre><code class="python">def get_all(self) -&gt; List[Value]:
+    &#34;&#34;&#34;Get all values in the collection regardless of the tags.
+
+    Returns:
+        List[Value]: List of all values in the collection
+    &#34;&#34;&#34;
     return [value for values in self.__collection.values() for value in values]</code></pre>
 </details>
 </dd>

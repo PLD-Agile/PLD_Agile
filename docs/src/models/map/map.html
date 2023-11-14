@@ -36,11 +36,19 @@ from src.models.map.segment import Segment
 
 @dataclass
 class Map:
+    &#34;&#34;&#34;Class representing a map. This contains all the information about the map, such as intersections, segments, warehouse, etc.&#34;&#34;&#34;
+
     intersections: Dict[int, Intersection]
+    &#34;&#34;&#34;Map of all the intersections identified by their ID. Ex: intersections[1] gives the intersection with ID 1.
+    &#34;&#34;&#34;
     segments: Dict[int, Dict[int, Segment]]
     &#34;&#34;&#34;2D map of segments, indexed by origin and destination intersection IDs. Ex: segments_map[1][2] gives the segment between intersection 1 and 2.&#34;&#34;&#34;
     warehouse: Intersection
+    &#34;&#34;&#34;Intersection where the warehouse is located.
+    &#34;&#34;&#34;
     size: MapSize
+    &#34;&#34;&#34;Size of the map.
+    &#34;&#34;&#34;
 
     def get_all_segments(self) -&gt; Generator[Segment, any, None]:
         &#34;&#34;&#34;Returns all segments in the map.&#34;&#34;&#34;
@@ -63,18 +71,26 @@ class Map:
 <span>(</span><span>intersections: Dict[int, <a title="src.models.map.intersection.Intersection" href="intersection.html#src.models.map.intersection.Intersection">Intersection</a>], segments: Dict[int, Dict[int, <a title="src.models.map.segment.Segment" href="segment.html#src.models.map.segment.Segment">Segment</a>]], warehouse: <a title="src.models.map.intersection.Intersection" href="intersection.html#src.models.map.intersection.Intersection">Intersection</a>, size: <a title="src.models.map.map_size.MapSize" href="map_size.html#src.models.map.map_size.MapSize">MapSize</a>)</span>
 </code></dt>
 <dd>
-<div class="desc"><p>Map(intersections: Dict[int, src.models.map.intersection.Intersection], segments: Dict[int, Dict[int, src.models.map.segment.Segment]], warehouse: src.models.map.intersection.Intersection, size: src.models.map.map_size.MapSize)</p></div>
+<div class="desc"><p>Class representing a map. This contains all the information about the map, such as intersections, segments, warehouse, etc.</p></div>
 <details class="source">
 <summary>
 <span>Expand source code</span>
 </summary>
 <pre><code class="python">@dataclass
 class Map:
+    &#34;&#34;&#34;Class representing a map. This contains all the information about the map, such as intersections, segments, warehouse, etc.&#34;&#34;&#34;
+
     intersections: Dict[int, Intersection]
+    &#34;&#34;&#34;Map of all the intersections identified by their ID. Ex: intersections[1] gives the intersection with ID 1.
+    &#34;&#34;&#34;
     segments: Dict[int, Dict[int, Segment]]
     &#34;&#34;&#34;2D map of segments, indexed by origin and destination intersection IDs. Ex: segments_map[1][2] gives the segment between intersection 1 and 2.&#34;&#34;&#34;
     warehouse: Intersection
+    &#34;&#34;&#34;Intersection where the warehouse is located.
+    &#34;&#34;&#34;
     size: MapSize
+    &#34;&#34;&#34;Size of the map.
+    &#34;&#34;&#34;
 
     def get_all_segments(self) -&gt; Generator[Segment, any, None]:
         &#34;&#34;&#34;Returns all segments in the map.&#34;&#34;&#34;
@@ -86,7 +102,7 @@ class Map:
 <dl>
 <dt id="src.models.map.map.Map.intersections"><code class="name">var <span class="ident">intersections</span> : Dict[int, <a title="src.models.map.intersection.Intersection" href="intersection.html#src.models.map.intersection.Intersection">Intersection</a>]</code></dt>
 <dd>
-<div class="desc"></div>
+<div class="desc"><p>Map of all the intersections identified by their ID. Ex: intersections[1] gives the intersection with ID 1.</p></div>
 </dd>
 <dt id="src.models.map.map.Map.segments"><code class="name">var <span class="ident">segments</span> : Dict[int, Dict[int, <a title="src.models.map.segment.Segment" href="segment.html#src.models.map.segment.Segment">Segment</a>]]</code></dt>
 <dd>
@@ -94,11 +110,11 @@ class Map:
 </dd>
 <dt id="src.models.map.map.Map.size"><code class="name">var <span class="ident">size</span> : <a title="src.models.map.map_size.MapSize" href="map_size.html#src.models.map.map_size.MapSize">MapSize</a></code></dt>
 <dd>
-<div class="desc"></div>
+<div class="desc"><p>Size of the map.</p></div>
 </dd>
 <dt id="src.models.map.map.Map.warehouse"><code class="name">var <span class="ident">warehouse</span> : <a title="src.models.map.intersection.Intersection" href="intersection.html#src.models.map.intersection.Intersection">Intersection</a></code></dt>
 <dd>
-<div class="desc"></div>
+<div class="desc"><p>Intersection where the warehouse is located.</p></div>
 </dd>
 </dl>
 <h3>Methods</h3>

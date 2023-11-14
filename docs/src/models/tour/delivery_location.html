@@ -33,6 +33,12 @@ from src.models.map.segment import Segment
 
 @dataclass
 class DeliveryLocation:
+    &#34;&#34;&#34;Location where a delivery is made. This represents a point on a segment.
+
+    **Notes:** This class was created from our initial architecture where the idea was to allow deliveries to be made anywhere on a segment.
+    However, this was not implemented in the end. The positionOnSegment attribute is always 0 and the location is always the segment&#39;s origin.
+    &#34;&#34;&#34;
+
     segment: Segment
     positionOnSegment: float</code></pre>
 </details>
@@ -51,13 +57,21 @@ class DeliveryLocation:
 <span>(</span><span>segment: <a title="src.models.map.segment.Segment" href="../map/segment.html#src.models.map.segment.Segment">Segment</a>, positionOnSegment: float)</span>
 </code></dt>
 <dd>
-<div class="desc"><p>DeliveryLocation(segment: src.models.map.segment.Segment, positionOnSegment: float)</p></div>
+<div class="desc"><p>Location where a delivery is made. This represents a point on a segment.</p>
+<p><strong>Notes:</strong> This class was created from our initial architecture where the idea was to allow deliveries to be made anywhere on a segment.
+However, this was not implemented in the end. The positionOnSegment attribute is always 0 and the location is always the segment's origin.</p></div>
 <details class="source">
 <summary>
 <span>Expand source code</span>
 </summary>
 <pre><code class="python">@dataclass
 class DeliveryLocation:
+    &#34;&#34;&#34;Location where a delivery is made. This represents a point on a segment.
+
+    **Notes:** This class was created from our initial architecture where the idea was to allow deliveries to be made anywhere on a segment.
+    However, this was not implemented in the end. The positionOnSegment attribute is always 0 and the location is always the segment&#39;s origin.
+    &#34;&#34;&#34;
+
     segment: Segment
     positionOnSegment: float</code></pre>
 </details>

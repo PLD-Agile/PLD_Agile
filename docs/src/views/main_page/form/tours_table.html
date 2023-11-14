@@ -26,11 +26,11 @@
 <summary>
 <span>Expand source code</span>
 </summary>
-<pre><code class="python">from typing import List, Tuple
+<pre><code class="python">from typing import Dict, List, Tuple
 
 from PyQt6.QtWidgets import QTableWidget
 
-from src.models.tour import Delivery, Tour
+from src.models.tour import Delivery, Tour, TourID
 from src.services.tour.tour_service import TourService
 from src.views.main_page.form.tours_table_column import ToursTableColumn
 from src.views.main_page.form.tours_table_column_items import (
@@ -73,11 +73,13 @@ class ToursTable(QTableWidget):
 
         self.cellClicked.connect(lambda: self.__on_item_clicked())
 
-    def update_content(self, tours: List[Tour]) -&gt; None:
+    def update_content(self, tours: Dict[TourID, Tour]) -&gt; None:
         self.setRowCount(0)
 
         self.__values = [
-            (tour, delivery) for tour in tours for delivery in tour.deliveries.values()
+            (tour, delivery)
+            for tour in tours.values()
+            for delivery in tour.deliveries.values()
         ]
 
         for tour, delivery in self.__values:
@@ -152,11 +154,13 @@ QTableWidget(rows: int, columns: int, parent: typing.Optional[QWidget] = None)</
 
         self.cellClicked.connect(lambda: self.__on_item_clicked())
 
-    def update_content(self, tours: List[Tour]) -&gt; None:
+    def update_content(self, tours: Dict[TourID, Tour]) -&gt; None:
         self.setRowCount(0)
 
         self.__values = [
-            (tour, delivery) for tour in tours for delivery in tour.deliveries.values()
+            (tour, delivery)
+            for tour in tours.values()
+            for delivery in tour.deliveries.values()
         ]
 
         for tour, delivery in self.__values:
@@ -203,7 +207,7 @@ QTableWidget(rows: int, columns: int, parent: typing.Optional[QWidget] = None)</
 <h3>Methods</h3>
 <dl>
 <dt id="src.views.main_page.form.tours_table.ToursTable.update_content"><code class="name flex">
-<span>def <span class="ident">update_content</span></span>(<span>self, tours: List[<a title="src.models.tour.tour.Tour" href="../../../models/tour/tour.html#src.models.tour.tour.Tour">Tour</a>]) ‑> None</span>
+<span>def <span class="ident">update_content</span></span>(<span>self, tours: Dict[uuid.UUID, <a title="src.models.tour.tour.Tour" href="../../../models/tour/tour.html#src.models.tour.tour.Tour">Tour</a>]) ‑> None</span>
 </code></dt>
 <dd>
 <div class="desc"></div>
@@ -211,11 +215,13 @@ QTableWidget(rows: int, columns: int, parent: typing.Optional[QWidget] = None)</
 <summary>
 <span>Expand source code</span>
 </summary>
-<pre><code class="python">def update_content(self, tours: List[Tour]) -&gt; None:
+<pre><code class="python">def update_content(self, tours: Dict[TourID, Tour]) -&gt; None:
     self.setRowCount(0)
 
     self.__values = [
-        (tour, delivery) for tour in tours for delivery in tour.deliveries.values()
+        (tour, delivery)
+        for tour in tours.values()
+        for delivery in tour.deliveries.values()
     ]
 
     for tour, delivery in self.__values:
