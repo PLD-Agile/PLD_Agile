@@ -25,7 +25,20 @@ from src.services.tour.tour_computing_service import TourComputingService
 from src.services.tour.tour_saving_service import TourSavingService
 from src.services.tour.tour_time_computing_service import TourTimeComputingService
 
-COLORS = ["#598BB4", "#E1BC6C", "#D5745A", "#89BA9C", "#9573C1", "#7FBBDB", "#757592", "#A77E56", "#A49F9C", "#B7D273", "#935772", "#D17775"]
+COLORS = [
+    "#598BB4",
+    "#E1BC6C",
+    "#D5745A",
+    "#89BA9C",
+    "#9573C1",
+    "#7FBBDB",
+    "#757592",
+    "#A77E56",
+    "#A49F9C",
+    "#B7D273",
+    "#935772",
+    "#D17775",
+]
 
 
 class TourService(Singleton):
