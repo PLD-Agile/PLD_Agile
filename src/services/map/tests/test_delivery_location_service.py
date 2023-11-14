@@ -56,6 +56,8 @@ class TestDeliveryLocationService:
         yield
         
         DeliveryLocationService.reset()
+        MapService.reset()
+        
         self.service = None
         
     def test_should_create_service(self):
