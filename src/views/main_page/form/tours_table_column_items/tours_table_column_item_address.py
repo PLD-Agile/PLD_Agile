@@ -1,6 +1,6 @@
 from PyQt6.QtWidgets import QLabel
 
-from src.models.tour import Tour, Delivery
+from src.models.tour import Delivery, Tour
 
 
 class ToursTableColumnItemAddress(QLabel):

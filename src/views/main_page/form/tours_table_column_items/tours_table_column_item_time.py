@@ -1,11 +1,11 @@
-from typing import Dict
-
 from PyQt6.QtWidgets import QComboBox, QHBoxLayout, QWidget
 
-from src.models.delivery_man.delivery_man import DeliveryMan
 from src.models.tour import ComputedDelivery, Delivery, Tour
+from src.services.command.command_service import CommandService
+from src.services.command.commands.update_delivery_request_time_window_command import (
+    UpdateDeliveryRequestTimeWindow,
+)
 from src.services.delivery_man.delivery_man_service import DeliveryManService
-from src.services.tour.tour_service import TourService
 
 
 class ToursTableColumnItemTime(QWidget):
@@ -71,8 +71,10 @@ class ToursTableColumnItemTime(QWidget):
         if time_window is None or time_window == -1:
             return
 
-        TourService.instance().update_delivery_request_time_window(
-            delivery_request_id=self.__delivery.id,
-            tour_id=self.__tour.id,
-            time_window=time_window,
+        CommandService.instance().execute(
+            UpdateDeliveryRequestTimeWindow(
+                delivery_request_id=self.__delivery.id,
+                tour_id=self.__tour.id,
+                time_window=time_window,
+            )
         )

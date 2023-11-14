@@ -34,11 +34,7 @@ class ToursTable(QTableWidget):
             render=ToursTableColumnItemDeliveryMan,
             width=150,
         ),
-        ToursTableColumn(
-            header="",
-            render=ToursTableColumnItemActions,
-            width=80
-        ),
+        ToursTableColumn(header="", render=ToursTableColumnItemActions, width=80),
     ]
 
     def __init__(self):

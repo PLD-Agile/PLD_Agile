@@ -153,16 +153,19 @@ class TourService(Singleton):
 
     def update_delivery_request_time_window(
         self, delivery_request_id: DeliveryID, tour_id: TourID, time_window: int
-    ) -> None:
+    ) -> int:
         tour_request = self.__tour_requests.value[tour_id]
         delivery_request = tour_request.deliveries[delivery_request_id]
 
         if delivery_request.time_window == time_window:
             return
 
+        previous_time_window = delivery_request.time_window
         delivery_request.time_window = time_window
 
         self.__tour_requests.on_next(self.__tour_requests.value)
+
+        return previous_time_window
 
     def update_delivery_request_delivery_man(
         self, delivery_request_id: DeliveryID, tour_id: TourID, delivery_man_id: UUID
