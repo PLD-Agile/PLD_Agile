@@ -14,22 +14,38 @@ class Position:
 
     @property
     def x(self) -> float:
-        """Get the value of the X axis. Equivalent the longitude of the position."""
+        """Get the value of the X axis. Equivalent the longitude of the position.
+
+        Returns:
+            float: Value of the X axis.
+        """
         return self.longitude
 
     @x.setter
     def x(self, value: float) -> None:
-        """Set the value of the X axis. Equivalent the longitude of the position."""
+        """Set the value of the X axis. Equivalent the longitude of the position.
+
+        Returns:
+            None
+        """
         self.longitude = value
 
     @property
     def y(self) -> float:
-        """Get the value of the Y axis. Equivalent the latitude of the position."""
+        """Get the value of the Y axis. Equivalent the latitude of the position.
+
+        Returns:
+            float: Value of the Y axis.
+        """
         return self.latitude
 
     @y.setter
     def y(self, value: float) -> None:
-        """Set the value of the Y axis. Equivalent the latitude of the position."""
+        """Set the value of the Y axis. Equivalent the latitude of the position.
+
+        Returns:
+            None
+        """
         self.latitude = value
 
     def max(self, p: "Position", *args: List["Position"]) -> "Position":

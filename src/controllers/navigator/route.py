@@ -5,6 +5,8 @@ from typing import Generic, Type, TypeVar
 from PyQt6.QtWidgets import QWidget
 
 RouteName = TypeVar("RouteName", Enum, str)
+"""Type of the route name.
+"""
 
 
 @dataclass

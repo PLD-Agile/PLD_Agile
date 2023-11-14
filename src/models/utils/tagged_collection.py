@@ -46,5 +46,9 @@ class TaggedCollection(Generic[Tag, Value]):
         return [value for values in self.__collection.values() for value in values]
 
     def clear_all(self) -> None:
-        """Clear all values in the collection for all tags."""
+        """Clear all values in the collection for all tags.
+
+        Returns:
+            None
+        """
         self.__collection = {}

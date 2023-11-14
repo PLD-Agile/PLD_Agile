@@ -23,7 +23,11 @@ class Map:
     """
 
     def get_all_segments(self) -> Generator[Segment, any, None]:
-        """Returns all segments in the map."""
+        """Returns all segments in the map.
+
+        Returns:
+            Generator[Segment, any, None]: Generator of all segments in the map.
+        """
         for origin_segments in self.segments.values():
             for segment in origin_segments.values():
                 yield segment

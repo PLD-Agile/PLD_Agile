@@ -14,6 +14,8 @@ RouteName = TypeVar("RouteName", Enum, str)
 
 
 class Navigator(Generic[RouteName]):
+    """Navigator class that handles the navigation between pages."""
+
     __navigators: Dict[str, "Navigator"] = {}
 
     __history_stack: BehaviorSubject[List[RouteName]]
@@ -142,6 +144,11 @@ class Navigator(Generic[RouteName]):
         self.__history_stack.on_next(self.__history_stack.value[:-1] + [name])
 
     def get_current_route_name(self) -> RouteName:
+        """Get the current route name
+
+        Returns:
+            RouteName: Current route name
+        """
         return self.__history_stack.value[-1]
 
     def get_router_outlet(self) -> QWidget:
@@ -175,11 +182,28 @@ class Navigator(Generic[RouteName]):
         return widget
 
     def __match_name(self, route_name: str, search_name: str) -> bool:
+        """Check if the route name matches the search name
+
+        Args:
+            route_name (str): Route name
+            search_name (str): Search name
+
+        Returns:
+            bool: True if the route name matches the search name, False otherwise
+        """
         return route_name == search_name or (
             route_name.value == search_name if isinstance(route_name, Enum) else False
         )
 
     def __resolve_route(self, name: str) -> Tuple[int, Route]:
+        """Resolve the route from the given name. If the route is not found, the not found widget is returned
+
+        Args:
+            name (str): Name of the route to resolve
+
+        Returns:
+            Tuple[int, Route]: Tuple of the index of the route and the route or the not found widget
+        """
         for i, route in enumerate(self.__routes):
             if self.__match_name(route.name, name):
                 return (i, route)
@@ -187,6 +211,11 @@ class Navigator(Generic[RouteName]):
         return (len(self.__routes), Route(name=name, widget=self.__not_found_widget))
 
     def __build_not_found_widget(self) -> QWidget:
+        """Build a not found widget
+
+        Returns:
+            QWidget: Not found widget
+        """
         widget = QWidget()
         layout = QVBoxLayout()
 
