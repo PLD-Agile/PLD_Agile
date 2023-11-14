@@ -466,6 +466,8 @@ class MapView(QGraphicsView):
         for i in range(count):
             brush.setColorAt(i / count, colors[i % len(colors)])
             brush.setColorAt(i / count + 0.0000001, colors[(i + 1) % len(colors)])
+            
+        brush.setColorAt(1, colors[count % len(colors)])
 
         segment_pen = segment_shape.pen()
         segment_pen.setBrush(brush)
