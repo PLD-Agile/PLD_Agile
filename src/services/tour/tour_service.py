@@ -14,6 +14,7 @@ from src.models.tour import (
     DeliveryRequest,
     NonComputedTour,
     Tour,
+    TourComputingResult,
     TourID,
     TourRequest,
 )
@@ -199,7 +200,7 @@ class TourService(Singleton):
 
         map = MapService.instance().get_map()
 
-        tours_intersection_ids: Dict[TourID, List[UUID]] = {}
+        tours_intersection_ids: Dict[TourID, TourComputingResult] = {}
 
         for id, tour_request in self.__tour_requests.value.items():
             try:
@@ -222,7 +223,7 @@ class TourService(Singleton):
                 except Exception as e:
                     computed_tours[id] = NonComputedTour.create_from_request(
                         self.__tour_requests.value[id],
-                        [f"Erreur lors du calcul du temps de parcours : {e}"],
+                        [f"Erreur lors du calcul du temps de parcours : {str(e)}"],
                     )
             else:
                 computed_tours[id] = NonComputedTour.create_from_request(

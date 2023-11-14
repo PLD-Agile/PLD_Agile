@@ -4,26 +4,40 @@ from typing import List
 import networkx as nx
 
 from src.models.map import Map, Segment
-from src.models.tour import DeliveryLocation, DeliveryRequest, TourRequest
+from src.models.tour import (
+    DeliveriesComputingResult,
+    DeliveryLocation,
+    DeliveryRequest,
+    TourComputingResult,
+    TourRequest,
+)
 from src.services.singleton import Singleton
 
 
 class TourComputingService(Singleton):
-    def compute_tour(self, tour_request: TourRequest, map: Map) -> List[int]:
-        """Compute tours for a list of tour requests."""
-        map_graph = self.create_graph_from_map(map)
+    def compute_tour(self, tour_request: TourRequest, map: Map) -> TourComputingResult:
+        """Compute tours for a list of tour requests.
+
+        Args:
+            tour_request (TourRequest): Tour request
+            map (Map): Map
+
+        Returns:
+            TourComputingResult: Result of the computation
+        """
+        map_graph = self.__create_graph_from_map(map)
         warehouse = DeliveryRequest(
             DeliveryLocation(Segment(-1, "", map.warehouse, map.warehouse, 0), 0), 8
         )
 
-        return self.solve_tsp(
-            self.compute_shortest_path_graph(
+        return self.__solve_tsp(
+            self.__compute_shortest_path_graph(
                 map_graph, [warehouse] + list(tour_request.deliveries.values())
             )
         )
 
     #  Replace this with the data from the Map model
-    def create_graph_from_map(self, map: Map) -> nx.Graph:
+    def __create_graph_from_map(self, map: Map) -> nx.Graph:
         """Create a directed graph from an XML file."""
         graph = nx.DiGraph()
 
@@ -43,7 +57,7 @@ class TourComputingService(Singleton):
 
         return graph
 
-    def compute_shortest_path_graph(
+    def __compute_shortest_path_graph(
         self, graph: nx.Graph, deliveries: List[DeliveryRequest]
     ) -> nx.DiGraph:
         """Compute the shortest path graph between delivery locations."""
@@ -82,9 +96,9 @@ class TourComputingService(Singleton):
 
         return G
 
-    def solve_tsp(self, shortest_path_graph: nx.Graph) -> List[int]:
+    def __solve_tsp(self, shortest_path_graph: nx.Graph) -> TourComputingResult:
         shortest_cycle_length = float("inf")
-        shortest_cycle = []
+        shortest_cycle: List[DeliveriesComputingResult] = []
         route = []
 
         # Generate all permutations of delivery points to find the shortest cycle
@@ -96,6 +110,8 @@ class TourComputingService(Singleton):
             permuted_points = [warehouse_id] + permuted_points
             cycle_length = 0
             current_time = 8 * 60  # Starting time at the warehouse (8 a.m.)
+
+            times = []
 
             for i in range(len(permuted_points) - 1):
                 source = permuted_points[i]
@@ -124,6 +140,8 @@ class TourComputingService(Singleton):
                     is_valid_tuple = False
                     break
 
+                times.append(current_time)
+
             if not is_valid_tuple:
                 continue
             # Add the length of the last edge back to the starting point to complete the cycle
@@ -137,23 +155,27 @@ class TourComputingService(Singleton):
 
             if cycle_length < shortest_cycle_length:
                 shortest_cycle_length = cycle_length
-                shortest_cycle = permuted_points
+                shortest_cycle = list(zip(permuted_points, [0] + times))
 
         # Compute the actual route from the shortest cycle
         if shortest_cycle == []:
             return []
+
         for i in range(len(shortest_cycle) - 1):
-            source = shortest_cycle[i]
-            target = shortest_cycle[i + 1]
+            source, source_time = shortest_cycle[i]
+            target, target_time = shortest_cycle[i + 1]
             dijkstra_path = shortest_path_graph[source][target]["path"]
             route = route + dijkstra_path
             route.pop()
 
         # Complete the route with the path from the last delivery point to the first
-        dijkstra_path = shortest_path_graph[shortest_cycle[-1]][shortest_cycle[0]][
-            "path"
-        ]
+        dijkstra_path = shortest_path_graph[shortest_cycle[-1][0]][
+            shortest_cycle[0][0]
+        ]["path"]
 
         route = route + dijkstra_path
 
-        return route
+        return TourComputingResult(
+            route=route,
+            deliveries=shortest_cycle,
+        )
