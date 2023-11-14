@@ -2,9 +2,10 @@ import math
 from datetime import datetime, timedelta
 from typing import Dict, List
 
+from models.errors.computing_errors import DeliveriesNotOnRouteError
 from src.config import Config
 from src.models.map import Segment
-from src.models.tour import ComputedDelivery, ComputedTour, DeliveryRequest, TourRequest
+from src.models.tour import ComputedDelivery, ComputedTour, DeliveryRequest, TourRequest, DeliveryID
 from src.services.map.map_service import MapService
 from src.services.singleton import Singleton
 
@@ -31,22 +32,19 @@ class TourTimeComputingService(Singleton):
 
         return ComputedTour.create_from_request(
             tour_request=tour_request,
-            deliveries={
-                delivery.id: delivery
-                for delivery in self.__compute_time_for_deliveries(
+            deliveries=self.__compute_time_for_deliveries(
                     tour_request, segment_route
-                )
-            },
+                ),
             route=segment_route,
         )
 
     def __compute_time_for_deliveries(
         self, tour_request: TourRequest, route: List[Segment]
-    ) -> List[ComputedDelivery]:
+    ) -> Dict[DeliveryID, ComputedDelivery]:
         travel_time = Config.INITIAL_DEPART_TIME
 
         delivery_requests: Dict[int, DeliveryRequest] = {}
-        computed_deliveries: List[ComputedDelivery] = []
+        computed_deliveries: Dict[DeliveryID, ComputedDelivery] = {}
 
         for delivery in tour_request.deliveries.values():
             delivery_requests[delivery.location.segment.origin.id] = delivery
@@ -67,18 +65,21 @@ class TourTimeComputingService(Singleton):
                 # if travel_time > time_window_start + Config.TIME_WINDOW_SIZE:
                 #     raise Exception("Delivery time window exceeded")
 
-                computed_deliveries.append(
-                    ComputedDelivery.create_from_request(
-                        delivery_request=delivery, time=travel_time
-                    )
+                computed_delivery = ComputedDelivery.create_from_request(
+                    delivery_request=delivery, time=travel_time
                 )
+                computed_deliveries[computed_delivery.id] = computed_delivery
 
                 # Delivery takes 5 minutes
                 travel_time += Config.DELIVERY_TIME
 
-        if len(computed_deliveries) != len(tour_request.deliveries):
+        if len(computed_deliveries) < len(tour_request.deliveries):
+            raise DeliveriesNotOnRouteError(
+                f"Expected {len(tour_request.deliveries)} deliveries, got {len(computed_deliveries)}"
+            )
+        elif len(computed_deliveries) != len(tour_request.deliveries):
             raise Exception(
-                "The number of computed deliveries and deliveries must be the same"
+                f"Expected {len(tour_request.deliveries)} deliveries, got {len(computed_deliveries)}"
             )
 
         return computed_deliveries
