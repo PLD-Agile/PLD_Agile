@@ -37,5 +37,5 @@ class UpdateDeliveryRequestTimeWindowCommand(AbstractCommand):
             tour_id=self.__tour_id,
             time_window=self.__previous_time_window,
         )
-        
+
         self.__previous_time_window = None

@@ -8,13 +8,13 @@ from reactivex.subject import BehaviorSubject
 from src.models.map import Position
 from src.models.tour import (
     ComputedTour,
+    Delivery,
     DeliveryID,
     DeliveryLocation,
     DeliveryRequest,
     Tour,
     TourID,
     TourRequest,
-    Delivery
 )
 from src.services.delivery_man.delivery_man_service import DeliveryManService
 from src.services.map.delivery_location_service import DeliveryLocationService
@@ -93,9 +93,7 @@ class TourService(Singleton):
     def get_computed_tours(self) -> List[ComputedTour]:
         return self.__computed_tours.value
 
-    def select_delivery(
-        self, delivery: Optional[Delivery]
-    ) -> None:
+    def select_delivery(self, delivery: Optional[Delivery]) -> None:
         self.__selected_delivery.on_next(delivery)
 
     def add_delivery_request(
