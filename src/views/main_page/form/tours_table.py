@@ -9,11 +9,17 @@ from src.views.main_page.form.tours_table_column_items import (
     ToursTableColumnItemAddress,
     ToursTableColumnItemDeliveryMan,
     ToursTableColumnItemTime,
+    ToursTableColumnItemTour,
 )
 
 
 class ToursTable(QTableWidget):
     COLUMNS: List[ToursTableColumn] = [
+        ToursTableColumn(
+            header="Tour",
+            render=ToursTableColumnItemTour,
+            width=40,
+        ),
         ToursTableColumn(
             header="Adresse",
             render=lambda tour, delivery: ToursTableColumnItemAddress(delivery),
@@ -55,3 +61,7 @@ class ToursTable(QTableWidget):
         self.setHorizontalHeaderLabels([column.header for column in self.COLUMNS])
         self.setEditTriggers(QTableWidget.EditTrigger.NoEditTriggers)
         self.setSelectionMode(QTableWidget.SelectionMode.SingleSelection)
+
+        for i, col in enumerate(self.COLUMNS):
+            if col.width is not None:
+                self.setColumnWidth(i, col.width)
