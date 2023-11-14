@@ -5,7 +5,7 @@ from src.services.command.abstract_command import AbstractCommand
 from src.services.tour.tour_service import TourService
 
 
-class UpdateDeliveryRequestTimeWindow(AbstractCommand):
+class UpdateDeliveryRequestTimeWindowCommand(AbstractCommand):
     __delivery_request_id: DeliveryID
     __tour_id: TourID
     __time_window: int

@@ -3,7 +3,7 @@ from PyQt6.QtWidgets import QComboBox, QHBoxLayout, QWidget
 from src.models.tour import ComputedDelivery, Delivery, Tour
 from src.services.command.command_service import CommandService
 from src.services.command.commands.update_delivery_request_time_window_command import (
-    UpdateDeliveryRequestTimeWindow,
+    UpdateDeliveryRequestTimeWindowCommand,
 )
 from src.services.delivery_man.delivery_man_service import DeliveryManService
 
@@ -72,7 +72,7 @@ class ToursTableColumnItemTime(QWidget):
             return
 
         CommandService.instance().execute(
-            UpdateDeliveryRequestTimeWindow(
+            UpdateDeliveryRequestTimeWindowCommand(
                 delivery_request_id=self.__delivery.id,
                 tour_id=self.__tour.id,
                 time_window=time_window,
