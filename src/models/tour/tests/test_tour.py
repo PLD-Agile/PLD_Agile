@@ -3,11 +3,11 @@ import unittest
 from src.models.delivery_man.delivery_man import DeliveryMan
 from src.models.map.intersection import Intersection
 from src.models.map.segment import Segment
-from src.models.tour.computed_delivery import ComputedDelivery
-from src.models.tour.computed_tour import ComputedTour
+from src.models.tour import ComputedDelivery
+from src.models.tour import ComputedTour
+from src.models.tour import DeliveryRequest
+from src.models.tour import TourRequest
 from src.models.tour.delivery_location import DeliveryLocation
-from src.models.tour.delivery_request import DeliveryRequest
-from src.models.tour.tour_request import TourRequest
 
 
 class TestDeliveryLocation(unittest.TestCase):
