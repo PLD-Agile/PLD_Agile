@@ -22,7 +22,7 @@ class ToursTable(QTableWidget):
         ),
         ToursTableColumn(
             header="Adresse",
-            render=lambda tour, delivery: ToursTableColumnItemAddress(delivery),
+            render=ToursTableColumnItemAddress,
         ),
         ToursTableColumn(
             header="Heure",
