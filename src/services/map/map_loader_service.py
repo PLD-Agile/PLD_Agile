@@ -60,5 +60,14 @@ class MapLoaderService(Singleton):
         return map
 
     def __update_map_size(self, map_size: MapSize, position: Position) -> None:
+        """Updates the map size based on the given position.
+
+        Args:
+            map_size (MapSize): The current map size.
+            position (Position): The position to update the map size with.
+
+        Returns:
+            None
+        """
         map_size.max = Position.max(map_size.max, position)
         map_size.min = Position.min(map_size.min, position)

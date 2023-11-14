@@ -43,6 +43,15 @@ class TourTimeComputingService(Singleton):
     def __compute_time_for_deliveries(
         self, tour_request: TourRequest, route: List[Segment]
     ) -> List[ComputedDelivery]:
+        """Computes the time for each delivery in a given tour request and route.
+
+        Args:
+            tour_request: A TourRequest object representing the tour request to compute the delivery times for.
+            route: A List of Segment objects representing the route to take for the tour request.
+
+        Returns:
+            List[ComputedDelivery]: Computed delivery times for the given tour request and route.
+        """
         travel_time = Config.INITIAL_DEPART_TIME
 
         delivery_requests: Dict[int, DeliveryRequest] = {}
@@ -84,6 +93,15 @@ class TourTimeComputingService(Singleton):
         return computed_deliveries
 
     def __calculate_travel_time_for_segment(self, segment: Segment) -> timedelta:
+        """
+        Calculates the travel time for a given segment based on its length and the traveling speed defined in the Config class.
+
+        Args:
+            segment (Segment): The segment for which to calculate the travel time.
+
+        Returns:
+            timedelta: The calculated travel time as a timedelta object.
+        """
         return timedelta(
             seconds=math.floor(segment.length / (Config.TRAVELING_SPEED / 3.6))
         )

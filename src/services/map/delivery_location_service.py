@@ -11,7 +11,14 @@ class DeliveryLocationService(Singleton):
     def find_delivery_location_from_position(
         self, position: Position
     ) -> DeliveryLocation:
-        """Find the delivery location from a position."""
+        """Find the delivery location from a given position.
+
+        Args:
+            position (Position): The position to find the delivery location from.
+
+        Returns:
+            DeliveryLocation: The delivery location closest to the given position.
+        """
 
         # TODO: Find the point on the segment
         closest_intersection = self.__find_closest_intersection(position)
@@ -47,4 +54,12 @@ class DeliveryLocationService(Singleton):
         return found
 
     def __get_intersection_segments(self, intersection: Intersection) -> List[Segment]:
+        """Returns a list of segments connected to the given intersection.
+
+        Args:
+            intersection (Intersection): The intersection to get the segments for.
+
+        Returns:
+            List[Segment]: A list of segments connected to the given intersection.
+        """
         return list(MapService.instance().get_map().segments[intersection.id].values())
