@@ -1,10 +1,10 @@
-import uuid
 from dataclasses import dataclass, field
 from typing import List
+from uuid import UUID, uuid4
 
 
 @dataclass
 class DeliveryMan:
     name: str
     availabilities: List[int]
-    id: str = field(default_factory=lambda: str(uuid.uuid4()))
+    id: UUID = field(default_factory=uuid4)

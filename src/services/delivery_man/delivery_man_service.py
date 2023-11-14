@@ -1,4 +1,5 @@
 from typing import Dict, List, Optional, Tuple
+from uuid import UUID
 
 from reactivex import Observable, combine_latest
 from reactivex.subject import BehaviorSubject
@@ -45,6 +46,17 @@ class DeliveryManService(Singleton):
             Observable[Tuple[Optional[DeliveryMan], Optional[int]]]: _description_
         """
         return combine_latest(self.__selected_delivery_man, self.__selected_time_window)
+
+    def get_delivery_man(self, id: UUID) -> DeliveryMan:
+        """Get delivery man from its ID.
+
+        Args:
+            id (UUID): ID of the delivery man
+
+        Returns:
+            DeliveryMan: Delivery man
+        """
+        return self.__delivery_men.value[id]
 
     def create_delivery_man(self, name: str) -> None:
         """Creates a Delivery Man and pass it back.
