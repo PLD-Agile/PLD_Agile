@@ -37,10 +37,20 @@ from src.models.map.intersection import Intersection
 @dataclass
 class Segment:
     id: int
+    &#34;&#34;&#34;ID of the segment.
+    &#34;&#34;&#34;
     name: str
+    &#34;&#34;&#34;Name of the segment.
+    &#34;&#34;&#34;
     origin: Intersection
+    &#34;&#34;&#34;Origin intersection.
+    &#34;&#34;&#34;
     destination: Intersection
+    &#34;&#34;&#34;Destination intersection.
+    &#34;&#34;&#34;
     length: float
+    &#34;&#34;&#34;Length of the segment.
+    &#34;&#34;&#34;
 
     @staticmethod
     def from_element(
@@ -101,10 +111,20 @@ class Segment:
 <pre><code class="python">@dataclass
 class Segment:
     id: int
+    &#34;&#34;&#34;ID of the segment.
+    &#34;&#34;&#34;
     name: str
+    &#34;&#34;&#34;Name of the segment.
+    &#34;&#34;&#34;
     origin: Intersection
+    &#34;&#34;&#34;Origin intersection.
+    &#34;&#34;&#34;
     destination: Intersection
+    &#34;&#34;&#34;Destination intersection.
+    &#34;&#34;&#34;
     length: float
+    &#34;&#34;&#34;Length of the segment.
+    &#34;&#34;&#34;
 
     @staticmethod
     def from_element(
@@ -146,23 +166,23 @@ class Segment:
 <dl>
 <dt id="src.models.map.segment.Segment.destination"><code class="name">var <span class="ident">destination</span> : <a title="src.models.map.intersection.Intersection" href="intersection.html#src.models.map.intersection.Intersection">Intersection</a></code></dt>
 <dd>
-<div class="desc"></div>
+<div class="desc"><p>Destination intersection.</p></div>
 </dd>
 <dt id="src.models.map.segment.Segment.id"><code class="name">var <span class="ident">id</span> : int</code></dt>
 <dd>
-<div class="desc"></div>
+<div class="desc"><p>ID of the segment.</p></div>
 </dd>
 <dt id="src.models.map.segment.Segment.length"><code class="name">var <span class="ident">length</span> : float</code></dt>
 <dd>
-<div class="desc"></div>
+<div class="desc"><p>Length of the segment.</p></div>
 </dd>
 <dt id="src.models.map.segment.Segment.name"><code class="name">var <span class="ident">name</span> : str</code></dt>
 <dd>
-<div class="desc"></div>
+<div class="desc"><p>Name of the segment.</p></div>
 </dd>
 <dt id="src.models.map.segment.Segment.origin"><code class="name">var <span class="ident">origin</span> : <a title="src.models.map.intersection.Intersection" href="intersection.html#src.models.map.intersection.Intersection">Intersection</a></code></dt>
 <dd>
-<div class="desc"></div>
+<div class="desc"><p>Origin intersection.</p></div>
 </dd>
 </dl>
 <h3>Static methods</h3>

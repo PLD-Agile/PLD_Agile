@@ -31,41 +31,57 @@ from src.models.map.position import Position
 
 
 class TestMapSize:
+    &#34;&#34;&#34;Tests class for MapSize.&#34;&#34;&#34;
+
     def test_should_create(self):
+        &#34;&#34;&#34;Test if MapSize can be created.&#34;&#34;&#34;
         assert MapSize(Position(0, 0), Position(0, 0)) is not None
 
+    def test_should_not_create(self):
+        &#34;&#34;&#34;Test if MapSize can&#39;t be created with invalid arguments.&#34;&#34;&#34;
+        with self.assertRaises(TypeError):
+            MapSize()
+
     def test_should_create_inverse_max_size(self):
+        &#34;&#34;&#34;Test if MapSize can create an inverse max size.&#34;&#34;&#34;
         assert MapSize.inverse_max_size() is not None
 
     def test_should_calculate_area(self):
+        &#34;&#34;&#34;Test if MapSize can calculate its area.&#34;&#34;&#34;
         assert MapSize(Position(0, 0), Position(1, 1)).area == 1
         assert MapSize(Position(0, 0), Position(2, 2)).area == 4
         assert MapSize(Position(0, 0), Position(3, 3)).area == 9
 
     def test_should_get_min(self):
+        &#34;&#34;&#34;Test if MapSize can get its min.&#34;&#34;&#34;
         assert MapSize(Position(0, 0), Position(1, 1)).min == Position(0, 0)
 
     def test_should_set_min(self):
+        &#34;&#34;&#34;Test if MapSize can set its min.&#34;&#34;&#34;
         map_size = MapSize(Position(0, 0), Position(1, 1))
         map_size.min = Position(1, 1)
 
         assert map_size.min == Position(1, 1)
 
     def test_should_get_max(self):
+        &#34;&#34;&#34;Test if MapSize can get its max.&#34;&#34;&#34;
         assert MapSize(Position(0, 0), Position(1, 1)).max == Position(1, 1)
 
     def test_should_set_max(self):
+        &#34;&#34;&#34;Test if MapSize can set its max.&#34;&#34;&#34;
         map_size = MapSize(Position(0, 0), Position(1, 1))
         map_size.max = Position(0, 0)
 
         assert map_size.max == Position(0, 0)
 
     def test_should_get_width(self):
+        &#34;&#34;&#34;Test if MapSize can get its width.&#34;&#34;&#34;
         assert MapSize(Position(0, 0), Position(1, 1)).width == 1
         assert MapSize(Position(0, 0), Position(2, 2)).width == 2
         assert MapSize(Position(0, 0), Position(3, 3)).width == 3
 
     def test_should_get_height(self):
+        &#34;&#34;&#34;Test if MapSize can get its height.&#34;&#34;&#34;
         assert MapSize(Position(0, 0), Position(1, 1)).height == 1
         assert MapSize(Position(0, 0), Position(2, 2)).height == 2
         assert MapSize(Position(0, 0), Position(3, 3)).height == 3</code></pre>
@@ -84,47 +100,63 @@ class TestMapSize:
 <span>class <span class="ident">TestMapSize</span></span>
 </code></dt>
 <dd>
-<div class="desc"></div>
+<div class="desc"><p>Tests class for MapSize.</p></div>
 <details class="source">
 <summary>
 <span>Expand source code</span>
 </summary>
 <pre><code class="python">class TestMapSize:
+    &#34;&#34;&#34;Tests class for MapSize.&#34;&#34;&#34;
+
     def test_should_create(self):
+        &#34;&#34;&#34;Test if MapSize can be created.&#34;&#34;&#34;
         assert MapSize(Position(0, 0), Position(0, 0)) is not None
 
+    def test_should_not_create(self):
+        &#34;&#34;&#34;Test if MapSize can&#39;t be created with invalid arguments.&#34;&#34;&#34;
+        with self.assertRaises(TypeError):
+            MapSize()
+
     def test_should_create_inverse_max_size(self):
+        &#34;&#34;&#34;Test if MapSize can create an inverse max size.&#34;&#34;&#34;
         assert MapSize.inverse_max_size() is not None
 
     def test_should_calculate_area(self):
+        &#34;&#34;&#34;Test if MapSize can calculate its area.&#34;&#34;&#34;
         assert MapSize(Position(0, 0), Position(1, 1)).area == 1
         assert MapSize(Position(0, 0), Position(2, 2)).area == 4
         assert MapSize(Position(0, 0), Position(3, 3)).area == 9
 
     def test_should_get_min(self):
+        &#34;&#34;&#34;Test if MapSize can get its min.&#34;&#34;&#34;
         assert MapSize(Position(0, 0), Position(1, 1)).min == Position(0, 0)
 
     def test_should_set_min(self):
+        &#34;&#34;&#34;Test if MapSize can set its min.&#34;&#34;&#34;
         map_size = MapSize(Position(0, 0), Position(1, 1))
         map_size.min = Position(1, 1)
 
         assert map_size.min == Position(1, 1)
 
     def test_should_get_max(self):
+        &#34;&#34;&#34;Test if MapSize can get its max.&#34;&#34;&#34;
         assert MapSize(Position(0, 0), Position(1, 1)).max == Position(1, 1)
 
     def test_should_set_max(self):
+        &#34;&#34;&#34;Test if MapSize can set its max.&#34;&#34;&#34;
         map_size = MapSize(Position(0, 0), Position(1, 1))
         map_size.max = Position(0, 0)
 
         assert map_size.max == Position(0, 0)
 
     def test_should_get_width(self):
+        &#34;&#34;&#34;Test if MapSize can get its width.&#34;&#34;&#34;
         assert MapSize(Position(0, 0), Position(1, 1)).width == 1
         assert MapSize(Position(0, 0), Position(2, 2)).width == 2
         assert MapSize(Position(0, 0), Position(3, 3)).width == 3
 
     def test_should_get_height(self):
+        &#34;&#34;&#34;Test if MapSize can get its height.&#34;&#34;&#34;
         assert MapSize(Position(0, 0), Position(1, 1)).height == 1
         assert MapSize(Position(0, 0), Position(2, 2)).height == 2
         assert MapSize(Position(0, 0), Position(3, 3)).height == 3</code></pre>
@@ -135,12 +167,13 @@ class TestMapSize:
 <span>def <span class="ident">test_should_calculate_area</span></span>(<span>self)</span>
 </code></dt>
 <dd>
-<div class="desc"></div>
+<div class="desc"><p>Test if MapSize can calculate its area.</p></div>
 <details class="source">
 <summary>
 <span>Expand source code</span>
 </summary>
 <pre><code class="python">def test_should_calculate_area(self):
+    &#34;&#34;&#34;Test if MapSize can calculate its area.&#34;&#34;&#34;
     assert MapSize(Position(0, 0), Position(1, 1)).area == 1
     assert MapSize(Position(0, 0), Position(2, 2)).area == 4
     assert MapSize(Position(0, 0), Position(3, 3)).area == 9</code></pre>
@@ -150,12 +183,13 @@ class TestMapSize:
 <span>def <span class="ident">test_should_create</span></span>(<span>self)</span>
 </code></dt>
 <dd>
-<div class="desc"></div>
+<div class="desc"><p>Test if MapSize can be created.</p></div>
 <details class="source">
 <summary>
 <span>Expand source code</span>
 </summary>
 <pre><code class="python">def test_should_create(self):
+    &#34;&#34;&#34;Test if MapSize can be created.&#34;&#34;&#34;
     assert MapSize(Position(0, 0), Position(0, 0)) is not None</code></pre>
 </details>
 </dd>
@@ -163,12 +197,13 @@ class TestMapSize:
 <span>def <span class="ident">test_should_create_inverse_max_size</span></span>(<span>self)</span>
 </code></dt>
 <dd>
-<div class="desc"></div>
+<div class="desc"><p>Test if MapSize can create an inverse max size.</p></div>
 <details class="source">
 <summary>
 <span>Expand source code</span>
 </summary>
 <pre><code class="python">def test_should_create_inverse_max_size(self):
+    &#34;&#34;&#34;Test if MapSize can create an inverse max size.&#34;&#34;&#34;
     assert MapSize.inverse_max_size() is not None</code></pre>
 </details>
 </dd>
@@ -176,12 +211,13 @@ class TestMapSize:
 <span>def <span class="ident">test_should_get_height</span></span>(<span>self)</span>
 </code></dt>
 <dd>
-<div class="desc"></div>
+<div class="desc"><p>Test if MapSize can get its height.</p></div>
 <details class="source">
 <summary>
 <span>Expand source code</span>
 </summary>
 <pre><code class="python">def test_should_get_height(self):
+    &#34;&#34;&#34;Test if MapSize can get its height.&#34;&#34;&#34;
     assert MapSize(Position(0, 0), Position(1, 1)).height == 1
     assert MapSize(Position(0, 0), Position(2, 2)).height == 2
     assert MapSize(Position(0, 0), Position(3, 3)).height == 3</code></pre>
@@ -191,12 +227,13 @@ class TestMapSize:
 <span>def <span class="ident">test_should_get_max</span></span>(<span>self)</span>
 </code></dt>
 <dd>
-<div class="desc"></div>
+<div class="desc"><p>Test if MapSize can get its max.</p></div>
 <details class="source">
 <summary>
 <span>Expand source code</span>
 </summary>
 <pre><code class="python">def test_should_get_max(self):
+    &#34;&#34;&#34;Test if MapSize can get its max.&#34;&#34;&#34;
     assert MapSize(Position(0, 0), Position(1, 1)).max == Position(1, 1)</code></pre>
 </details>
 </dd>
@@ -204,12 +241,13 @@ class TestMapSize:
 <span>def <span class="ident">test_should_get_min</span></span>(<span>self)</span>
 </code></dt>
 <dd>
-<div class="desc"></div>
+<div class="desc"><p>Test if MapSize can get its min.</p></div>
 <details class="source">
 <summary>
 <span>Expand source code</span>
 </summary>
 <pre><code class="python">def test_should_get_min(self):
+    &#34;&#34;&#34;Test if MapSize can get its min.&#34;&#34;&#34;
     assert MapSize(Position(0, 0), Position(1, 1)).min == Position(0, 0)</code></pre>
 </details>
 </dd>
@@ -217,27 +255,44 @@ class TestMapSize:
 <span>def <span class="ident">test_should_get_width</span></span>(<span>self)</span>
 </code></dt>
 <dd>
-<div class="desc"></div>
+<div class="desc"><p>Test if MapSize can get its width.</p></div>
 <details class="source">
 <summary>
 <span>Expand source code</span>
 </summary>
 <pre><code class="python">def test_should_get_width(self):
+    &#34;&#34;&#34;Test if MapSize can get its width.&#34;&#34;&#34;
     assert MapSize(Position(0, 0), Position(1, 1)).width == 1
     assert MapSize(Position(0, 0), Position(2, 2)).width == 2
     assert MapSize(Position(0, 0), Position(3, 3)).width == 3</code></pre>
+</details>
+</dd>
+<dt id="src.models.map.tests.test_map_size.TestMapSize.test_should_not_create"><code class="name flex">
+<span>def <span class="ident">test_should_not_create</span></span>(<span>self)</span>
+</code></dt>
+<dd>
+<div class="desc"><p>Test if MapSize can't be created with invalid arguments.</p></div>
+<details class="source">
+<summary>
+<span>Expand source code</span>
+</summary>
+<pre><code class="python">def test_should_not_create(self):
+    &#34;&#34;&#34;Test if MapSize can&#39;t be created with invalid arguments.&#34;&#34;&#34;
+    with self.assertRaises(TypeError):
+        MapSize()</code></pre>
 </details>
 </dd>
 <dt id="src.models.map.tests.test_map_size.TestMapSize.test_should_set_max"><code class="name flex">
 <span>def <span class="ident">test_should_set_max</span></span>(<span>self)</span>
 </code></dt>
 <dd>
-<div class="desc"></div>
+<div class="desc"><p>Test if MapSize can set its max.</p></div>
 <details class="source">
 <summary>
 <span>Expand source code</span>
 </summary>
 <pre><code class="python">def test_should_set_max(self):
+    &#34;&#34;&#34;Test if MapSize can set its max.&#34;&#34;&#34;
     map_size = MapSize(Position(0, 0), Position(1, 1))
     map_size.max = Position(0, 0)
 
@@ -248,12 +303,13 @@ class TestMapSize:
 <span>def <span class="ident">test_should_set_min</span></span>(<span>self)</span>
 </code></dt>
 <dd>
-<div class="desc"></div>
+<div class="desc"><p>Test if MapSize can set its min.</p></div>
 <details class="source">
 <summary>
 <span>Expand source code</span>
 </summary>
 <pre><code class="python">def test_should_set_min(self):
+    &#34;&#34;&#34;Test if MapSize can set its min.&#34;&#34;&#34;
     map_size = MapSize(Position(0, 0), Position(1, 1))
     map_size.min = Position(1, 1)
 
@@ -288,6 +344,7 @@ class TestMapSize:
 <li><code><a title="src.models.map.tests.test_map_size.TestMapSize.test_should_get_max" href="#src.models.map.tests.test_map_size.TestMapSize.test_should_get_max">test_should_get_max</a></code></li>
 <li><code><a title="src.models.map.tests.test_map_size.TestMapSize.test_should_get_min" href="#src.models.map.tests.test_map_size.TestMapSize.test_should_get_min">test_should_get_min</a></code></li>
 <li><code><a title="src.models.map.tests.test_map_size.TestMapSize.test_should_get_width" href="#src.models.map.tests.test_map_size.TestMapSize.test_should_get_width">test_should_get_width</a></code></li>
+<li><code><a title="src.models.map.tests.test_map_size.TestMapSize.test_should_not_create" href="#src.models.map.tests.test_map_size.TestMapSize.test_should_not_create">test_should_not_create</a></code></li>
 <li><code><a title="src.models.map.tests.test_map_size.TestMapSize.test_should_set_max" href="#src.models.map.tests.test_map_size.TestMapSize.test_should_set_max">test_should_set_max</a></code></li>
 <li><code><a title="src.models.map.tests.test_map_size.TestMapSize.test_should_set_min" href="#src.models.map.tests.test_map_size.TestMapSize.test_should_set_min">test_should_set_min</a></code></li>
 </ul>

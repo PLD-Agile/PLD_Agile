@@ -36,56 +36,76 @@ from src.models.tour.delivery_location import DeliveryLocation
 
 
 class TestDeliveryLocation(unittest.TestCase):
+    &#34;&#34;&#34;Tests class for DeliveryLocation.&#34;&#34;&#34;
+
     def test_should_create(self):
+        &#34;&#34;&#34;Test if DeliveryLocation can be created.&#34;&#34;&#34;
         intersection = Intersection(1.0, 1.0, 1.0)
         segment = Segment(0, &#34;&#34;, intersection, intersection, 1.0)
         assert DeliveryLocation(segment, 0.0)
 
     def test_should_not_create(self):
+        &#34;&#34;&#34;Test if DeliveryLocation can&#39;t be created with invalid arguments.&#34;&#34;&#34;
         with self.assertRaises(TypeError):
             DeliveryLocation()
 
 
 class TestDeliveryRequest(unittest.TestCase):
+    &#34;&#34;&#34;Tests class for DeliveryRequest.&#34;&#34;&#34;
+
     def test_should_create(self):
+        &#34;&#34;&#34;Test if DeliveryRequest can be created.&#34;&#34;&#34;
         intersection = Intersection(1.0, 1.0, 1.0)
         segment = Segment(0, &#34;&#34;, intersection, intersection, 1.0)
         location = DeliveryLocation(segment, 0.0)
         assert DeliveryRequest(location, 0)
 
     def test_should_not_create(self):
+        &#34;&#34;&#34;Test if DeliveryRequest can&#39;t be created with invalid arguments.&#34;&#34;&#34;
         with self.assertRaises(TypeError):
             DeliveryRequest()
 
 
 class TestComputedDelivery(unittest.TestCase):
+    &#34;&#34;&#34;Tests class for ComputedDelivery.&#34;&#34;&#34;
+
     def test_should_create(self):
+        &#34;&#34;&#34;Test if ComputedDelivery can be created.&#34;&#34;&#34;
         intersection = Intersection(1.0, 1.0, 1.0)
         segment = Segment(0, &#34;&#34;, intersection, intersection, 1.0)
         delivery_location = DeliveryLocation(segment, 0.0)
         assert ComputedDelivery(delivery_location, 0.0)
 
     def test_should_not_create(self):
+        &#34;&#34;&#34;Test if ComputedDelivery can&#39;t be created with invalid arguments.&#34;&#34;&#34;
         with self.assertRaises(TypeError):
             ComputedDelivery()
 
 
 class TestTourRequest(unittest.TestCase):
+    &#34;&#34;&#34;Tests class for TourRequest.&#34;&#34;&#34;
+
     def test_should_create(self):
+        &#34;&#34;&#34;Test if TourRequest can be created.&#34;&#34;&#34;
         delivery_man = DeliveryMan(&#34;&#34;, [])
         assert TourRequest([], {}, delivery_man, &#34;red&#34;)
 
     def test_should_not_create(self):
+        &#34;&#34;&#34;Test if TourRequest can&#39;t be created with invalid arguments.&#34;&#34;&#34;
         with self.assertRaises(TypeError):
             TourRequest()
 
 
 class TestComputedTour(unittest.TestCase):
+    &#34;&#34;&#34;Tests class for ComputedTour.&#34;&#34;&#34;
+
     def test_should_create(self):
+        &#34;&#34;&#34;Test if ComputedTour can be created.&#34;&#34;&#34;
         delivery_man = DeliveryMan(&#34;&#34;, [])
         assert ComputedTour([], delivery_man, [], 1.0, &#34;&#34;)
 
     def test_should_not_create(self):
+        &#34;&#34;&#34;Test if ComputedTour can&#39;t be created with invalid arguments.&#34;&#34;&#34;
         with self.assertRaises(TypeError):
             ComputedTour()</code></pre>
 </details>
@@ -104,31 +124,7 @@ class TestComputedTour(unittest.TestCase):
 <span>(</span><span>methodName='runTest')</span>
 </code></dt>
 <dd>
-<div class="desc"><p>A class whose instances are single test cases.</p>
-<p>By default, the test code itself should be placed in a method named
-'runTest'.</p>
-<p>If the fixture may be used for many test cases, create as
-many test methods as are needed. When instantiating such a TestCase
-subclass, specify in the constructor arguments the name of the test method
-that the instance is to execute.</p>
-<p>Test authors should subclass TestCase for their own tests. Construction
-and deconstruction of the test's environment ('fixture') can be
-implemented by overriding the 'setUp' and 'tearDown' methods respectively.</p>
-<p>If it is necessary to override the <strong>init</strong> method, the base class
-<strong>init</strong> method must always be called. It is important that subclasses
-should not change the signature of their <strong>init</strong> method, since instances
-of the classes are instantiated automatically by parts of the framework
-in order to be run.</p>
-<p>When subclassing TestCase, you can set these attributes:
-* failureException: determines which exception will be raised when
-the instance's assertion methods fail; test methods raising this
-exception will be deemed to have 'failed' rather than 'errored'.
-* longMessage: determines whether long messages (including repr of
-objects used in assert methods) will be printed on failure in <em>addition</em>
-to any explicit message passed.
-* maxDiff: sets the maximum length of a diff in failure messages
-by assert methods using difflib. It is looked up as an instance
-attribute so can be configured by individual tests if required.</p>
+<div class="desc"><p>Tests class for ComputedDelivery.</p>
 <p>Create an instance of the class that will use the named test
 method when executed. Raises a ValueError if the instance does
 not have a method with the specified name.</p></div>
@@ -137,13 +133,17 @@ not have a method with the specified name.</p></div>
 <span>Expand source code</span>
 </summary>
 <pre><code class="python">class TestComputedDelivery(unittest.TestCase):
+    &#34;&#34;&#34;Tests class for ComputedDelivery.&#34;&#34;&#34;
+
     def test_should_create(self):
+        &#34;&#34;&#34;Test if ComputedDelivery can be created.&#34;&#34;&#34;
         intersection = Intersection(1.0, 1.0, 1.0)
         segment = Segment(0, &#34;&#34;, intersection, intersection, 1.0)
         delivery_location = DeliveryLocation(segment, 0.0)
         assert ComputedDelivery(delivery_location, 0.0)
 
     def test_should_not_create(self):
+        &#34;&#34;&#34;Test if ComputedDelivery can&#39;t be created with invalid arguments.&#34;&#34;&#34;
         with self.assertRaises(TypeError):
             ComputedDelivery()</code></pre>
 </details>
@@ -157,12 +157,13 @@ not have a method with the specified name.</p></div>
 <span>def <span class="ident">test_should_create</span></span>(<span>self)</span>
 </code></dt>
 <dd>
-<div class="desc"></div>
+<div class="desc"><p>Test if ComputedDelivery can be created.</p></div>
 <details class="source">
 <summary>
 <span>Expand source code</span>
 </summary>
 <pre><code class="python">def test_should_create(self):
+    &#34;&#34;&#34;Test if ComputedDelivery can be created.&#34;&#34;&#34;
     intersection = Intersection(1.0, 1.0, 1.0)
     segment = Segment(0, &#34;&#34;, intersection, intersection, 1.0)
     delivery_location = DeliveryLocation(segment, 0.0)
@@ -173,12 +174,13 @@ not have a method with the specified name.</p></div>
 <span>def <span class="ident">test_should_not_create</span></span>(<span>self)</span>
 </code></dt>
 <dd>
-<div class="desc"></div>
+<div class="desc"><p>Test if ComputedDelivery can't be created with invalid arguments.</p></div>
 <details class="source">
 <summary>
 <span>Expand source code</span>
 </summary>
 <pre><code class="python">def test_should_not_create(self):
+    &#34;&#34;&#34;Test if ComputedDelivery can&#39;t be created with invalid arguments.&#34;&#34;&#34;
     with self.assertRaises(TypeError):
         ComputedDelivery()</code></pre>
 </details>
@@ -190,31 +192,7 @@ not have a method with the specified name.</p></div>
 <span>(</span><span>methodName='runTest')</span>
 </code></dt>
 <dd>
-<div class="desc"><p>A class whose instances are single test cases.</p>
-<p>By default, the test code itself should be placed in a method named
-'runTest'.</p>
-<p>If the fixture may be used for many test cases, create as
-many test methods as are needed. When instantiating such a TestCase
-subclass, specify in the constructor arguments the name of the test method
-that the instance is to execute.</p>
-<p>Test authors should subclass TestCase for their own tests. Construction
-and deconstruction of the test's environment ('fixture') can be
-implemented by overriding the 'setUp' and 'tearDown' methods respectively.</p>
-<p>If it is necessary to override the <strong>init</strong> method, the base class
-<strong>init</strong> method must always be called. It is important that subclasses
-should not change the signature of their <strong>init</strong> method, since instances
-of the classes are instantiated automatically by parts of the framework
-in order to be run.</p>
-<p>When subclassing TestCase, you can set these attributes:
-* failureException: determines which exception will be raised when
-the instance's assertion methods fail; test methods raising this
-exception will be deemed to have 'failed' rather than 'errored'.
-* longMessage: determines whether long messages (including repr of
-objects used in assert methods) will be printed on failure in <em>addition</em>
-to any explicit message passed.
-* maxDiff: sets the maximum length of a diff in failure messages
-by assert methods using difflib. It is looked up as an instance
-attribute so can be configured by individual tests if required.</p>
+<div class="desc"><p>Tests class for ComputedTour.</p>
 <p>Create an instance of the class that will use the named test
 method when executed. Raises a ValueError if the instance does
 not have a method with the specified name.</p></div>
@@ -223,11 +201,15 @@ not have a method with the specified name.</p></div>
 <span>Expand source code</span>
 </summary>
 <pre><code class="python">class TestComputedTour(unittest.TestCase):
+    &#34;&#34;&#34;Tests class for ComputedTour.&#34;&#34;&#34;
+
     def test_should_create(self):
+        &#34;&#34;&#34;Test if ComputedTour can be created.&#34;&#34;&#34;
         delivery_man = DeliveryMan(&#34;&#34;, [])
         assert ComputedTour([], delivery_man, [], 1.0, &#34;&#34;)
 
     def test_should_not_create(self):
+        &#34;&#34;&#34;Test if ComputedTour can&#39;t be created with invalid arguments.&#34;&#34;&#34;
         with self.assertRaises(TypeError):
             ComputedTour()</code></pre>
 </details>
@@ -241,12 +223,13 @@ not have a method with the specified name.</p></div>
 <span>def <span class="ident">test_should_create</span></span>(<span>self)</span>
 </code></dt>
 <dd>
-<div class="desc"></div>
+<div class="desc"><p>Test if ComputedTour can be created.</p></div>
 <details class="source">
 <summary>
 <span>Expand source code</span>
 </summary>
 <pre><code class="python">def test_should_create(self):
+    &#34;&#34;&#34;Test if ComputedTour can be created.&#34;&#34;&#34;
     delivery_man = DeliveryMan(&#34;&#34;, [])
     assert ComputedTour([], delivery_man, [], 1.0, &#34;&#34;)</code></pre>
 </details>
@@ -255,12 +238,13 @@ not have a method with the specified name.</p></div>
 <span>def <span class="ident">test_should_not_create</span></span>(<span>self)</span>
 </code></dt>
 <dd>
-<div class="desc"></div>
+<div class="desc"><p>Test if ComputedTour can't be created with invalid arguments.</p></div>
 <details class="source">
 <summary>
 <span>Expand source code</span>
 </summary>
 <pre><code class="python">def test_should_not_create(self):
+    &#34;&#34;&#34;Test if ComputedTour can&#39;t be created with invalid arguments.&#34;&#34;&#34;
     with self.assertRaises(TypeError):
         ComputedTour()</code></pre>
 </details>
@@ -272,31 +256,7 @@ not have a method with the specified name.</p></div>
 <span>(</span><span>methodName='runTest')</span>
 </code></dt>
 <dd>
-<div class="desc"><p>A class whose instances are single test cases.</p>
-<p>By default, the test code itself should be placed in a method named
-'runTest'.</p>
-<p>If the fixture may be used for many test cases, create as
-many test methods as are needed. When instantiating such a TestCase
-subclass, specify in the constructor arguments the name of the test method
-that the instance is to execute.</p>
-<p>Test authors should subclass TestCase for their own tests. Construction
-and deconstruction of the test's environment ('fixture') can be
-implemented by overriding the 'setUp' and 'tearDown' methods respectively.</p>
-<p>If it is necessary to override the <strong>init</strong> method, the base class
-<strong>init</strong> method must always be called. It is important that subclasses
-should not change the signature of their <strong>init</strong> method, since instances
-of the classes are instantiated automatically by parts of the framework
-in order to be run.</p>
-<p>When subclassing TestCase, you can set these attributes:
-* failureException: determines which exception will be raised when
-the instance's assertion methods fail; test methods raising this
-exception will be deemed to have 'failed' rather than 'errored'.
-* longMessage: determines whether long messages (including repr of
-objects used in assert methods) will be printed on failure in <em>addition</em>
-to any explicit message passed.
-* maxDiff: sets the maximum length of a diff in failure messages
-by assert methods using difflib. It is looked up as an instance
-attribute so can be configured by individual tests if required.</p>
+<div class="desc"><p>Tests class for DeliveryLocation.</p>
 <p>Create an instance of the class that will use the named test
 method when executed. Raises a ValueError if the instance does
 not have a method with the specified name.</p></div>
@@ -305,12 +265,16 @@ not have a method with the specified name.</p></div>
 <span>Expand source code</span>
 </summary>
 <pre><code class="python">class TestDeliveryLocation(unittest.TestCase):
+    &#34;&#34;&#34;Tests class for DeliveryLocation.&#34;&#34;&#34;
+
     def test_should_create(self):
+        &#34;&#34;&#34;Test if DeliveryLocation can be created.&#34;&#34;&#34;
         intersection = Intersection(1.0, 1.0, 1.0)
         segment = Segment(0, &#34;&#34;, intersection, intersection, 1.0)
         assert DeliveryLocation(segment, 0.0)
 
     def test_should_not_create(self):
+        &#34;&#34;&#34;Test if DeliveryLocation can&#39;t be created with invalid arguments.&#34;&#34;&#34;
         with self.assertRaises(TypeError):
             DeliveryLocation()</code></pre>
 </details>
@@ -324,12 +288,13 @@ not have a method with the specified name.</p></div>
 <span>def <span class="ident">test_should_create</span></span>(<span>self)</span>
 </code></dt>
 <dd>
-<div class="desc"></div>
+<div class="desc"><p>Test if DeliveryLocation can be created.</p></div>
 <details class="source">
 <summary>
 <span>Expand source code</span>
 </summary>
 <pre><code class="python">def test_should_create(self):
+    &#34;&#34;&#34;Test if DeliveryLocation can be created.&#34;&#34;&#34;
     intersection = Intersection(1.0, 1.0, 1.0)
     segment = Segment(0, &#34;&#34;, intersection, intersection, 1.0)
     assert DeliveryLocation(segment, 0.0)</code></pre>
@@ -339,12 +304,13 @@ not have a method with the specified name.</p></div>
 <span>def <span class="ident">test_should_not_create</span></span>(<span>self)</span>
 </code></dt>
 <dd>
-<div class="desc"></div>
+<div class="desc"><p>Test if DeliveryLocation can't be created with invalid arguments.</p></div>
 <details class="source">
 <summary>
 <span>Expand source code</span>
 </summary>
 <pre><code class="python">def test_should_not_create(self):
+    &#34;&#34;&#34;Test if DeliveryLocation can&#39;t be created with invalid arguments.&#34;&#34;&#34;
     with self.assertRaises(TypeError):
         DeliveryLocation()</code></pre>
 </details>
@@ -356,31 +322,7 @@ not have a method with the specified name.</p></div>
 <span>(</span><span>methodName='runTest')</span>
 </code></dt>
 <dd>
-<div class="desc"><p>A class whose instances are single test cases.</p>
-<p>By default, the test code itself should be placed in a method named
-'runTest'.</p>
-<p>If the fixture may be used for many test cases, create as
-many test methods as are needed. When instantiating such a TestCase
-subclass, specify in the constructor arguments the name of the test method
-that the instance is to execute.</p>
-<p>Test authors should subclass TestCase for their own tests. Construction
-and deconstruction of the test's environment ('fixture') can be
-implemented by overriding the 'setUp' and 'tearDown' methods respectively.</p>
-<p>If it is necessary to override the <strong>init</strong> method, the base class
-<strong>init</strong> method must always be called. It is important that subclasses
-should not change the signature of their <strong>init</strong> method, since instances
-of the classes are instantiated automatically by parts of the framework
-in order to be run.</p>
-<p>When subclassing TestCase, you can set these attributes:
-* failureException: determines which exception will be raised when
-the instance's assertion methods fail; test methods raising this
-exception will be deemed to have 'failed' rather than 'errored'.
-* longMessage: determines whether long messages (including repr of
-objects used in assert methods) will be printed on failure in <em>addition</em>
-to any explicit message passed.
-* maxDiff: sets the maximum length of a diff in failure messages
-by assert methods using difflib. It is looked up as an instance
-attribute so can be configured by individual tests if required.</p>
+<div class="desc"><p>Tests class for DeliveryRequest.</p>
 <p>Create an instance of the class that will use the named test
 method when executed. Raises a ValueError if the instance does
 not have a method with the specified name.</p></div>
@@ -389,13 +331,17 @@ not have a method with the specified name.</p></div>
 <span>Expand source code</span>
 </summary>
 <pre><code class="python">class TestDeliveryRequest(unittest.TestCase):
+    &#34;&#34;&#34;Tests class for DeliveryRequest.&#34;&#34;&#34;
+
     def test_should_create(self):
+        &#34;&#34;&#34;Test if DeliveryRequest can be created.&#34;&#34;&#34;
         intersection = Intersection(1.0, 1.0, 1.0)
         segment = Segment(0, &#34;&#34;, intersection, intersection, 1.0)
         location = DeliveryLocation(segment, 0.0)
         assert DeliveryRequest(location, 0)
 
     def test_should_not_create(self):
+        &#34;&#34;&#34;Test if DeliveryRequest can&#39;t be created with invalid arguments.&#34;&#34;&#34;
         with self.assertRaises(TypeError):
             DeliveryRequest()</code></pre>
 </details>
@@ -409,12 +355,13 @@ not have a method with the specified name.</p></div>
 <span>def <span class="ident">test_should_create</span></span>(<span>self)</span>
 </code></dt>
 <dd>
-<div class="desc"></div>
+<div class="desc"><p>Test if DeliveryRequest can be created.</p></div>
 <details class="source">
 <summary>
 <span>Expand source code</span>
 </summary>
 <pre><code class="python">def test_should_create(self):
+    &#34;&#34;&#34;Test if DeliveryRequest can be created.&#34;&#34;&#34;
     intersection = Intersection(1.0, 1.0, 1.0)
     segment = Segment(0, &#34;&#34;, intersection, intersection, 1.0)
     location = DeliveryLocation(segment, 0.0)
@@ -425,12 +372,13 @@ not have a method with the specified name.</p></div>
 <span>def <span class="ident">test_should_not_create</span></span>(<span>self)</span>
 </code></dt>
 <dd>
-<div class="desc"></div>
+<div class="desc"><p>Test if DeliveryRequest can't be created with invalid arguments.</p></div>
 <details class="source">
 <summary>
 <span>Expand source code</span>
 </summary>
 <pre><code class="python">def test_should_not_create(self):
+    &#34;&#34;&#34;Test if DeliveryRequest can&#39;t be created with invalid arguments.&#34;&#34;&#34;
     with self.assertRaises(TypeError):
         DeliveryRequest()</code></pre>
 </details>
@@ -442,31 +390,7 @@ not have a method with the specified name.</p></div>
 <span>(</span><span>methodName='runTest')</span>
 </code></dt>
 <dd>
-<div class="desc"><p>A class whose instances are single test cases.</p>
-<p>By default, the test code itself should be placed in a method named
-'runTest'.</p>
-<p>If the fixture may be used for many test cases, create as
-many test methods as are needed. When instantiating such a TestCase
-subclass, specify in the constructor arguments the name of the test method
-that the instance is to execute.</p>
-<p>Test authors should subclass TestCase for their own tests. Construction
-and deconstruction of the test's environment ('fixture') can be
-implemented by overriding the 'setUp' and 'tearDown' methods respectively.</p>
-<p>If it is necessary to override the <strong>init</strong> method, the base class
-<strong>init</strong> method must always be called. It is important that subclasses
-should not change the signature of their <strong>init</strong> method, since instances
-of the classes are instantiated automatically by parts of the framework
-in order to be run.</p>
-<p>When subclassing TestCase, you can set these attributes:
-* failureException: determines which exception will be raised when
-the instance's assertion methods fail; test methods raising this
-exception will be deemed to have 'failed' rather than 'errored'.
-* longMessage: determines whether long messages (including repr of
-objects used in assert methods) will be printed on failure in <em>addition</em>
-to any explicit message passed.
-* maxDiff: sets the maximum length of a diff in failure messages
-by assert methods using difflib. It is looked up as an instance
-attribute so can be configured by individual tests if required.</p>
+<div class="desc"><p>Tests class for TourRequest.</p>
 <p>Create an instance of the class that will use the named test
 method when executed. Raises a ValueError if the instance does
 not have a method with the specified name.</p></div>
@@ -475,11 +399,15 @@ not have a method with the specified name.</p></div>
 <span>Expand source code</span>
 </summary>
 <pre><code class="python">class TestTourRequest(unittest.TestCase):
+    &#34;&#34;&#34;Tests class for TourRequest.&#34;&#34;&#34;
+
     def test_should_create(self):
+        &#34;&#34;&#34;Test if TourRequest can be created.&#34;&#34;&#34;
         delivery_man = DeliveryMan(&#34;&#34;, [])
         assert TourRequest([], {}, delivery_man, &#34;red&#34;)
 
     def test_should_not_create(self):
+        &#34;&#34;&#34;Test if TourRequest can&#39;t be created with invalid arguments.&#34;&#34;&#34;
         with self.assertRaises(TypeError):
             TourRequest()</code></pre>
 </details>
@@ -493,12 +421,13 @@ not have a method with the specified name.</p></div>
 <span>def <span class="ident">test_should_create</span></span>(<span>self)</span>
 </code></dt>
 <dd>
-<div class="desc"></div>
+<div class="desc"><p>Test if TourRequest can be created.</p></div>
 <details class="source">
 <summary>
 <span>Expand source code</span>
 </summary>
 <pre><code class="python">def test_should_create(self):
+    &#34;&#34;&#34;Test if TourRequest can be created.&#34;&#34;&#34;
     delivery_man = DeliveryMan(&#34;&#34;, [])
     assert TourRequest([], {}, delivery_man, &#34;red&#34;)</code></pre>
 </details>
@@ -507,12 +436,13 @@ not have a method with the specified name.</p></div>
 <span>def <span class="ident">test_should_not_create</span></span>(<span>self)</span>
 </code></dt>
 <dd>
-<div class="desc"></div>
+<div class="desc"><p>Test if TourRequest can't be created with invalid arguments.</p></div>
 <details class="source">
 <summary>
 <span>Expand source code</span>
 </summary>
 <pre><code class="python">def test_should_not_create(self):
+    &#34;&#34;&#34;Test if TourRequest can&#39;t be created with invalid arguments.&#34;&#34;&#34;
     with self.assertRaises(TypeError):
         TourRequest()</code></pre>
 </details>

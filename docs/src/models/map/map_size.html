@@ -40,8 +40,14 @@ class MapSize:
     &#34;&#34;&#34;Represents the size of a map.&#34;&#34;&#34;
 
     __min: Position
+    &#34;&#34;&#34;Minimum position of the map.
+    &#34;&#34;&#34;
     __max: Position
+    &#34;&#34;&#34;Maximum position of the map.
+    &#34;&#34;&#34;
     area: float
+    &#34;&#34;&#34;Area of the map.
+    &#34;&#34;&#34;
 
     def __init__(self, min: Position, max: Position) -&gt; None:
         self.__min = min
@@ -50,7 +56,14 @@ class MapSize:
 
     @classmethod
     def inverse_max_size(cls: Type[T]) -&gt; T:
-        &#34;&#34;&#34;Creates a MapSize instance with the inverted maximum possible size. (min = System MAX, max = System MIN)&#34;&#34;&#34;
+        &#34;&#34;&#34;Creates a MapSize instance with the inverted maximum possible size. (min = System MAX, max = System MIN)
+
+        Args:
+            cls (Type[T]): MapSize class
+
+        Returns:
+            T: MapSize instance
+        &#34;&#34;&#34;
         return cls(
             Position(sys.maxsize, sys.maxsize),
             Position(sys.maxsize * -1, sys.maxsize * -1),
@@ -58,31 +71,72 @@ class MapSize:
 
     @property
     def min(self) -&gt; Position:
+        &#34;&#34;&#34;Minimum position of the map.
+
+        Returns:
+            Position: Minimum position of the map.
+        &#34;&#34;&#34;
         return self.__min
 
     @min.setter
     def min(self, value: Position) -&gt; None:
+        &#34;&#34;&#34;Minimum position of the map.
+
+        Args:
+            value (Position): Minimum position of the map.
+
+        Returns:
+            None
+        &#34;&#34;&#34;
         self.__min = value
         self.area = self.__calculate_area()
 
     @property
     def max(self) -&gt; Position:
+        &#34;&#34;&#34;Maximum position of the map.
+
+        Returns:
+            Position: Maximum position of the map.
+        &#34;&#34;&#34;
         return self.__max
 
     @max.setter
     def max(self, value: Position) -&gt; None:
+        &#34;&#34;&#34;Maximum position of the map.
+
+        Args:
+            value (Position): Maximum position of the map.
+
+        Returns:
+            None
+        &#34;&#34;&#34;
         self.__max = value
         self.area = self.__calculate_area()
 
     @property
     def width(self) -&gt; float:
+        &#34;&#34;&#34;Width of the map.
+
+        Returns:
+            float: Width of the map.
+        &#34;&#34;&#34;
         return self.__max.longitude - self.__min.longitude
 
     @property
     def height(self) -&gt; float:
+        &#34;&#34;&#34;Height of the map.
+
+        Returns:
+            float: Height of the map.
+        &#34;&#34;&#34;
         return self.__max.latitude - self.__min.latitude
 
     def __calculate_area(self) -&gt; float:
+        &#34;&#34;&#34;Calculate the area of the map.
+
+        Returns:
+            float: Area of the map.
+        &#34;&#34;&#34;
         return (self.__max.latitude - self.__min.latitude) * (
             self.__max.longitude - self.__min.longitude
         )</code></pre>
@@ -112,8 +166,14 @@ class MapSize:
     &#34;&#34;&#34;Represents the size of a map.&#34;&#34;&#34;
 
     __min: Position
+    &#34;&#34;&#34;Minimum position of the map.
+    &#34;&#34;&#34;
     __max: Position
+    &#34;&#34;&#34;Maximum position of the map.
+    &#34;&#34;&#34;
     area: float
+    &#34;&#34;&#34;Area of the map.
+    &#34;&#34;&#34;
 
     def __init__(self, min: Position, max: Position) -&gt; None:
         self.__min = min
@@ -122,7 +182,14 @@ class MapSize:
 
     @classmethod
     def inverse_max_size(cls: Type[T]) -&gt; T:
-        &#34;&#34;&#34;Creates a MapSize instance with the inverted maximum possible size. (min = System MAX, max = System MIN)&#34;&#34;&#34;
+        &#34;&#34;&#34;Creates a MapSize instance with the inverted maximum possible size. (min = System MAX, max = System MIN)
+
+        Args:
+            cls (Type[T]): MapSize class
+
+        Returns:
+            T: MapSize instance
+        &#34;&#34;&#34;
         return cls(
             Position(sys.maxsize, sys.maxsize),
             Position(sys.maxsize * -1, sys.maxsize * -1),
@@ -130,31 +197,72 @@ class MapSize:
 
     @property
     def min(self) -&gt; Position:
+        &#34;&#34;&#34;Minimum position of the map.
+
+        Returns:
+            Position: Minimum position of the map.
+        &#34;&#34;&#34;
         return self.__min
 
     @min.setter
     def min(self, value: Position) -&gt; None:
+        &#34;&#34;&#34;Minimum position of the map.
+
+        Args:
+            value (Position): Minimum position of the map.
+
+        Returns:
+            None
+        &#34;&#34;&#34;
         self.__min = value
         self.area = self.__calculate_area()
 
     @property
     def max(self) -&gt; Position:
+        &#34;&#34;&#34;Maximum position of the map.
+
+        Returns:
+            Position: Maximum position of the map.
+        &#34;&#34;&#34;
         return self.__max
 
     @max.setter
     def max(self, value: Position) -&gt; None:
+        &#34;&#34;&#34;Maximum position of the map.
+
+        Args:
+            value (Position): Maximum position of the map.
+
+        Returns:
+            None
+        &#34;&#34;&#34;
         self.__max = value
         self.area = self.__calculate_area()
 
     @property
     def width(self) -&gt; float:
+        &#34;&#34;&#34;Width of the map.
+
+        Returns:
+            float: Width of the map.
+        &#34;&#34;&#34;
         return self.__max.longitude - self.__min.longitude
 
     @property
     def height(self) -&gt; float:
+        &#34;&#34;&#34;Height of the map.
+
+        Returns:
+            float: Height of the map.
+        &#34;&#34;&#34;
         return self.__max.latitude - self.__min.latitude
 
     def __calculate_area(self) -&gt; float:
+        &#34;&#34;&#34;Calculate the area of the map.
+
+        Returns:
+            float: Area of the map.
+        &#34;&#34;&#34;
         return (self.__max.latitude - self.__min.latitude) * (
             self.__max.longitude - self.__min.longitude
         )</code></pre>
@@ -163,7 +271,7 @@ class MapSize:
 <dl>
 <dt id="src.models.map.map_size.MapSize.area"><code class="name">var <span class="ident">area</span> : float</code></dt>
 <dd>
-<div class="desc"></div>
+<div class="desc"><p>Area of the map.</p></div>
 </dd>
 </dl>
 <h3>Static methods</h3>
@@ -172,14 +280,31 @@ class MapSize:
 <span>def <span class="ident">inverse_max_size</span></span>(<span>) ‑> ~T</span>
 </code></dt>
 <dd>
-<div class="desc"><p>Creates a MapSize instance with the inverted maximum possible size. (min = System MAX, max = System MIN)</p></div>
+<div class="desc"><p>Creates a MapSize instance with the inverted maximum possible size. (min = System MAX, max = System MIN)</p>
+<h2 id="args">Args</h2>
+<dl>
+<dt><strong><code>cls</code></strong> :&ensp;<code>Type[T]</code></dt>
+<dd>MapSize class</dd>
+</dl>
+<h2 id="returns">Returns</h2>
+<dl>
+<dt><code>T</code></dt>
+<dd>MapSize instance</dd>
+</dl></div>
 <details class="source">
 <summary>
 <span>Expand source code</span>
 </summary>
 <pre><code class="python">@classmethod
 def inverse_max_size(cls: Type[T]) -&gt; T:
-    &#34;&#34;&#34;Creates a MapSize instance with the inverted maximum possible size. (min = System MAX, max = System MIN)&#34;&#34;&#34;
+    &#34;&#34;&#34;Creates a MapSize instance with the inverted maximum possible size. (min = System MAX, max = System MIN)
+
+    Args:
+        cls (Type[T]): MapSize class
+
+    Returns:
+        T: MapSize instance
+    &#34;&#34;&#34;
     return cls(
         Position(sys.maxsize, sys.maxsize),
         Position(sys.maxsize * -1, sys.maxsize * -1),
@@ -191,49 +316,89 @@ def inverse_max_size(cls: Type[T]) -&gt; T:
 <dl>
 <dt id="src.models.map.map_size.MapSize.height"><code class="name">var <span class="ident">height</span> : float</code></dt>
 <dd>
-<div class="desc"></div>
+<div class="desc"><p>Height of the map.</p>
+<h2 id="returns">Returns</h2>
+<dl>
+<dt><code>float</code></dt>
+<dd>Height of the map.</dd>
+</dl></div>
 <details class="source">
 <summary>
 <span>Expand source code</span>
 </summary>
 <pre><code class="python">@property
 def height(self) -&gt; float:
+    &#34;&#34;&#34;Height of the map.
+
+    Returns:
+        float: Height of the map.
+    &#34;&#34;&#34;
     return self.__max.latitude - self.__min.latitude</code></pre>
 </details>
 </dd>
 <dt id="src.models.map.map_size.MapSize.max"><code class="name">var <span class="ident">max</span> : <a title="src.models.map.position.Position" href="position.html#src.models.map.position.Position">Position</a></code></dt>
 <dd>
-<div class="desc"></div>
+<div class="desc"><p>Maximum position of the map.</p>
+<h2 id="returns">Returns</h2>
+<dl>
+<dt><code>Position</code></dt>
+<dd>Maximum position of the map.</dd>
+</dl></div>
 <details class="source">
 <summary>
 <span>Expand source code</span>
 </summary>
 <pre><code class="python">@property
 def max(self) -&gt; Position:
+    &#34;&#34;&#34;Maximum position of the map.
+
+    Returns:
+        Position: Maximum position of the map.
+    &#34;&#34;&#34;
     return self.__max</code></pre>
 </details>
 </dd>
 <dt id="src.models.map.map_size.MapSize.min"><code class="name">var <span class="ident">min</span> : <a title="src.models.map.position.Position" href="position.html#src.models.map.position.Position">Position</a></code></dt>
 <dd>
-<div class="desc"></div>
+<div class="desc"><p>Minimum position of the map.</p>
+<h2 id="returns">Returns</h2>
+<dl>
+<dt><code>Position</code></dt>
+<dd>Minimum position of the map.</dd>
+</dl></div>
 <details class="source">
 <summary>
 <span>Expand source code</span>
 </summary>
 <pre><code class="python">@property
 def min(self) -&gt; Position:
+    &#34;&#34;&#34;Minimum position of the map.
+
+    Returns:
+        Position: Minimum position of the map.
+    &#34;&#34;&#34;
     return self.__min</code></pre>
 </details>
 </dd>
 <dt id="src.models.map.map_size.MapSize.width"><code class="name">var <span class="ident">width</span> : float</code></dt>
 <dd>
-<div class="desc"></div>
+<div class="desc"><p>Width of the map.</p>
+<h2 id="returns">Returns</h2>
+<dl>
+<dt><code>float</code></dt>
+<dd>Width of the map.</dd>
+</dl></div>
 <details class="source">
 <summary>
 <span>Expand source code</span>
 </summary>
 <pre><code class="python">@property
 def width(self) -&gt; float:
+    &#34;&#34;&#34;Width of the map.
+
+    Returns:
+        float: Width of the map.
+    &#34;&#34;&#34;
     return self.__max.longitude - self.__min.longitude</code></pre>
 </details>
 </dd>

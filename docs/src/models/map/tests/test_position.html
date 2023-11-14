@@ -30,26 +30,38 @@
 
 
 class TestPosition:
+    &#34;&#34;&#34;Tests class for Position.&#34;&#34;&#34;
+
     def test_should_create(self):
+        &#34;&#34;&#34;Test if Position can be created.&#34;&#34;&#34;
         assert Position(0, 0) is not None
 
+    def test_should_not_create(self):
+        &#34;&#34;&#34;Test if Position can&#39;t be created with invalid arguments.&#34;&#34;&#34;
+        with self.assertRaises(TypeError):
+            Position()
+
     def test_should_get_longitude_equals_x(self):
+        &#34;&#34;&#34;Test if Position can get its longitude and x. They should be the same.&#34;&#34;&#34;
         LONGITUDE = 420
 
         assert Position(LONGITUDE, 0).longitude == LONGITUDE
         assert Position(LONGITUDE, 0).x == LONGITUDE
 
     def test_should_get_latitude_equals_y(self):
+        &#34;&#34;&#34;Test if Position can get its latitude and y. They should be the same.&#34;&#34;&#34;
         LATITUDE = 69
 
         assert Position(0, LATITUDE).latitude == LATITUDE
         assert Position(0, LATITUDE).y == LATITUDE
 
     def test_should_get_max(self):
+        &#34;&#34;&#34;Test if Position can get the maximum position between the current position and the given position.&#34;&#34;&#34;
         assert Position(1, 1).max(Position(2, 2)) == Position(2, 2)
         assert Position(1, 1).max(Position(2, 2), Position(3, 3)) == Position(3, 3)
 
     def test_should_get_min(self):
+        &#34;&#34;&#34;Test if Position can get the minimum position between the current position and the given position.&#34;&#34;&#34;
         assert Position(1, 1).min(Position(2, 2)) == Position(1, 1)
         assert Position(1, 1).min(Position(2, 2), Position(3, 3)) == Position(1, 1)</code></pre>
 </details>
@@ -67,32 +79,44 @@ class TestPosition:
 <span>class <span class="ident">TestPosition</span></span>
 </code></dt>
 <dd>
-<div class="desc"></div>
+<div class="desc"><p>Tests class for Position.</p></div>
 <details class="source">
 <summary>
 <span>Expand source code</span>
 </summary>
 <pre><code class="python">class TestPosition:
+    &#34;&#34;&#34;Tests class for Position.&#34;&#34;&#34;
+
     def test_should_create(self):
+        &#34;&#34;&#34;Test if Position can be created.&#34;&#34;&#34;
         assert Position(0, 0) is not None
 
+    def test_should_not_create(self):
+        &#34;&#34;&#34;Test if Position can&#39;t be created with invalid arguments.&#34;&#34;&#34;
+        with self.assertRaises(TypeError):
+            Position()
+
     def test_should_get_longitude_equals_x(self):
+        &#34;&#34;&#34;Test if Position can get its longitude and x. They should be the same.&#34;&#34;&#34;
         LONGITUDE = 420
 
         assert Position(LONGITUDE, 0).longitude == LONGITUDE
         assert Position(LONGITUDE, 0).x == LONGITUDE
 
     def test_should_get_latitude_equals_y(self):
+        &#34;&#34;&#34;Test if Position can get its latitude and y. They should be the same.&#34;&#34;&#34;
         LATITUDE = 69
 
         assert Position(0, LATITUDE).latitude == LATITUDE
         assert Position(0, LATITUDE).y == LATITUDE
 
     def test_should_get_max(self):
+        &#34;&#34;&#34;Test if Position can get the maximum position between the current position and the given position.&#34;&#34;&#34;
         assert Position(1, 1).max(Position(2, 2)) == Position(2, 2)
         assert Position(1, 1).max(Position(2, 2), Position(3, 3)) == Position(3, 3)
 
     def test_should_get_min(self):
+        &#34;&#34;&#34;Test if Position can get the minimum position between the current position and the given position.&#34;&#34;&#34;
         assert Position(1, 1).min(Position(2, 2)) == Position(1, 1)
         assert Position(1, 1).min(Position(2, 2), Position(3, 3)) == Position(1, 1)</code></pre>
 </details>
@@ -102,12 +126,13 @@ class TestPosition:
 <span>def <span class="ident">test_should_create</span></span>(<span>self)</span>
 </code></dt>
 <dd>
-<div class="desc"></div>
+<div class="desc"><p>Test if Position can be created.</p></div>
 <details class="source">
 <summary>
 <span>Expand source code</span>
 </summary>
 <pre><code class="python">def test_should_create(self):
+    &#34;&#34;&#34;Test if Position can be created.&#34;&#34;&#34;
     assert Position(0, 0) is not None</code></pre>
 </details>
 </dd>
@@ -115,12 +140,13 @@ class TestPosition:
 <span>def <span class="ident">test_should_get_latitude_equals_y</span></span>(<span>self)</span>
 </code></dt>
 <dd>
-<div class="desc"></div>
+<div class="desc"><p>Test if Position can get its latitude and y. They should be the same.</p></div>
 <details class="source">
 <summary>
 <span>Expand source code</span>
 </summary>
 <pre><code class="python">def test_should_get_latitude_equals_y(self):
+    &#34;&#34;&#34;Test if Position can get its latitude and y. They should be the same.&#34;&#34;&#34;
     LATITUDE = 69
 
     assert Position(0, LATITUDE).latitude == LATITUDE
@@ -131,12 +157,13 @@ class TestPosition:
 <span>def <span class="ident">test_should_get_longitude_equals_x</span></span>(<span>self)</span>
 </code></dt>
 <dd>
-<div class="desc"></div>
+<div class="desc"><p>Test if Position can get its longitude and x. They should be the same.</p></div>
 <details class="source">
 <summary>
 <span>Expand source code</span>
 </summary>
 <pre><code class="python">def test_should_get_longitude_equals_x(self):
+    &#34;&#34;&#34;Test if Position can get its longitude and x. They should be the same.&#34;&#34;&#34;
     LONGITUDE = 420
 
     assert Position(LONGITUDE, 0).longitude == LONGITUDE
@@ -147,12 +174,13 @@ class TestPosition:
 <span>def <span class="ident">test_should_get_max</span></span>(<span>self)</span>
 </code></dt>
 <dd>
-<div class="desc"></div>
+<div class="desc"><p>Test if Position can get the maximum position between the current position and the given position.</p></div>
 <details class="source">
 <summary>
 <span>Expand source code</span>
 </summary>
 <pre><code class="python">def test_should_get_max(self):
+    &#34;&#34;&#34;Test if Position can get the maximum position between the current position and the given position.&#34;&#34;&#34;
     assert Position(1, 1).max(Position(2, 2)) == Position(2, 2)
     assert Position(1, 1).max(Position(2, 2), Position(3, 3)) == Position(3, 3)</code></pre>
 </details>
@@ -161,14 +189,30 @@ class TestPosition:
 <span>def <span class="ident">test_should_get_min</span></span>(<span>self)</span>
 </code></dt>
 <dd>
-<div class="desc"></div>
+<div class="desc"><p>Test if Position can get the minimum position between the current position and the given position.</p></div>
 <details class="source">
 <summary>
 <span>Expand source code</span>
 </summary>
 <pre><code class="python">def test_should_get_min(self):
+    &#34;&#34;&#34;Test if Position can get the minimum position between the current position and the given position.&#34;&#34;&#34;
     assert Position(1, 1).min(Position(2, 2)) == Position(1, 1)
     assert Position(1, 1).min(Position(2, 2), Position(3, 3)) == Position(1, 1)</code></pre>
+</details>
+</dd>
+<dt id="src.models.map.tests.test_position.TestPosition.test_should_not_create"><code class="name flex">
+<span>def <span class="ident">test_should_not_create</span></span>(<span>self)</span>
+</code></dt>
+<dd>
+<div class="desc"><p>Test if Position can't be created with invalid arguments.</p></div>
+<details class="source">
+<summary>
+<span>Expand source code</span>
+</summary>
+<pre><code class="python">def test_should_not_create(self):
+    &#34;&#34;&#34;Test if Position can&#39;t be created with invalid arguments.&#34;&#34;&#34;
+    with self.assertRaises(TypeError):
+        Position()</code></pre>
 </details>
 </dd>
 </dl>
@@ -197,6 +241,7 @@ class TestPosition:
 <li><code><a title="src.models.map.tests.test_position.TestPosition.test_should_get_longitude_equals_x" href="#src.models.map.tests.test_position.TestPosition.test_should_get_longitude_equals_x">test_should_get_longitude_equals_x</a></code></li>
 <li><code><a title="src.models.map.tests.test_position.TestPosition.test_should_get_max" href="#src.models.map.tests.test_position.TestPosition.test_should_get_max">test_should_get_max</a></code></li>
 <li><code><a title="src.models.map.tests.test_position.TestPosition.test_should_get_min" href="#src.models.map.tests.test_position.TestPosition.test_should_get_min">test_should_get_min</a></code></li>
+<li><code><a title="src.models.map.tests.test_position.TestPosition.test_should_not_create" href="#src.models.map.tests.test_position.TestPosition.test_should_not_create">test_should_not_create</a></code></li>
 </ul>
 </li>
 </ul>

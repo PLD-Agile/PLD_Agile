@@ -42,6 +42,8 @@ RouteName = TypeVar(&#34;RouteName&#34;, Enum, str)
 
 
 class Navigator(Generic[RouteName]):
+    &#34;&#34;&#34;Navigator class that handles the navigation between pages.&#34;&#34;&#34;
+
     __navigators: Dict[str, &#34;Navigator&#34;] = {}
 
     __history_stack: BehaviorSubject[List[RouteName]]
@@ -170,6 +172,11 @@ class Navigator(Generic[RouteName]):
         self.__history_stack.on_next(self.__history_stack.value[:-1] + [name])
 
     def get_current_route_name(self) -&gt; RouteName:
+        &#34;&#34;&#34;Get the current route name
+
+        Returns:
+            RouteName: Current route name
+        &#34;&#34;&#34;
         return self.__history_stack.value[-1]
 
     def get_router_outlet(self) -&gt; QWidget:
@@ -203,11 +210,28 @@ class Navigator(Generic[RouteName]):
         return widget
 
     def __match_name(self, route_name: str, search_name: str) -&gt; bool:
+        &#34;&#34;&#34;Check if the route name matches the search name
+
+        Args:
+            route_name (str): Route name
+            search_name (str): Search name
+
+        Returns:
+            bool: True if the route name matches the search name, False otherwise
+        &#34;&#34;&#34;
         return route_name == search_name or (
             route_name.value == search_name if isinstance(route_name, Enum) else False
         )
 
     def __resolve_route(self, name: str) -&gt; Tuple[int, Route]:
+        &#34;&#34;&#34;Resolve the route from the given name. If the route is not found, the not found widget is returned
+
+        Args:
+            name (str): Name of the route to resolve
+
+        Returns:
+            Tuple[int, Route]: Tuple of the index of the route and the route or the not found widget
+        &#34;&#34;&#34;
         for i, route in enumerate(self.__routes):
             if self.__match_name(route.name, name):
                 return (i, route)
@@ -215,6 +239,11 @@ class Navigator(Generic[RouteName]):
         return (len(self.__routes), Route(name=name, widget=self.__not_found_widget))
 
     def __build_not_found_widget(self) -&gt; QWidget:
+        &#34;&#34;&#34;Build a not found widget
+
+        Returns:
+            QWidget: Not found widget
+        &#34;&#34;&#34;
         widget = QWidget()
         layout = QVBoxLayout()
 
@@ -239,25 +268,14 @@ class Navigator(Generic[RouteName]):
 <span>class <span class="ident">Navigator</span></span>
 </code></dt>
 <dd>
-<div class="desc"><p>Abstract base class for generic types.</p>
-<p>A generic type is typically declared by inheriting from
-this class parameterized with one or more type variables.
-For example, a generic mapping type might be defined as::</p>
-<p>class Mapping(Generic[KT, VT]):
-def <strong>getitem</strong>(self, key: KT) -&gt; VT:
-&hellip;
-# Etc.</p>
-<p>This class can then be used as follows::</p>
-<p>def lookup_name(mapping: Mapping[KT, VT], key: KT, default: VT) -&gt; VT:
-try:
-return mapping[key]
-except KeyError:
-return default</p></div>
+<div class="desc"><p>Navigator class that handles the navigation between pages.</p></div>
 <details class="source">
 <summary>
 <span>Expand source code</span>
 </summary>
 <pre><code class="python">class Navigator(Generic[RouteName]):
+    &#34;&#34;&#34;Navigator class that handles the navigation between pages.&#34;&#34;&#34;
+
     __navigators: Dict[str, &#34;Navigator&#34;] = {}
 
     __history_stack: BehaviorSubject[List[RouteName]]
@@ -386,6 +404,11 @@ return default</p></div>
         self.__history_stack.on_next(self.__history_stack.value[:-1] + [name])
 
     def get_current_route_name(self) -&gt; RouteName:
+        &#34;&#34;&#34;Get the current route name
+
+        Returns:
+            RouteName: Current route name
+        &#34;&#34;&#34;
         return self.__history_stack.value[-1]
 
     def get_router_outlet(self) -&gt; QWidget:
@@ -419,11 +442,28 @@ return default</p></div>
         return widget
 
     def __match_name(self, route_name: str, search_name: str) -&gt; bool:
+        &#34;&#34;&#34;Check if the route name matches the search name
+
+        Args:
+            route_name (str): Route name
+            search_name (str): Search name
+
+        Returns:
+            bool: True if the route name matches the search name, False otherwise
+        &#34;&#34;&#34;
         return route_name == search_name or (
             route_name.value == search_name if isinstance(route_name, Enum) else False
         )
 
     def __resolve_route(self, name: str) -&gt; Tuple[int, Route]:
+        &#34;&#34;&#34;Resolve the route from the given name. If the route is not found, the not found widget is returned
+
+        Args:
+            name (str): Name of the route to resolve
+
+        Returns:
+            Tuple[int, Route]: Tuple of the index of the route and the route or the not found widget
+        &#34;&#34;&#34;
         for i, route in enumerate(self.__routes):
             if self.__match_name(route.name, name):
                 return (i, route)
@@ -431,6 +471,11 @@ return default</p></div>
         return (len(self.__routes), Route(name=name, widget=self.__not_found_widget))
 
     def __build_not_found_widget(self) -&gt; QWidget:
+        &#34;&#34;&#34;Build a not found widget
+
+        Returns:
+            QWidget: Not found widget
+        &#34;&#34;&#34;
         widget = QWidget()
         layout = QVBoxLayout()
 
@@ -586,12 +631,22 @@ def history_stack(self) -&gt; Observable[List[str]]:
 <span>def <span class="ident">get_current_route_name</span></span>(<span>self) ‑> ~RouteName</span>
 </code></dt>
 <dd>
-<div class="desc"></div>
+<div class="desc"><p>Get the current route name</p>
+<h2 id="returns">Returns</h2>
+<dl>
+<dt><code>RouteName</code></dt>
+<dd>Current route name</dd>
+</dl></div>
 <details class="source">
 <summary>
 <span>Expand source code</span>
 </summary>
 <pre><code class="python">def get_current_route_name(self) -&gt; RouteName:
+    &#34;&#34;&#34;Get the current route name
+
+    Returns:
+        RouteName: Current route name
+    &#34;&#34;&#34;
     return self.__history_stack.value[-1]</code></pre>
 </details>
 </dd>
