@@ -25,19 +25,19 @@ class TourComputingService(Singleton):
         Returns:
             TourComputingResult: Result of the computation
         """
-        map_graph = self.__create_graph_from_map(map)
+        map_graph = self.create_graph_from_map(map)
         warehouse = DeliveryRequest(
             DeliveryLocation(Segment(-1, "", map.warehouse, map.warehouse, 0), 0), 8
         )
 
-        return self.__solve_tsp(
-            self.__compute_shortest_path_graph(
+        return self.solve_tsp(
+            self.compute_shortest_path_graph(
                 map_graph, [warehouse] + list(tour_request.deliveries.values())
             )
         )
 
     #  Replace this with the data from the Map model
-    def __create_graph_from_map(self, map: Map) -> nx.Graph:
+    def create_graph_from_map(self, map: Map) -> nx.Graph:
         """Create a directed graph from an XML file."""
         graph = nx.DiGraph()
 
@@ -57,7 +57,7 @@ class TourComputingService(Singleton):
 
         return graph
 
-    def __compute_shortest_path_graph(
+    def compute_shortest_path_graph(
         self, graph: nx.Graph, deliveries: List[DeliveryRequest]
     ) -> nx.DiGraph:
         """Compute the shortest path graph between delivery locations."""
@@ -96,7 +96,7 @@ class TourComputingService(Singleton):
 
         return G
 
-    def __solve_tsp(self, shortest_path_graph: nx.Graph) -> TourComputingResult:
+    def solve_tsp(self, shortest_path_graph: nx.Graph) -> TourComputingResult:
         shortest_cycle_length = float("inf")
         shortest_cycle: List[DeliveriesComputingResult] = []
         route = []

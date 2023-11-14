@@ -76,7 +76,7 @@ def test_solve_tsp_should_return_solution(tour_service):
 
     # Check if the above graph is a valid NetworkX DiGraph
     assert isinstance(G, nx.DiGraph)
-    assert path == [0, 23, 56, 1, 7, 6, 2, 42, 27, 0]
+    assert path.route == [0, 23, 56, 1, 7, 6, 2, 42, 27, 0]
 
 
 def test_solve_tsp_should_return_empty_solution_if_cul_de_sac(tour_service):
@@ -148,4 +148,4 @@ def test_solve_tsp_should_pass_if_delivery_in_time_window(tour_service):
 
     # Check if the above graph is a valid NetworkX DiGraph
     assert isinstance(G, nx.DiGraph)
-    assert path == [0, 23, 56, 1, 7, 6, 2, 4, 7, 3, 2, 99, 33, 0]
+    assert path.route == [0, 23, 56, 1, 7, 6, 2, 4, 7, 3, 2, 99, 33, 0]
