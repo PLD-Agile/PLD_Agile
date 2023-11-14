@@ -1,3 +1,4 @@
+from src.models.tour.computing import DeliveriesComputingResult, TourComputingResult
 from src.models.tour.delivery import (
     ComputedDelivery,
     Delivery,
