@@ -13,11 +13,7 @@ from PyQt6.QtWidgets import (
 
 from src.controllers.navigator.page import Page
 from src.models.delivery_man.delivery_man import DeliveryMan
-from src.models.tour import (
-    NonComputedTour,
-    Tour,
-    TourID,
-)
+from src.models.tour import NonComputedTour, Tour, TourID
 from src.services.delivery_man.delivery_man_service import DeliveryManService
 from src.services.tour.tour_service import TourService
 from src.views.main_page.form.tours_table import ToursTable

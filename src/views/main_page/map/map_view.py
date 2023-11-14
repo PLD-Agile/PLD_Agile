@@ -133,7 +133,7 @@ class MapView(QGraphicsView):
             icon="warehouse",
             color=QColor("#1e8239"),
             align_bottom=False,
-            scale=0.5,
+            scale=1,
         )
 
         self.fit_map()
@@ -174,7 +174,7 @@ class MapView(QGraphicsView):
         icon_shape.setScale(marker_size / self.MARKER_RESOLUTION_RESOLUTION)
         icon_shape.setZValue(10000)
 
-        marker = MapMarker(icon_shape, align_bottom, scale)
+        marker = MapMarker(icon_shape, align_bottom=align_bottom, scale=scale)
 
         self.__adjust_marker(marker)
 
@@ -275,8 +275,8 @@ class MapView(QGraphicsView):
 
             for segment in computed_tour.route:
                 # We get an unique identifier for the segment regardless of the direction
-                segment_id = f'{min(segment.origin.id, segment.destination.id)}-{max(segment.origin.id, segment.destination.id)}'
-                
+                segment_id = f"{min(segment.origin.id, segment.destination.id)}-{max(segment.origin.id, segment.destination.id)}"
+
                 if segment_id not in segments:
                     segments[segment_id] = (segment, [])
                 segments[segment_id][1].append(computed_tour)
@@ -417,7 +417,7 @@ class MapView(QGraphicsView):
 
         return QPointF(
             x - (marker_size / 2 * direction),
-            (y - (marker_size - (marker_size * 0.01)) * direction)
+            (y - (marker_size * 0.99) * direction)
             if align_bottom
             else (y - (marker_size / 2 * direction)),
         )
