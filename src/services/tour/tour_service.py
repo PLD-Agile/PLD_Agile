@@ -143,8 +143,8 @@ class TourService(Singleton):
 
         del tour_request.deliveries[delivery_request_id]
 
-        if len(tour_request.deliveries) == 0:
-            del self.__tour_requests.value[tour_request.id]
+        # if len(tour_request.deliveries) == 0:
+        #     del self.__tour_requests.value[tour_request.id]
 
         self.__tour_requests.on_next(self.__tour_requests.value)
 
@@ -190,8 +190,8 @@ class TourService(Singleton):
             delivery_request_id
         ] = delivery_request
 
-        if len(tour_request.deliveries) == 0:
-            del self.__tour_requests.value[tour_request.id]
+        # if len(tour_request.deliveries) == 0:
+        #     del self.__tour_requests.value[tour_request.id]
 
         self.__tour_requests.on_next(self.__tour_requests.value)
 
@@ -211,9 +211,10 @@ class TourService(Singleton):
 
         for id, tour_request in self.__tour_requests.value.items():
             try:
-                tours_intersection_ids[
-                    id
-                ] = TourComputingService.instance().compute_tour(tour_request, map)
+                if len(tour_request.deliveries) > 0:
+                    tours_intersection_ids[
+                        id
+                    ] = TourComputingService.instance().compute_tour(tour_request, map)
             except Exception as e:
                 tours_intersection_ids[id] = []
 
