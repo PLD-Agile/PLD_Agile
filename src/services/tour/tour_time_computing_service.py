@@ -64,8 +64,8 @@ class TourTimeComputingService(Singleton):
                 if travel_time < time_window_start:
                     travel_time = time_window_start
 
-                if travel_time > time_window_start + Config.TIME_WINDOW_SIZE:
-                    raise Exception("Delivery time window exceeded")
+                # if travel_time > time_window_start + Config.TIME_WINDOW_SIZE:
+                #     raise Exception("Delivery time window exceeded")
 
                 computed_deliveries.append(
                     ComputedDelivery.create_from_request(
