@@ -5,6 +5,7 @@ from PyQt6.QtWidgets import QLabel, QTableWidget
 from src.models.tour import Tour
 from src.views.main_page.form.tours_table_column import ToursTableColumn
 from src.views.main_page.form.tours_table_column_items import (
+    ToursTableColumnItemActions,
     ToursTableColumnItemAddress,
     ToursTableColumnItemDeliveryMan,
     ToursTableColumnItemTime,
@@ -24,6 +25,10 @@ class ToursTable(QTableWidget):
         ToursTableColumn(
             header="Livreur",
             render=ToursTableColumnItemDeliveryMan,
+        ),
+        ToursTableColumn(
+            header="",
+            render=ToursTableColumnItemActions,
         ),
     ]
 

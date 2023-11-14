@@ -68,26 +68,13 @@ class DeliveryFormPage(Page):
 
         self.setLayout(layout)
 
-        # UNUSED self.address_list = []
-
         DeliveryManService.instance().delivery_men.subscribe(
             self.__update_delivery_man_combobox
         )
-        # TourService.instance().all_tours.subscribe(self.__update_delivery_table)
         TourService.instance().all_tours.subscribe(self.__delivery_table.update_content)
 
     def compute_tour(self):
         TourService.instance().compute_tours()
-
-    def remove_delivery_location(
-        self, delivery_request_id: DeliveryID, tour_id: TourID
-    ):
-        CommandService.instance().execute(
-            RemoveDeliveryRequestCommand(
-                delivery_request_id=delivery_request_id,
-                tour_id=tour_id,
-            )
-        )
 
     def __build_warehouse_location(self) -> QLayout:
         # Define components to be used in this screen

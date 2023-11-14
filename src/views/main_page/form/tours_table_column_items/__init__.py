@@ -1,3 +1,6 @@
+from src.views.main_page.form.tours_table_column_items.tours_table_column_item_actions import (
+    ToursTableColumnItemActions,
+)
 from src.views.main_page.form.tours_table_column_items.tours_table_column_item_address import (
     ToursTableColumnItemAddress,
 )
