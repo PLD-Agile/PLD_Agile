@@ -23,6 +23,7 @@ class ToursTable(QTableWidget):
         ToursTableColumn(
             header="Adresse",
             render=ToursTableColumnItemAddress,
+            width=200,
         ),
         ToursTableColumn(
             header="Heure",
@@ -31,10 +32,12 @@ class ToursTable(QTableWidget):
         ToursTableColumn(
             header="Livreur",
             render=ToursTableColumnItemDeliveryMan,
+            width=150,
         ),
         ToursTableColumn(
             header="",
             render=ToursTableColumnItemActions,
+            width=80
         ),
     ]
 
