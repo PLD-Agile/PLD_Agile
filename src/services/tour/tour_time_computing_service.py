@@ -5,7 +5,13 @@ from typing import Dict, List
 from models.errors.computing_errors import DeliveriesNotOnRouteError
 from src.config import Config
 from src.models.map import Segment
-from src.models.tour import ComputedDelivery, ComputedTour, DeliveryRequest, TourRequest, DeliveryID
+from src.models.tour import (
+    ComputedDelivery,
+    ComputedTour,
+    DeliveryID,
+    DeliveryRequest,
+    TourRequest,
+)
 from src.services.map.map_service import MapService
 from src.services.singleton import Singleton
 
@@ -32,9 +38,7 @@ class TourTimeComputingService(Singleton):
 
         return ComputedTour.create_from_request(
             tour_request=tour_request,
-            deliveries=self.__compute_time_for_deliveries(
-                    tour_request, segment_route
-                ),
+            deliveries=self.__compute_time_for_deliveries(tour_request, segment_route),
             route=segment_route,
         )
 

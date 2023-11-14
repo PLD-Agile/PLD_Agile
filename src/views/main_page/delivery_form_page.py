@@ -1,4 +1,4 @@
-from typing import Dict, List
+from typing import Dict
 
 from PyQt6.QtCore import Qt
 from PyQt6.QtWidgets import (
@@ -7,8 +7,6 @@ from PyQt6.QtWidgets import (
     QLabel,
     QLayout,
     QMessageBox,
-    QTableWidget,
-    QTableWidgetItem,
     QVBoxLayout,
     QWidget,
 )
@@ -16,18 +14,9 @@ from PyQt6.QtWidgets import (
 from src.controllers.navigator.page import Page
 from src.models.delivery_man.delivery_man import DeliveryMan
 from src.models.tour import (
-    ComputedDelivery,
-    ComputedTour,
-    Delivery,
-    DeliveryID,
-    DeliveryRequest,
+    NonComputedTour,
     Tour,
     TourID,
-    TourRequest,
-)
-from src.services.command.command_service import CommandService
-from src.services.command.commands.remove_delivery_request_command import (
-    RemoveDeliveryRequestCommand,
 )
 from src.services.delivery_man.delivery_man_service import DeliveryManService
 from src.services.tour.tour_service import TourService
@@ -39,6 +28,7 @@ class DeliveryFormPage(Page):
     __delivery_man_control: QComboBox
     __time_window_control: QComboBox
     __delivery_table: ToursTable
+    __errors_container: QLayout
 
     def __init__(self):
         super().__init__()
@@ -62,6 +52,7 @@ class DeliveryFormPage(Page):
         layout.addWidget(add_deliveries_click)
 
         layout.addWidget(deliveries_label)
+        layout.addLayout(self.__build_errors_container())
         layout.addLayout(self.__build_delivery_table())
         layout.addWidget(Separator())
         layout.addLayout(self.__build_load_tours())
@@ -71,7 +62,10 @@ class DeliveryFormPage(Page):
         DeliveryManService.instance().delivery_men.subscribe(
             self.__update_delivery_man_combobox
         )
-        TourService.instance().all_tours.subscribe(self.__delivery_table.update_content)
+        TourService.instance().computed_tours.subscribe(
+            self.__delivery_table.update_content
+        )
+        TourService.instance().computed_tours.subscribe(self.__update_errors)
 
     def compute_tour(self):
         TourService.instance().compute_tours()
@@ -181,6 +175,12 @@ class DeliveryFormPage(Page):
 
         return layout
 
+    def __build_errors_container(self) -> QLayout:
+        # Define components to be used in this screen
+        self.__errors_container = QVBoxLayout()
+
+        return self.__errors_container
+
     def __update_delivery_man_combobox(
         self, delivery_men: Dict[str, DeliveryMan]
     ) -> None:
@@ -210,6 +210,34 @@ class DeliveryFormPage(Page):
             self.__time_window_control.setCurrentIndex(
                 max(self.__time_window_control.findData(current_value), 0)
             )
+
+    def __update_errors(self, tours: Dict[TourID, Tour]) -> None:
+        for i in reversed(range(self.__errors_container.count())):
+            self.__errors_container.itemAt(i).widget().setParent(None)
+
+        for tour in tours.values():
+            if not isinstance(tour, NonComputedTour):
+                continue
+
+            for error in tour.errors:
+                error_widget = QWidget()
+                error_widget.setStyleSheet(
+                    "background-color: #211211; border-radius: 5px;"
+                )
+
+                error_layout = QHBoxLayout()
+                error_layout.setAlignment(Qt.AlignmentFlag.AlignLeft)
+
+                tour_color = QLabel("     ")
+                tour_color.setStyleSheet(f"background-color: {tour.color};")
+
+                error_text = QLabel(error)
+
+                error_layout.addWidget(tour_color)
+                error_layout.addWidget(error_text)
+                error_widget.setLayout(error_layout)
+
+                self.__errors_container.addWidget(error_widget)
 
     def __save_tour(self):
         selected_delivery_man: DeliveryMan = self.__delivery_man_control.currentData()

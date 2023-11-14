@@ -25,7 +25,7 @@ from reactivex import Observable
 from reactivex.subject import BehaviorSubject
 
 from src.models.map import Map, Position, Segment
-from src.models.tour import ComputedTour, Delivery, DeliveryLocation, TourID
+from src.models.tour import ComputedTour, Delivery, DeliveryLocation, Tour, TourID
 from src.services.command.command_service import CommandService
 from src.services.command.commands.add_delivery_request_command import (
     AddDeliveryRequestCommand,
@@ -259,7 +259,7 @@ class MapView(QGraphicsView):
                 ),
             )
 
-    def __on_update_computed_tours(self, computed_tours: Dict[TourID, ComputedTour]):
+    def __on_update_computed_tours(self, computed_tours: Dict[TourID, Tour]):
         for maker in self.__map_annotations.segments.get(SegmentTypes.Tour):
             self.__scene.removeItem(maker.shape)
             if maker.arrow_shape:
@@ -270,7 +270,7 @@ class MapView(QGraphicsView):
         segments: Dict[int, Tuple[Segment, List[ComputedTour]]] = {}
 
         for computed_tour in computed_tours.values():
-            if not computed_tour:
+            if not computed_tour or not isinstance(computed_tour, ComputedTour):
                 continue
 
             for segment in computed_tour.route:
