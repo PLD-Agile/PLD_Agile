@@ -8,9 +8,8 @@ from src.models.map.segment import Segment
 
 @dataclass
 class Map:
-    """Class representing a map. This contains all the information about the map, such as intersections, segments, warehouse, etc.
-    """
-    
+    """Class representing a map. This contains all the information about the map, such as intersections, segments, warehouse, etc."""
+
     intersections: Dict[int, Intersection]
     """Map of all the intersections identified by their ID. Ex: intersections[1] gives the intersection with ID 1.
     """

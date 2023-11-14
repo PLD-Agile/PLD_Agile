@@ -5,8 +5,8 @@ Value = TypeVar("Value")
 
 
 class TaggedCollection(Generic[Tag, Value]):
-    """Collection where values are indexed by tags.
-    """
+    """Collection where values are indexed by tags."""
+
     __collection: Dict[Tag, List[Value]] = {}
 
     def get(self, tag: Tag) -> List[Value]:
@@ -46,6 +46,5 @@ class TaggedCollection(Generic[Tag, Value]):
         return [value for values in self.__collection.values() for value in values]
 
     def clear_all(self) -> None:
-        """Clear all values in the collection for all tags.
-        """
+        """Clear all values in the collection for all tags."""
         self.__collection = {}

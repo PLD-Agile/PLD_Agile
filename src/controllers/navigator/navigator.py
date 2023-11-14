@@ -37,7 +37,7 @@ class Navigator(Generic[RouteName]):
         Returns:
             Navigator: Navigator with the given name
         """
-        
+
         navigator = Navigator.__navigators.get(name)
 
         if navigator is None:

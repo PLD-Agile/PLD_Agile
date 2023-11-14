@@ -9,8 +9,8 @@ T = TypeVar("T", bound="MapSize")
 
 @dataclass
 class MapSize:
-    """Represents the size of a map.
-    """
+    """Represents the size of a map."""
+
     __min: Position
     __max: Position
     area: float
