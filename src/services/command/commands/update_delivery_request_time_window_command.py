@@ -29,7 +29,7 @@ class UpdateDeliveryRequestTimeWindowCommand(AbstractCommand):
         )
 
     def undo(self) -> None:
-        if self.__time_window is None:
+        if self.__previous_time_window is None:
             raise Exception("Cannot undo a command that has not been executed")
 
         TourService.instance().update_delivery_request_time_window(
@@ -37,3 +37,5 @@ class UpdateDeliveryRequestTimeWindowCommand(AbstractCommand):
             tour_id=self.__tour_id,
             time_window=self.__previous_time_window,
         )
+        
+        self.__previous_time_window = None
