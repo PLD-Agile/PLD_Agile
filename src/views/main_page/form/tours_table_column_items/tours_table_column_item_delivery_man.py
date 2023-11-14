@@ -5,6 +5,10 @@ from PyQt6.QtWidgets import QComboBox, QHBoxLayout, QWidget
 
 from src.models.delivery_man.delivery_man import DeliveryMan
 from src.models.tour import Delivery, Tour
+from src.services.command.command_service import CommandService
+from src.services.command.commands.update_delivery_request_delivery_man_command import (
+    UpdateDeliveryRequestDeliveryMan,
+)
 from src.services.delivery_man.delivery_man_service import DeliveryManService
 from src.services.tour.tour_service import TourService
 
@@ -68,8 +72,10 @@ class ToursTableColumnItemDeliveryMan(QWidget):
         if delivery_man_id is None or delivery_man_id == self.__tour.delivery_man.id:
             return
 
-        TourService.instance().update_delivery_request_delivery_man(
-            delivery_request_id=self.__delivery.id,
-            tour_id=self.__tour.id,
-            delivery_man_id=delivery_man_id,
+        CommandService.instance().execute(
+            UpdateDeliveryRequestDeliveryMan(
+                delivery_request_id=self.__delivery.id,
+                tour_id=self.__tour.id,
+                delivery_man_id=delivery_man_id,
+            )
         )

@@ -169,12 +169,14 @@ class TourService(Singleton):
 
     def update_delivery_request_delivery_man(
         self, delivery_request_id: DeliveryID, tour_id: TourID, delivery_man_id: UUID
-    ) -> None:
+    ) -> UUID:
         if tour_id == delivery_man_id:
             return
 
         tour_request = self.__tour_requests.value[tour_id]
         delivery_request = tour_request.deliveries[delivery_request_id]
+
+        previous_delivery_man_id = tour_request.delivery_man.id
 
         del tour_request.deliveries[delivery_request_id]
 
@@ -183,6 +185,8 @@ class TourService(Singleton):
         ] = delivery_request
 
         self.__tour_requests.on_next(self.__tour_requests.value)
+
+        return previous_delivery_man_id
 
     def compute_tours(self) -> None:
         """Compute the tours and publish the update."""
