@@ -31,7 +31,12 @@ class TourTimeComputingService(Singleton):
 
         return ComputedTour.create_from_request(
             tour_request=tour_request,
-            deliveries={delivery.id: delivery for delivery in self.__compute_time_for_deliveries(tour_request, segment_route)},
+            deliveries={
+                delivery.id: delivery
+                for delivery in self.__compute_time_for_deliveries(
+                    tour_request, segment_route
+                )
+            },
             route=segment_route,
         )
 
@@ -59,8 +64,8 @@ class TourTimeComputingService(Singleton):
                 if travel_time < time_window_start:
                     travel_time = time_window_start
 
-                if travel_time > time_window_start + Config.TIME_WINDOW_SIZE:
-                    raise Exception("Delivery time window exceeded")
+                # if travel_time > time_window_start + Config.TIME_WINDOW_SIZE:
+                #     raise Exception("Delivery time window exceeded")
 
                 computed_deliveries.append(
                     ComputedDelivery.create_from_request(
