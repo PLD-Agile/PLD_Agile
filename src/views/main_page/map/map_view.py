@@ -25,7 +25,7 @@ from reactivex import Observable
 from reactivex.subject import BehaviorSubject
 
 from src.models.map import Map, Position, Segment
-from src.models.tour import ComputedTour, DeliveryLocation, TourID
+from src.models.tour import ComputedTour, DeliveryLocation, TourID, Delivery
 from src.services.command.command_service import CommandService
 from src.services.command.commands.add_delivery_request_command import (
     AddDeliveryRequestCommand,
@@ -234,10 +234,10 @@ class MapView(QGraphicsView):
 
     def __on_update_delivery_locations(
         self,
-        deliveries: Tuple[Optional[DeliveryLocation], List[DeliveryLocation]],
+        deliveries: Tuple[Optional[Delivery], List[DeliveryLocation]],
     ):
-        selected_delivery_location, delivery_locations = deliveries
-
+        selected_delivery, delivery_locations = deliveries
+        
         for marker in self.__map_annotations.markers.get(MarkersTypes.Delivery):
             self.__scene.removeItem(marker.shape)
 
@@ -250,7 +250,7 @@ class MapView(QGraphicsView):
                     position=delivery_location.segment.origin,
                     icon="map-marker-alt",
                     color=QColor("#f54242"),
-                    scale=1.5 if delivery_location == selected_delivery_location else 1,
+                    scale=1.5 if (selected_delivery and delivery_location == selected_delivery.location) else 1,
                 ),
             )
 

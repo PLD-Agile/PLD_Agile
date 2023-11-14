@@ -14,6 +14,7 @@ from src.models.tour import (
     Tour,
     TourID,
     TourRequest,
+    Delivery
 )
 from src.services.delivery_man.delivery_man_service import DeliveryManService
 from src.services.map.delivery_location_service import DeliveryLocationService
@@ -29,12 +30,12 @@ COLORS = ["#6929c4", "#1192e8", "#005d5d", "#9f1853", "#198038", "#012749", "#b2
 class TourService(Singleton):
     __tour_requests: BehaviorSubject[Dict[TourID, TourRequest]]
     __computed_tours: BehaviorSubject[Dict[TourID, ComputedTour]]
-    __selected_delivery_request: BehaviorSubject[Optional[DeliveryRequest]]
+    __selected_delivery: BehaviorSubject[Optional[Delivery]]
 
     def __init__(self) -> None:
         self.__tour_requests = BehaviorSubject({})
         self.__computed_tours = BehaviorSubject({})
-        self.__selected_delivery_request = BehaviorSubject(None)
+        self.__selected_delivery = BehaviorSubject(None)
 
         self.__tour_requests.subscribe(lambda _: self.compute_tours())
 
@@ -45,9 +46,9 @@ class TourService(Singleton):
     @property
     def tour_requests_delivery_locations(
         self,
-    ) -> Observable[Tuple[DeliveryLocation, List[DeliveryLocation]]]:
+    ) -> Observable[Tuple[Delivery, List[DeliveryLocation]]]:
         return combine_latest(
-            self.__selected_delivery_request,
+            self.__selected_delivery,
             self.__tour_requests,
         ).pipe(
             map(
@@ -92,10 +93,10 @@ class TourService(Singleton):
     def get_computed_tours(self) -> List[ComputedTour]:
         return self.__computed_tours.value
 
-    def select_delivery_request(
-        self, delivery_request: Optional[DeliveryRequest]
+    def select_delivery(
+        self, delivery: Optional[Delivery]
     ) -> None:
-        self.__selected_delivery_request.on_next(delivery_request)
+        self.__selected_delivery.on_next(delivery)
 
     def add_delivery_request(
         self, position: Position, time_window: int, tour_id: TourID
@@ -146,8 +147,8 @@ class TourService(Singleton):
 
         self.__tour_requests.on_next(self.__tour_requests.value)
 
-        if self.__selected_delivery_request.value == tour_request:
-            self.__selected_delivery_request.on_next(None)
+        if self.__selected_delivery.value == tour_request:
+            self.__selected_delivery.on_next(None)
 
         return delivery_request
 
