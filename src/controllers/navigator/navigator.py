@@ -29,6 +29,15 @@ class Navigator(Generic[RouteName]):
 
     @staticmethod
     def get_navigator(name: str) -> "Navigator":
+        """Get the navigator with the given name
+
+        Args:
+            name (str): Name of the navigator
+
+        Returns:
+            Navigator: Navigator with the given name
+        """
+        
         navigator = Navigator.__navigators.get(name)
 
         if navigator is None:
