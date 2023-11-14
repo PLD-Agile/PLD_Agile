@@ -39,6 +39,9 @@ class DeliveryLocationService(Singleton):
         found_distance: float = sys.maxsize
 
         for intersection in MapService.instance().get_map().intersections.values():
+            if intersection.id not in MapService.instance().get_map().segments:
+                continue
+            
             distance = intersection.distance_to(position)
             if distance < found_distance:
                 found = intersection
