@@ -3,13 +3,13 @@ from typing import Dict
 from PyQt6.QtCore import Qt
 from PyQt6.QtWidgets import (
     QComboBox,
+    QFileDialog,
     QHBoxLayout,
     QLabel,
     QLayout,
     QMessageBox,
     QVBoxLayout,
     QWidget,
-    QFileDialog,
 )
 
 from src.controllers.navigator.page import Page
