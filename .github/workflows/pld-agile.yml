@@ -107,7 +107,7 @@ jobs:
           python -m pip install pipenv
           pipenv install --dev
       - name: Build
-        run: .venv/bin/pyinstaller --windowed --name "PLD Agile" --paths "." src/pld_agile/main.py
+        run: .venv/bin/pyinstaller --windowed --name "PLD Agile" --paths "." src/main.py
       - name: Archive build
         uses: actions/upload-artifact@v3
         with:
