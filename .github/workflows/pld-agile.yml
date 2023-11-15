@@ -62,6 +62,18 @@ jobs:
           name: pld-agile-testing-report
           path: testing_report.html
 
+  docs:
+    name: Docs
+    runs-on: ubuntu-latest
+    steps:
+      - name: Generate docs
+        run: pdoc3 --html --output-dir docs src
+      - name: Upload generate docs
+        uses: actions/upload-artifact@v3
+        with:
+          name: pld-agile-docs
+          path: docs/*
+
 
   build_linux:
     name: Build Linux

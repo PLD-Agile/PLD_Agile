@@ -4,6 +4,7 @@
 # Report
 testing_report.html
 *.css
+docs/
 
 # Byte-compiled / optimized / DLL files
 __pycache__/
