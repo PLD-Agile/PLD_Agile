@@ -82,16 +82,39 @@ class TourService(Singleton):
         return self.__computed_tours
 
     def clear(self) -> None:
+        """Clears the tour requests and computed tours.
+
+        Returns:
+            None
+        """
         self.__tour_requests.on_next({})
         self.__computed_tours.on_next({})
 
     def get_tour_requests(self) -> List[TourRequest]:
+        """Returns a list of all tour requests.
+
+        Returns:
+            List[TourRequest]: A list of all tour requests.
+        """
         return self.__tour_requests.value
 
     def get_computed_tours(self) -> List[ComputedTour]:
+        """Returns a list of computed tours.
+
+        Returns:
+            List[ComputedTour]: A list of computed tours.
+        """
         return self.__computed_tours.value
 
     def select_delivery(self, delivery: Optional[Delivery]) -> None:
+        """Selects a delivery and publishes it to the selected_delivery subject.
+
+        Args:
+            delivery (Delivery): The delivery to be selected.
+
+        Returns:
+            None
+        """
         self.__selected_delivery.on_next(delivery)
 
     def add_delivery_request(
@@ -103,6 +126,9 @@ class TourService(Singleton):
             position (Position): Approximate position of the delivery
             time_window (int): Time window for the delivery
             tour_id (TourID): ID of the tour to add the delivery to (same as DeliveryMan ID)
+
+        Returns:
+            DeliveryRequest: The created delivery request.
         """
         tour_request = self.__get_or_create_tour_request(tour_id)
 
@@ -129,6 +155,9 @@ class TourService(Singleton):
         Args:
             delivery_request_id(DeliverID): ID of the delivery request to remove
             tour_id (TourID): ID of the tour to add the delivery to (same as DeliveryMan ID)
+
+        Returns:
+            None
         """
         tour_request = (
             self.__tour_requests.value[tour_id]
@@ -158,6 +187,16 @@ class TourService(Singleton):
     def update_delivery_request_time_window(
         self, delivery_request_id: DeliveryID, tour_id: TourID, time_window: int
     ) -> int:
+        """Update the time window of a delivery request in a tour.
+
+        Args:
+            delivery_request_id (DeliveryID): The ID of the delivery request to update.
+            tour_id (TourID): The ID of the tour containing the delivery request.
+            time_window (int): The new time window for the delivery request.
+
+        Returns:
+            int: The previous time window of the delivery request.
+        """
         tour_request = self.__tour_requests.value[tour_id]
         delivery_request = tour_request.deliveries[delivery_request_id]
 
@@ -176,6 +215,16 @@ class TourService(Singleton):
     def update_delivery_request_delivery_man(
         self, delivery_request_id: DeliveryID, tour_id: TourID, delivery_man_id: UUID
     ) -> UUID:
+        """Update the delivery man assigned to a delivery request in a tour.
+
+        Args:
+            delivery_request_id (DeliveryID): The ID of the delivery request to update.
+            tour_id (TourID): The ID of the tour containing the delivery request.
+            delivery_man_id (UUID): The ID of the delivery man to assign to the delivery request.
+
+        Returns:
+            UUID: The ID of the previous delivery man assigned to the tour.
+        """
         if tour_id == delivery_man_id:
             return
 
@@ -200,7 +249,11 @@ class TourService(Singleton):
         return previous_delivery_man_id
 
     def compute_tours(self) -> None:
-        """Compute the tours and publish the update."""
+        """Compute the tours and publish the update.
+
+        Returns:
+            None
+        """
         if len(self.__tour_requests.value) == 0:
             self.__computed_tours.on_next({})
             return
@@ -241,10 +294,19 @@ class TourService(Singleton):
         self.__computed_tours.on_next(computed_tours)
 
     def clear_tour_requests(self) -> None:
+        """Clear the tour requests and publish the update.
+
+        Returns:
+            None
+        """
         self.__tour_requests.on_next({})
 
     def clear_computed_tours(self) -> None:
-        """Clear the computed tours and publish the update."""
+        """Clear the computed tours and publish the update.
+
+        Returns:
+            None
+        """
         self.__computed_tours.on_next({})
 
     def save_tours(self, path: str) -> None:
@@ -252,6 +314,9 @@ class TourService(Singleton):
 
         Args:
             path (str): Path to the file
+
+        Returns:
+            None
         """
         TourSavingService.instance().save_tours(self.__computed_tours.value, path)
 
@@ -260,6 +325,9 @@ class TourService(Singleton):
 
         Args:
             path (str): Path to the file
+
+        Returns:
+            None
         """
         loaded_tours = TourSavingService.instance().load_tours(path)
 
@@ -298,6 +366,17 @@ class TourService(Singleton):
         self.__computed_tours.on_next(loaded_tours)
 
     def __get_or_create_tour_request(self, tour_id: TourID) -> Tour:
+        """Get or create a tour request with the given tour ID.
+
+        If a tour request with the given ID already exists, return it. Otherwise, create a new tour request with the given ID
+        and add it to the list of tour requests.
+
+        Args:
+            tour_id (TourID): The ID of the tour request to get or create.
+
+        Returns:
+            Tour: The tour request with the given ID.
+        """
         tour_request = self.__tour_requests.value.get(tour_id)
 
         if not tour_request:

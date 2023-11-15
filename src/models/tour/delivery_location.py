@@ -12,4 +12,8 @@ class DeliveryLocation:
     """
 
     segment: Segment
+    """Segment where the delivery is made.
+    """
     positionOnSegment: float
+    """Position on the segment where the delivery is made.
+    """

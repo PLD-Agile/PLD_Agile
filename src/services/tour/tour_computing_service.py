@@ -19,8 +19,8 @@ class TourComputingService(Singleton):
         """Compute tours for a list of tour requests.
 
         Args:
-            tour_request (TourRequest): Tour request
-            map (Map): Map
+            tour_request (TourRequest): The tour request to compute the tour for.
+            map (Map): The map to compute the tour on.
 
         Returns:
             TourComputingResult: Result of the computation
@@ -38,7 +38,14 @@ class TourComputingService(Singleton):
 
     #  Replace this with the data from the Map model
     def create_graph_from_map(self, map: Map) -> nx.Graph:
-        """Create a directed graph from an XML file."""
+        """Create a directed graph from a Map object.
+
+        Args:
+            map (Map): The Map object to create the graph from.
+
+        Returns:
+            nx.Graph: The directed graph created from the Map object.
+        """
         graph = nx.DiGraph()
 
         graph.add_node(map.warehouse.id)
@@ -60,7 +67,15 @@ class TourComputingService(Singleton):
     def compute_shortest_path_graph(
         self, graph: nx.Graph, deliveries: List[DeliveryRequest]
     ) -> nx.DiGraph:
-        """Compute the shortest path graph between delivery locations."""
+        """Compute the shortest path graph between delivery locations.
+
+        Args:
+            graph (nx.Graph): The graph to compute the shortest path distances and paths between delivery locations.
+            deliveries (List[DeliveryRequest]): The list of delivery requests.
+
+        Returns:
+            nx.DiGraph: The directed graph with the shortest path distances and paths between delivery locations.
+        """
         G = nx.DiGraph()
         # Add delivery locations as nodes
         for delivery in deliveries:
@@ -97,6 +112,14 @@ class TourComputingService(Singleton):
         return G
 
     def solve_tsp(self, shortest_path_graph: nx.Graph) -> TourComputingResult:
+        """Solves the Traveling Salesman Problem (TSP) for a given graph of delivery points and returns the shortest route.
+
+        Args:
+            shortest_path_graph (nx.Graph): A graph representing the shortest path between delivery points.
+
+        Returns:
+            TourComputingResult: The result of the computed Tour.
+        """
         shortest_cycle_length = float("inf")
         shortest_cycle: List[DeliveriesComputingResult] = []
         route = []

@@ -9,10 +9,20 @@ from src.models.map.intersection import Intersection
 @dataclass
 class Segment:
     id: int
+    """ID of the segment.
+    """
     name: str
+    """Name of the segment.
+    """
     origin: Intersection
+    """Origin intersection.
+    """
     destination: Intersection
+    """Destination intersection.
+    """
     length: float
+    """Length of the segment.
+    """
 
     @staticmethod
     def from_element(

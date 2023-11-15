@@ -39,6 +39,8 @@ ROUTES: List[Route[RoutesTest]] = [
 
 
 class TestNavigator:
+    """Test class for Navigator."""
+
     navigator: Navigator[RoutesTest]
 
     @pytest.fixture(autouse=True)
