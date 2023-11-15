@@ -220,7 +220,7 @@ class DeliveryFormPage(Page):
             for error in tour.errors:
                 error_widget = QWidget()
                 error_widget.setStyleSheet(
-                    "background-color: #211211; border-radius: 5px;"
+                    "background-color: #211211; color: white; border-radius: 5px;"
                 )
 
                 error_layout = QHBoxLayout()
