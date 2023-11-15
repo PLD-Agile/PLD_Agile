@@ -1,16 +1,31 @@
 import itertools
-from typing import List
+from typing import List, Optional
 
 import networkx as nx
+from src.config import Config
 
 from src.models.map import Map, Segment
-from src.models.tour import DeliveryLocation, DeliveryRequest, TourRequest
+from src.models.tour import (
+    DeliveriesComputingResult,
+    DeliveryLocation,
+    DeliveryRequest,
+    TourComputingResult,
+    TourRequest,
+)
 from src.services.singleton import Singleton
 
 
 class TourComputingService(Singleton):
-    def compute_tour(self, tour_request: TourRequest, map: Map) -> List[int]:
-        """Compute tours for a list of tour requests."""
+    def compute_tour(self, tour_request: TourRequest, map: Map) -> TourComputingResult:
+        """Compute tours for a list of tour requests.
+
+        Args:
+            tour_request (TourRequest): The tour request to compute the tour for.
+            map (Map): The map to compute the tour on.
+
+        Returns:
+            TourComputingResult: Result of the computation
+        """
         map_graph = self.create_graph_from_map(map)
         warehouse = DeliveryRequest(
             DeliveryLocation(Segment(-1, "", map.warehouse, map.warehouse, 0), 0), 8
@@ -19,21 +34,23 @@ class TourComputingService(Singleton):
         shortest_path_graph = self.compute_shortest_path_graph(
             map_graph, [warehouse] + list(tour_request.deliveries.values())
         )
+        
+        if len(tour_request.deliveries) <= 6:
+            tsp_result = self.solve_tsp(shortest_path_graph)
+        else:
+            tsp_result = self.solve_greedy_tsp(shortest_path_graph)
 
-        # Greedy:
-        shortest_cycle = self.solve_greedy_tsp(shortest_path_graph)
-        check_time = self.check_arrival_time_constraint(shortest_cycle, shortest_path_graph)
-        if not check_time:
-            print("Time constraint violation")
-            # raise Exception("Time constraint violation")
-        # Bruteforce:
-        # shortest_cycle = self.solve_tsp(shortest_path_graph)
-        route = self.return_route_from_shortest_cycle(shortest_path_graph, shortest_cycle)
-
-        return route
+        return tsp_result
 
     def create_graph_from_map(self, map: Map) -> nx.Graph:
-        """Create a directed graph from an XML file."""
+        """Create a directed graph from a Map object.
+
+        Args:
+            map (Map): The Map object to create the graph from.
+
+        Returns:
+            nx.Graph: The directed graph created from the Map object.
+        """
         graph = nx.DiGraph()
 
         graph.add_node(map.warehouse.id)
@@ -55,7 +72,15 @@ class TourComputingService(Singleton):
     def compute_shortest_path_graph(
             self, graph: nx.Graph, deliveries: List[DeliveryRequest]
     ) -> nx.DiGraph:
-        """Compute the shortest path graph between delivery locations."""
+        """Compute the shortest path graph between delivery locations.
+
+        Args:
+            graph (nx.Graph): The graph to compute the shortest path distances and paths between delivery locations.
+            deliveries (List[DeliveryRequest]): The list of delivery requests.
+
+        Returns:
+            nx.DiGraph: The directed graph with the shortest path distances and paths between delivery locations.
+        """
         G = nx.DiGraph()
         # Add delivery locations as nodes
         for delivery in deliveries:
@@ -91,9 +116,17 @@ class TourComputingService(Singleton):
 
         return G
 
-    def solve_tsp(self, shortest_path_graph: nx.Graph) -> List[int]:
+    def solve_tsp(self, shortest_path_graph: nx.Graph) -> TourComputingResult:
+        """Solves the Traveling Salesman Problem (TSP) for a given graph of delivery points and returns the shortest route.
+
+        Args:
+            shortest_path_graph (nx.Graph): A graph representing the shortest path between delivery points.
+
+        Returns:
+            TourComputingResult: The result of the computed Tour.
+        """
         shortest_cycle_length = float("inf")
-        shortest_cycle = []
+        shortest_cycle: List[DeliveriesComputingResult] = []
         route = []
 
         # Generate all permutations of delivery points to find the shortest cycle
@@ -104,7 +137,9 @@ class TourComputingService(Singleton):
             permuted_points = list(permuted_points)
             permuted_points = [warehouse_id] + permuted_points
             cycle_length = 0
-            current_time = 8 * 60  # Starting time at the warehouse (8 a.m.)
+            current_time = Config.INITIAL_DEPART_TIME
+
+            times = []
 
             for i in range(len(permuted_points) - 1):
                 source = permuted_points[i]
@@ -118,26 +153,28 @@ class TourComputingService(Singleton):
                 # Check if the delivery time is within the time window
                 time_window = shortest_path_graph.nodes[target]["timewindow"] * 60
                 travel_time = (
-                                      travel_distance / 15000
-                              ) * 60  # Convert meters to minutes based on speed (15 km/h)
+                    travel_distance / 15000
+                ) * 60  # Convert meters to minutes based on speed (15 km/h)
                 arrival_time = current_time + travel_time
 
                 if arrival_time < time_window:
                     # Courier arrives before the time window, wait until it starts
-                    current_time = time_window + 5  # Add 5 minutes for delivery
-                elif arrival_time <= time_window + 60:
+                    current_time = time_window + Config.DELIVERY_TIME  # Add 5 minutes for delivery
+                elif arrival_time <= time_window + Config.TIME_WINDOW_SIZE:
                     # Courier arrives within the time window
-                    current_time = arrival_time + 5  # Add 5 minutes for delivery
+                    current_time = arrival_time + Config.DELIVERY_TIME  # Add 5 minutes for delivery
                 else:
                     # Courier arrives after the time window, this tuple is invalid
                     is_valid_tuple = False
                     break
 
+                times.append(current_time - Config.DELIVERY_TIME)
+
             if not is_valid_tuple:
                 continue
             # Add the length of the last edge back to the starting point to complete the cycle
             if not shortest_path_graph.has_edge(
-                    permuted_points[-1], permuted_points[0]
+                permuted_points[-1], permuted_points[0]
             ):
                 continue
             cycle_length += shortest_path_graph[permuted_points[-1]][
@@ -146,15 +183,32 @@ class TourComputingService(Singleton):
 
             if cycle_length < shortest_cycle_length:
                 shortest_cycle_length = cycle_length
-                shortest_cycle = permuted_points
+                shortest_cycle = list(zip(permuted_points, [0] + times))
 
         # Compute the actual route from the shortest cycle
         if shortest_cycle == []:
             return []
 
-        return shortest_cycle
+        for i in range(len(shortest_cycle) - 1):
+            source, source_time = shortest_cycle[i]
+            target, target_time = shortest_cycle[i + 1]
+            dijkstra_path = shortest_path_graph[source][target]["path"]
+            route = route + dijkstra_path
+            route.pop()
 
-    def solve_greedy_tsp(self, shortest_path_graph: nx.Graph) -> List[int]:
+        # Complete the route with the path from the last delivery point to the first
+        dijkstra_path = shortest_path_graph[shortest_cycle[-1][0]][
+            shortest_cycle[0][0]
+        ]["path"]
+
+        route = route + dijkstra_path
+
+        return TourComputingResult(
+            route=route,
+            deliveries=shortest_cycle[1:],
+        )
+
+    def solve_greedy_tsp(self, shortest_path_graph: nx.Graph) -> TourComputingResult:
         delivery_points = list(shortest_path_graph.nodes())
         warehouse_id = delivery_points.pop(0)
 
@@ -180,11 +234,14 @@ class TourComputingService(Singleton):
             route.append(nearest_node)
             unvisited_nodes.remove(nearest_node)
             current_node = nearest_node
+            
+        return self.return_route_from_shortest_cycle(shortest_path_graph, route)
 
-        return route
 
-    def return_route_from_shortest_cycle(self, shortest_path_graph: nx.Graph, shortest_cycle: List[int]) -> List[int]:
+    def return_route_from_shortest_cycle(self, shortest_path_graph: nx.Graph, shortest_cycle: List[int]) -> Optional[TourComputingResult]:
         route = []
+        deliveries: List[DeliveriesComputingResult] = []
+        current_time = 8 * 60  # Starting time at the warehouse (8 a.m.)
 
         if len(shortest_cycle) < 2:
             return []
@@ -192,8 +249,27 @@ class TourComputingService(Singleton):
         for i in range(len(shortest_cycle) - 1):
             source = shortest_cycle[i]
             target = shortest_cycle[i + 1]
+            
             if not shortest_path_graph.has_edge(source, target):
                 return []
+            
+            time_window = shortest_path_graph.nodes[target]["timewindow"] * 60
+            
+            travel_distance = shortest_path_graph[source][target]["length"]
+            travel_time = (travel_distance / 15000) * 60  # Convert meters to minutes based on speed (15 km/h)
+            arrival_time = current_time + travel_time
+            
+            if arrival_time < time_window:
+                # Courier arrives before the time window, wait until it starts
+                current_time = time_window + 5  # Add 5 minutes for delivery
+            elif arrival_time <= time_window + 60:
+                # Courier arrives within the time window
+                current_time = arrival_time + 5  # Add 5 minutes for delivery
+            else:
+                return None
+            
+            deliveries.append((target, current_time - 5))
+            
             dijkstra_path = shortest_path_graph[source][target]["path"]
             route = route + dijkstra_path
             route.pop()
@@ -210,16 +286,19 @@ class TourComputingService(Singleton):
 
         route = route + dijkstra_path
 
-        return route
+        return TourComputingResult(
+            route=route,
+            deliveries=deliveries,
+        )
 
     # Check arrival time constraint
-    def check_arrival_time_constraint(self, shortest_cycle: List[int], shortest_path_graph: nx.Graph):
+    def check_arrival_time_constraint(self, tsp_result: TourComputingResult, shortest_path_graph: nx.Graph):
         current_time = 8 * 60  # Starting time at the warehouse (8 a.m.)
         cycle_length = 0
 
-        for i in range(len(shortest_cycle) - 1):
-            source = shortest_cycle[i]
-            target = shortest_cycle[i + 1]
+        for i in range(len(tsp_result.route) - 1):
+            source = tsp_result[i]
+            target = tsp_result[i + 1]
             travel_distance = shortest_path_graph[source][target]["length"]
             cycle_length += travel_distance
 

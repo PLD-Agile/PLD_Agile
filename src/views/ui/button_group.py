@@ -7,6 +7,12 @@ from src.views.ui.button import Button, ButtonCorners
 
 
 class ButtonGroup(QWidget):
+    """A widget that groups a list of buttons horizontally.
+
+    Args:
+        buttons (List[Button]): A list of buttons to be grouped together.
+    """
+
     def __init__(self, buttons: List[Button]) -> None:
         super().__init__()
 

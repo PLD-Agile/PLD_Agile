@@ -58,7 +58,7 @@ class DeliveryManService(Singleton):
         """
         return self.__delivery_men.value[id]
 
-    def create_delivery_man(self, name: str) -> None:
+    def create_delivery_man(self, name: str) -> DeliveryMan:
         """Creates a Delivery Man and pass it back.
 
         Args:
@@ -98,7 +98,6 @@ class DeliveryManService(Singleton):
 
         name = delivery_man_info.get("name")
         availabilities = delivery_man_info.get("availabilities")
-        speed = delivery_man_info.get("speed")
 
         if name is not None:
             delivery_man.name = name
@@ -115,9 +114,12 @@ class DeliveryManService(Singleton):
 
         Args:
             delivery_man: A DeliveryMan instance to be deleted
+
+        Returns:
+            None
         """
 
-        del self.__delivery_men.value[delivery_man.name]
+        del self.__delivery_men.value[delivery_man.id]
         self.__delivery_men.on_next(self.__delivery_men.value)
 
         return
@@ -126,7 +128,10 @@ class DeliveryManService(Singleton):
         """Set currently selected delivery man.
 
         Args:
-            delivery_man_name (str): Name of the delivery man to be selected
+            delivery_man_id (int): ID of the delivery man to be selected
+
+        Returns:
+            None
         """
         self.__selected_delivery_man.on_next(
             self.__delivery_men.value[delivery_man_id]
@@ -139,8 +144,20 @@ class DeliveryManService(Singleton):
 
         Args:
             time_window (int): Time window to be selected
+
+        Returns:
+            None
         """
         self.__selected_time_window.on_next(time_window)
 
     def get_selected_values(self) -> Tuple[Optional[DeliveryMan], Optional[int]]:
+        """
+        Returns a tuple containing the selected delivery man and time window.
+
+        Returns:
+            Tuple[Optional[DeliveryMan], Optional[int]]: A tuple containing the selected delivery man and time window.
+        """
         return (self.__selected_delivery_man.value, self.__selected_time_window.value)
+
+    def overwrite(self, delivery_men: Dict[UUID, DeliveryMan]):
+        self.__delivery_men.on_next(delivery_men)

@@ -1,43 +1,31 @@
-from typing import Dict, List
+from typing import Dict
 
 from PyQt6.QtCore import Qt
 from PyQt6.QtWidgets import (
     QComboBox,
+    QFileDialog,
     QHBoxLayout,
     QLabel,
     QLayout,
     QMessageBox,
-    QTableWidget,
-    QTableWidgetItem,
     QVBoxLayout,
     QWidget,
 )
 
 from src.controllers.navigator.page import Page
 from src.models.delivery_man.delivery_man import DeliveryMan
-from src.models.tour import (
-    ComputedDelivery,
-    ComputedTour,
-    Delivery,
-    DeliveryID,
-    Tour,
-    TourID,
-    TourRequest,
-    DeliveryRequest,
-)
-from src.services.command.command_service import CommandService
-from src.services.command.commands.remove_delivery_request_command import (
-    RemoveDeliveryRequestCommand,
-)
+from src.models.tour import NonComputedTour, Tour, TourID
 from src.services.delivery_man.delivery_man_service import DeliveryManService
 from src.services.tour.tour_service import TourService
+from src.views.main_page.form.tours_table import ToursTable
 from src.views.ui import Button, Callout, Separator, Text, TextSize
 
 
 class DeliveryFormPage(Page):
     __delivery_man_control: QComboBox
     __time_window_control: QComboBox
-    __delivery_table: QTableWidget
+    __delivery_table: ToursTable
+    __errors_container: QLayout
 
     def __init__(self):
         super().__init__()
@@ -61,31 +49,23 @@ class DeliveryFormPage(Page):
         layout.addWidget(add_deliveries_click)
 
         layout.addWidget(deliveries_label)
+        layout.addLayout(self.__build_errors_container())
         layout.addLayout(self.__build_delivery_table())
         layout.addWidget(Separator())
         layout.addLayout(self.__build_load_tours())
 
         self.setLayout(layout)
 
-        # UNUSED self.address_list = []
-
         DeliveryManService.instance().delivery_men.subscribe(
             self.__update_delivery_man_combobox
         )
-        TourService.instance().all_tours.subscribe(self.__update_delivery_table)
+        TourService.instance().computed_tours.subscribe(
+            self.__delivery_table.update_content
+        )
+        TourService.instance().computed_tours.subscribe(self.__update_errors)
 
     def compute_tour(self):
         TourService.instance().compute_tours()
-
-    def remove_delivery_location(
-        self, delivery_request_id: DeliveryID, tour_id: TourID
-    ):
-        CommandService.instance().execute(
-            RemoveDeliveryRequestCommand(
-                delivery_request_id=delivery_request_id,
-                tour_id=tour_id,
-            )
-        )
 
     def __build_warehouse_location(self) -> QLayout:
         # Define components to be used in this screen
@@ -152,13 +132,7 @@ class DeliveryFormPage(Page):
         # Define components to be used in this screen
         layout = QVBoxLayout()
 
-        table = QTableWidget()
-        table.setColumnCount(4)
-        table.setHorizontalHeaderLabels(
-            ["Delivery Address", "Time", "Delivery Man", ""]
-        )
-        table.setEditTriggers(QTableWidget.EditTrigger.NoEditTriggers)
-        table.setSelectionMode(QTableWidget.SelectionMode.SingleSelection)
+        table = ToursTable()
 
         self.__delivery_table = table
 
@@ -191,12 +165,19 @@ class DeliveryFormPage(Page):
         buttons_layout = QHBoxLayout()
         buttons_layout.setAlignment(Qt.AlignmentFlag.AlignCenter)
         load_tour_button = Button("Load Tour")
+        load_tour_button.clicked.connect(self.__load_tour)
         buttons_layout.addWidget(load_tour_button)
 
         layout.addWidget(load_tour_label)
         layout.addLayout(buttons_layout)
 
         return layout
+
+    def __build_errors_container(self) -> QLayout:
+        # Define components to be used in this screen
+        self.__errors_container = QVBoxLayout()
+
+        return self.__errors_container
 
     def __update_delivery_man_combobox(
         self, delivery_men: Dict[str, DeliveryMan]
@@ -228,114 +209,47 @@ class DeliveryFormPage(Page):
                 max(self.__time_window_control.findData(current_value), 0)
             )
 
-    def __update_delivery_table(self, tours: List[TourRequest | ComputedTour]) -> None:
-        self.__delivery_table.setRowCount(0)
+    def __update_errors(self, tours: Dict[TourID, Tour]) -> None:
+        for i in reversed(range(self.__errors_container.count())):
+            self.__errors_container.itemAt(i).widget().setParent(None)
 
-        self.table_rows = [
-            (tour, delivery) for tour in tours for delivery in tour.deliveries.values()
-        ]
+        for tour in tours.values():
+            if not isinstance(tour, NonComputedTour):
+                continue
 
-        for tour, delivery in self.table_rows:
-            row_position = self.__delivery_table.rowCount()
-            self.__delivery_table.insertRow(row_position)
+            for error in tour.errors:
+                error_widget = QWidget()
+                error_widget.setStyleSheet(
+                    "background-color: #211211; border-radius: 5px;"
+                )
 
-            self.__delivery_table.setItem(
-                row_position, 0, QTableWidgetItem(delivery.location.segment.name)
-            )
-            self.__delivery_table.setItem(
-                row_position,
-                1,
-                self.__build_time_table_item(delivery),
-            )
-            self.__delivery_table.setCellWidget(
-                row_position, 2, self.__build_delivery_man_table_item(tour)
-            )
-            self.__delivery_table.setCellWidget(
-                row_position,
-                3,
-                self.__build_actions_table_item(delivery, tour),
-            )
+                error_layout = QHBoxLayout()
+                error_layout.setAlignment(Qt.AlignmentFlag.AlignLeft)
 
-        def select_delivery_request(row_index: int) -> None:
-            TourService.instance().select_delivery_request(
-                self.table_rows[row_index][1].location
-            )
+                tour_color = QLabel("     ")
+                tour_color.setStyleSheet(f"background-color: {tour.color};")
 
-        self.__delivery_table.itemClicked.connect(
-            lambda: select_delivery_request(self.__delivery_table.currentRow())
-        )
+                error_text = QLabel(error)
 
-        self.__delivery_table.clearSelection()
-        TourService.instance().select_delivery_request(None)
+                error_layout.addWidget(tour_color)
+                error_layout.addWidget(error_text)
+                error_widget.setLayout(error_layout)
 
-    def __build_delivery_man_table_item(self, tour: Tour) -> QWidget:
-        delivery_man_widget = QWidget()
-        delivery_man_layout = QHBoxLayout()
-
-        delivery_man_label = QLabel(tour.delivery_man.name)
-        delivery_man_label.setStyleSheet(
-            f"""
-            background-color: {tour.color if isinstance(tour, ComputedTour) else "#222222"};
-            border-radius: 5px;
-            color: white;
-            text-align: center;
-            font-weight: 500;
-            font-size: 12px;
-        """
-        )
-        delivery_man_label.setAlignment(Qt.AlignmentFlag.AlignCenter)
-        delivery_man_label.setContentsMargins(6, 0, 6, 0)
-
-        delivery_man_layout.setContentsMargins(2, 6, 2, 6)
-        delivery_man_layout.setAlignment(Qt.AlignmentFlag.AlignHCenter)
-        delivery_man_layout.addWidget(delivery_man_label)
-        delivery_man_widget.setLayout(delivery_man_layout)
-
-        return delivery_man_widget
-
-    def __build_actions_table_item(self, delivery: Delivery, tour: Tour) -> QWidget:
-        actions_widget = QWidget()
-        actions_layout = QHBoxLayout()
-
-        remove_btn = Button("Remove")
-        remove_btn.clicked.connect(
-            lambda _, delivery=delivery, tour=tour: self.remove_delivery_location(
-                delivery_request_id=delivery.id, tour_id=tour.id
-            )
-        )
-
-        actions_layout.setContentsMargins(2, 2, 2, 2)
-        actions_layout.addWidget(remove_btn)
-        actions_widget.setLayout(actions_layout)
-
-        return actions_widget
-
-    def __build_time_table_item(self, delivery: Delivery) -> QWidget:
-        return QTableWidgetItem(
-            delivery.time.strftime("%H:%M")
-            if isinstance(delivery, ComputedDelivery)
-            else f"{delivery.time_window}:00 - {delivery.time_window + 1}:00" if isinstance(delivery, DeliveryRequest) else "ERROR"
-        )
+                self.__errors_container.addWidget(error_widget)
 
     def __save_tour(self):
-        selected_delivery_man: DeliveryMan = self.__delivery_man_control.currentData()
-        selected_time_window: int = self.__time_window_control.currentData()
+        file_name, _ = QFileDialog.getSaveFileName(
+            self, "Enregistrer des tours", "Mes tours.tour", "Tour files (*.tour)"
+        )
+        if file_name:
+            TourService.instance().save_tours(file_name)
 
-        if selected_delivery_man and selected_time_window:
-            delivery_man_name = selected_delivery_man.name
-            time_window_str = (
-                f"{selected_time_window}:00 - {selected_time_window + 1}:00"
-            )
-            message = (
-                f"Tour saved for {delivery_man_name} with time window {time_window_str}"
-            )
-
-            self.__show_popup("Tour Saved", message)
-        else:
-            self.__show_popup(
-                "Error",
-                "Please select a delivery man and time window before saving the tour",
-            )
+    def __load_tour(self):
+        file_name, _ = QFileDialog.getOpenFileName(
+            self, "Ouvrir des tours", "${HOME}", "Tour files (*.tour)"
+        )
+        if file_name:
+            TourService.instance().load_tours(file_name)
 
     def __show_popup(self, title, message):
         popup = QMessageBox()

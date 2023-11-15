@@ -25,7 +25,7 @@ from reactivex import Observable
 from reactivex.subject import BehaviorSubject
 
 from src.models.map import Map, Position, Segment
-from src.models.tour import ComputedTour, DeliveryLocation, TourID
+from src.models.tour import ComputedTour, Delivery, DeliveryLocation, Tour, TourID
 from src.services.command.command_service import CommandService
 from src.services.command.commands.add_delivery_request_command import (
     AddDeliveryRequestCommand,
@@ -131,9 +131,9 @@ class MapView(QGraphicsView):
         self.add_marker(
             position=map.warehouse,
             icon="warehouse",
-            color=QColor("#1e8239"),
+            color=QColor("#105723"),
             align_bottom=False,
-            scale=0.5,
+            scale=1,
         )
 
         self.fit_map()
@@ -174,7 +174,7 @@ class MapView(QGraphicsView):
         icon_shape.setScale(marker_size / self.MARKER_RESOLUTION_RESOLUTION)
         icon_shape.setZValue(10000)
 
-        marker = MapMarker(icon_shape, align_bottom, scale)
+        marker = MapMarker(icon_shape, align_bottom=align_bottom, scale=scale)
 
         self.__adjust_marker(marker)
 
@@ -234,9 +234,9 @@ class MapView(QGraphicsView):
 
     def __on_update_delivery_locations(
         self,
-        deliveries: Tuple[Optional[DeliveryLocation], List[DeliveryLocation]],
+        deliveries: Tuple[Optional[Delivery], List[DeliveryLocation]],
     ):
-        selected_delivery_location, delivery_locations = deliveries
+        selected_delivery, delivery_locations = deliveries
 
         for marker in self.__map_annotations.markers.get(MarkersTypes.Delivery):
             self.__scene.removeItem(marker.shape)
@@ -250,11 +250,16 @@ class MapView(QGraphicsView):
                     position=delivery_location.segment.origin,
                     icon="map-marker-alt",
                     color=QColor("#f54242"),
-                    scale=1.5 if delivery_location == selected_delivery_location else 1,
+                    scale=1.5
+                    if (
+                        selected_delivery
+                        and delivery_location == selected_delivery.location
+                    )
+                    else 1,
                 ),
             )
 
-    def __on_update_computed_tours(self, computed_tours: Dict[TourID, ComputedTour]):
+    def __on_update_computed_tours(self, computed_tours: Dict[TourID, Tour]):
         for maker in self.__map_annotations.segments.get(SegmentTypes.Tour):
             self.__scene.removeItem(maker.shape)
             if maker.arrow_shape:
@@ -265,13 +270,16 @@ class MapView(QGraphicsView):
         segments: Dict[int, Tuple[Segment, List[ComputedTour]]] = {}
 
         for computed_tour in computed_tours.values():
-            if not computed_tour:
+            if not computed_tour or not isinstance(computed_tour, ComputedTour):
                 continue
 
             for segment in computed_tour.route:
-                if segment.id not in segments:
-                    segments[segment.id] = (segment, [])
-                segments[segment.id][1].append(computed_tour)
+                # We get an unique identifier for the segment regardless of the direction
+                segment_id = f"{min(segment.origin.id, segment.destination.id)}-{max(segment.origin.id, segment.destination.id)}"
+
+                if segment_id not in segments:
+                    segments[segment_id] = (segment, [])
+                segments[segment_id][1].append(computed_tour)
 
         i = 0
         for _, (segment, tours) in segments.items():
@@ -409,7 +417,7 @@ class MapView(QGraphicsView):
 
         return QPointF(
             x - (marker_size / 2 * direction),
-            (y - (marker_size - (marker_size * 0.01)) * direction)
+            (y - (marker_size * 0.99) * direction)
             if align_bottom
             else (y - (marker_size / 2 * direction)),
         )
@@ -466,6 +474,8 @@ class MapView(QGraphicsView):
         for i in range(count):
             brush.setColorAt(i / count, colors[i % len(colors)])
             brush.setColorAt(i / count + 0.0000001, colors[(i + 1) % len(colors)])
+
+        brush.setColorAt(1, colors[count % len(colors)])
 
         segment_pen = segment_shape.pen()
         segment_pen.setBrush(brush)

@@ -1,4 +1,5 @@
 from typing import Dict, List, Optional, Tuple
+from uuid import UUID
 
 from reactivex import Observable, combine_latest
 from reactivex.operators import map
@@ -6,11 +7,15 @@ from reactivex.subject import BehaviorSubject
 
 from src.models.map import Position
 from src.models.tour import (
+    ComputedDelivery,
     ComputedTour,
+    Delivery,
     DeliveryID,
     DeliveryLocation,
     DeliveryRequest,
+    NonComputedTour,
     Tour,
+    TourComputingResult,
     TourID,
     TourRequest,
 )
@@ -22,18 +27,31 @@ from src.services.tour.tour_computing_service import TourComputingService
 from src.services.tour.tour_saving_service import TourSavingService
 from src.services.tour.tour_time_computing_service import TourTimeComputingService
 
-COLORS = ["#6929c4", "#1192e8", "#005d5d", "#9f1853", "#198038", "#012749", "#b28600"]
+COLORS = [
+    "#598BB4",
+    "#E1BC6C",
+    "#D5745A",
+    "#89BA9C",
+    "#9573C1",
+    "#7FBBDB",
+    "#757592",
+    "#A77E56",
+    "#A49F9C",
+    "#B7D273",
+    "#935772",
+    "#D17775",
+]
 
 
 class TourService(Singleton):
     __tour_requests: BehaviorSubject[Dict[TourID, TourRequest]]
-    __computed_tours: BehaviorSubject[Dict[TourID, ComputedTour]]
-    __selected_delivery_request: BehaviorSubject[Optional[DeliveryRequest]]
+    __computed_tours: BehaviorSubject[Dict[TourID, Tour]]
+    __selected_delivery: BehaviorSubject[Optional[Delivery]]
 
     def __init__(self) -> None:
         self.__tour_requests = BehaviorSubject({})
         self.__computed_tours = BehaviorSubject({})
-        self.__selected_delivery_request = BehaviorSubject(None)
+        self.__selected_delivery = BehaviorSubject(None)
 
     @property
     def tour_requests(self) -> Observable[Dict[TourID, TourRequest]]:
@@ -42,9 +60,9 @@ class TourService(Singleton):
     @property
     def tour_requests_delivery_locations(
         self,
-    ) -> Observable[Tuple[DeliveryLocation, List[DeliveryLocation]]]:
+    ) -> Observable[Tuple[Delivery, List[DeliveryLocation]]]:
         return combine_latest(
-            self.__selected_delivery_request,
+            self.__selected_delivery,
             self.__tour_requests,
         ).pipe(
             map(
@@ -60,39 +78,44 @@ class TourService(Singleton):
         )
 
     @property
-    def computed_tours(self) -> Observable[Dict[TourID, ComputedTour]]:
+    def computed_tours(self) -> Observable[Dict[TourID, Tour]]:
         return self.__computed_tours
 
-    @property
-    def all_tours(self) -> Observable[List[Tour]]:
-        return combine_latest(
-            self.__tour_requests,
-            self.__computed_tours,
-        ).pipe(
-            map(
-                lambda tours: [
-                    (computed_tour if computed_tour else tour_request)
-                    for (tour_request, computed_tour) in zip(
-                        tours[0].values(), tours[1].values()
-                    )
-                ]
-            )
-        )
-
     def clear(self) -> None:
-        self.__tour_requests.on_next([])
-        self.__computed_tours.on_next([])
+        """Clears the tour requests and computed tours.
+
+        Returns:
+            None
+        """
+        self.__tour_requests.on_next({})
+        self.__computed_tours.on_next({})
 
     def get_tour_requests(self) -> List[TourRequest]:
+        """Returns a list of all tour requests.
+
+        Returns:
+            List[TourRequest]: A list of all tour requests.
+        """
         return self.__tour_requests.value
 
     def get_computed_tours(self) -> List[ComputedTour]:
+        """Returns a list of computed tours.
+
+        Returns:
+            List[ComputedTour]: A list of computed tours.
+        """
         return self.__computed_tours.value
 
-    def select_delivery_request(
-        self, delivery_request: Optional[DeliveryRequest]
-    ) -> None:
-        self.__selected_delivery_request.on_next(delivery_request)
+    def select_delivery(self, delivery: Optional[Delivery]) -> None:
+        """Selects a delivery and publishes it to the selected_delivery subject.
+
+        Args:
+            delivery (Delivery): The delivery to be selected.
+
+        Returns:
+            None
+        """
+        self.__selected_delivery.on_next(delivery)
 
     def add_delivery_request(
         self, position: Position, time_window: int, tour_id: TourID
@@ -103,17 +126,11 @@ class TourService(Singleton):
             position (Position): Approximate position of the delivery
             time_window (int): Time window for the delivery
             tour_id (TourID): ID of the tour to add the delivery to (same as DeliveryMan ID)
-        """
-        tour_request = self.__tour_requests.value.get(tour_id)
 
-        if not tour_request:
-            tour_request = TourRequest(
-                id=tour_id,
-                deliveries={},
-                delivery_man=DeliveryManService.instance().get_delivery_man(tour_id),
-                color=COLORS[len(self.__tour_requests.value) % len(COLORS)],
-            )
-            self.__tour_requests.value[tour_request.id] = tour_request
+        Returns:
+            DeliveryRequest: The created delivery request.
+        """
+        tour_request = self.__get_or_create_tour_request(tour_id)
 
         delivery_request = DeliveryRequest(
             location=DeliveryLocationService.instance().find_delivery_location_from_position(
@@ -126,7 +143,6 @@ class TourService(Singleton):
 
         self.__tour_requests.on_next(self.__tour_requests.value)
 
-        # TODO: review how to compute tours when adding a delivery request
         self.compute_tours()
 
         return delivery_request
@@ -139,6 +155,9 @@ class TourService(Singleton):
         Args:
             delivery_request_id(DeliverID): ID of the delivery request to remove
             tour_id (TourID): ID of the tour to add the delivery to (same as DeliveryMan ID)
+
+        Returns:
+            None
         """
         tour_request = (
             self.__tour_requests.value[tour_id]
@@ -153,39 +172,141 @@ class TourService(Singleton):
 
         del tour_request.deliveries[delivery_request_id]
 
+        # if len(tour_request.deliveries) == 0:
+        #     del self.__tour_requests.value[tour_request.id]
+
         self.__tour_requests.on_next(self.__tour_requests.value)
 
-        if self.__selected_delivery_request.value == tour_request:
-            self.__selected_delivery_request.on_next(None)
+        if self.__selected_delivery.value == tour_request:
+            self.__selected_delivery.on_next(None)
 
-        # TODO: review how to compute tours when adding a delivery request
         self.compute_tours()
 
         return delivery_request
 
+    def update_delivery_request_time_window(
+        self, delivery_request_id: DeliveryID, tour_id: TourID, time_window: int
+    ) -> int:
+        """Update the time window of a delivery request in a tour.
+
+        Args:
+            delivery_request_id (DeliveryID): The ID of the delivery request to update.
+            tour_id (TourID): The ID of the tour containing the delivery request.
+            time_window (int): The new time window for the delivery request.
+
+        Returns:
+            int: The previous time window of the delivery request.
+        """
+        tour_request = self.__tour_requests.value[tour_id]
+        delivery_request = tour_request.deliveries[delivery_request_id]
+
+        if delivery_request.time_window == time_window:
+            return
+
+        previous_time_window = delivery_request.time_window
+        delivery_request.time_window = time_window
+
+        self.__tour_requests.on_next(self.__tour_requests.value)
+
+        self.compute_tours()
+
+        return previous_time_window
+
+    def update_delivery_request_delivery_man(
+        self, delivery_request_id: DeliveryID, tour_id: TourID, delivery_man_id: UUID
+    ) -> UUID:
+        """Update the delivery man assigned to a delivery request in a tour.
+
+        Args:
+            delivery_request_id (DeliveryID): The ID of the delivery request to update.
+            tour_id (TourID): The ID of the tour containing the delivery request.
+            delivery_man_id (UUID): The ID of the delivery man to assign to the delivery request.
+
+        Returns:
+            UUID: The ID of the previous delivery man assigned to the tour.
+        """
+        if tour_id == delivery_man_id:
+            return
+
+        tour_request = self.__tour_requests.value[tour_id]
+        delivery_request = tour_request.deliveries[delivery_request_id]
+
+        previous_delivery_man_id = tour_request.delivery_man.id
+
+        del tour_request.deliveries[delivery_request_id]
+
+        self.__get_or_create_tour_request(delivery_man_id).deliveries[
+            delivery_request_id
+        ] = delivery_request
+
+        # if len(tour_request.deliveries) == 0:
+        #     del self.__tour_requests.value[tour_request.id]
+
+        self.__tour_requests.on_next(self.__tour_requests.value)
+
+        self.compute_tours()
+
+        return previous_delivery_man_id
+
     def compute_tours(self) -> None:
-        """Compute the tours and publish the update."""
+        """Compute the tours and publish the update.
+
+        Returns:
+            None
+        """
+        if len(self.__tour_requests.value) == 0:
+            self.__computed_tours.on_next({})
+            return
+
         map = MapService.instance().get_map()
 
-        tours_intersection_ids = {
-            id: TourComputingService.instance().compute_tour(tour_request, map)
-            for (id, tour_request) in self.__tour_requests.value.items()
-        }
+        tours_intersection_ids: Dict[TourID, TourComputingResult] = {}
 
-        computed_tours = {
-            id: TourTimeComputingService.instance().get_computed_tour_from_route_ids(
-                self.__tour_requests.value[id], tour_intersection_ids
-            ) if tour_intersection_ids else None
-            for (id, tour_intersection_ids) in tours_intersection_ids.items()
-        }
+        for id, tour_request in self.__tour_requests.value.items():
+            try:
+                if len(tour_request.deliveries) > 0:
+                    tours_intersection_ids[
+                        id
+                    ] = TourComputingService.instance().compute_tour(tour_request, map)
+            except Exception as e:
+                tours_intersection_ids[id] = []
+
+        computed_tours: Dict[TourID, Tour] = {}
+
+        for id, tour_intersection_ids in tours_intersection_ids.items():
+            if tour_intersection_ids:
+                try:
+                    computed_tours[
+                        id
+                    ] = TourTimeComputingService.instance().get_computed_tour_from_route_ids(
+                        self.__tour_requests.value[id], tour_intersection_ids
+                    )
+                except Exception as e:
+                    computed_tours[id] = NonComputedTour.create_from_request(
+                        self.__tour_requests.value[id],
+                        [f"Erreur lors du calcul du temps de parcours : {str(e)}"],
+                    )
+            else:
+                computed_tours[id] = NonComputedTour.create_from_request(
+                    self.__tour_requests.value[id], ["Impossible de trouver un chemin."]
+                )
 
         self.__computed_tours.on_next(computed_tours)
 
     def clear_tour_requests(self) -> None:
+        """Clear the tour requests and publish the update.
+
+        Returns:
+            None
+        """
         self.__tour_requests.on_next({})
 
     def clear_computed_tours(self) -> None:
-        """Clear the computed tours and publish the update."""
+        """Clear the computed tours and publish the update.
+
+        Returns:
+            None
+        """
         self.__computed_tours.on_next({})
 
     def save_tours(self, path: str) -> None:
@@ -193,6 +314,9 @@ class TourService(Singleton):
 
         Args:
             path (str): Path to the file
+
+        Returns:
+            None
         """
         TourSavingService.instance().save_tours(self.__computed_tours.value, path)
 
@@ -201,5 +325,67 @@ class TourService(Singleton):
 
         Args:
             path (str): Path to the file
+
+        Returns:
+            None
         """
-        self.__computed_tours.on_next(TourSavingService.instance().load_tours(path))
+        loaded_tours = TourSavingService.instance().load_tours(path)
+
+        for tour in loaded_tours.values():
+            updated_deliveries = {}
+
+            for delivery in tour.deliveries.values():
+                updated_delivery = ComputedDelivery(
+                    location=DeliveryLocation(
+                        segment=MapService.instance()
+                        .get_map()
+                        .segments[delivery.location.segment.origin.id][
+                            delivery.location.segment.destination.id
+                        ],
+                        positionOnSegment=0,
+                    ),
+                    time=delivery.time,
+                )
+                updated_deliveries[updated_delivery.id] = updated_delivery
+
+            tour.deliveries = updated_deliveries
+
+        self.__tour_requests.on_next({})
+        self.__computed_tours.on_next({})
+
+        DeliveryManService.instance().overwrite(
+            {tour.delivery_man.id: tour.delivery_man for tour in loaded_tours.values()}
+        )
+
+        self.__tour_requests.on_next(
+            {
+                id: TourRequest.create_from_computed(tour)
+                for id, tour in loaded_tours.items()
+            }
+        )
+        self.__computed_tours.on_next(loaded_tours)
+
+    def __get_or_create_tour_request(self, tour_id: TourID) -> Tour:
+        """Get or create a tour request with the given tour ID.
+
+        If a tour request with the given ID already exists, return it. Otherwise, create a new tour request with the given ID
+        and add it to the list of tour requests.
+
+        Args:
+            tour_id (TourID): The ID of the tour request to get or create.
+
+        Returns:
+            Tour: The tour request with the given ID.
+        """
+        tour_request = self.__tour_requests.value.get(tour_id)
+
+        if not tour_request:
+            tour_request = TourRequest(
+                id=tour_id,
+                deliveries={},
+                delivery_man=DeliveryManService.instance().get_delivery_man(tour_id),
+                color=COLORS[len(self.__tour_requests.value) % len(COLORS)],
+            )
+            self.__tour_requests.value[tour_request.id] = tour_request
+
+        return tour_request

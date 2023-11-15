@@ -2,6 +2,8 @@ from PyQt6.QtWidgets import QWidget
 
 
 class Page(QWidget):
+    """Base class for pages."""
+
     def __init__(self, parent=None):
         super().__init__(parent=parent)
 

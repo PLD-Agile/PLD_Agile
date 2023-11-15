@@ -10,6 +10,17 @@ NavigationButtonTarget = Enum("NavigationButtonTarget", ["REPLACE", "PUSH"])
 
 
 class NavigationButton(Button):
+    """A button that represents a navigation link in the UI.
+
+    Args:
+        text (str): The text to display on the button.
+        link (str): The link to navigate to when the button is clicked.
+        navigator (Navigator): The navigator object that handles the navigation logic.
+        target (NavigationButtonTarget, optional): The target navigation action to perform when the button is clicked. Defaults to NavigationButtonTarget.PUSH.
+        icon (Optional[QIcon], optional): The icon to display on the button. Defaults to None.
+        corners (ButtonCorners, optional): The corners of the button to round. Defaults to ButtonCorners.ALL.
+    """
+
     __active: bool = False
 
     def __init__(

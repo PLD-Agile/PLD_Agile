@@ -11,7 +11,14 @@ class DeliveryLocationService(Singleton):
     def find_delivery_location_from_position(
         self, position: Position
     ) -> DeliveryLocation:
-        """Find the delivery location from a position."""
+        """Find the delivery location from a given position.
+
+        Args:
+            position (Position): The position to find the delivery location from.
+
+        Returns:
+            DeliveryLocation: The delivery location closest to the given position.
+        """
 
         # TODO: Find the point on the segment
         closest_intersection = self.__find_closest_intersection(position)
@@ -39,6 +46,9 @@ class DeliveryLocationService(Singleton):
         found_distance: float = sys.maxsize
 
         for intersection in MapService.instance().get_map().intersections.values():
+            if self.__is_invalid_intersection(intersection):
+                continue
+
             distance = intersection.distance_to(position)
             if distance < found_distance:
                 found = intersection
@@ -47,4 +57,26 @@ class DeliveryLocationService(Singleton):
         return found
 
     def __get_intersection_segments(self, intersection: Intersection) -> List[Segment]:
+        """Returns a list of segments connected to the given intersection.
+
+        Args:
+            intersection (Intersection): The intersection to get the segments for.
+
+        Returns:
+            List[Segment]: A list of segments connected to the given intersection.
+        """
         return list(MapService.instance().get_map().segments[intersection.id].values())
+
+    def __is_invalid_intersection(self, intersection: Intersection) -> bool:
+        map = MapService().instance().get_map()
+
+        if intersection.id not in map.segments:
+            return True
+
+        segments = list(map.segments[intersection.id].values())
+
+        # Detect if the intersections is a the end of a one-way dead-end
+        if all(segment.destination.id not in map.segments for segment in segments):
+            return True
+
+        return False
