@@ -181,10 +181,10 @@ class ModifyDeliveryManFormView(Page):
 
             if 0 <= index < len(self.__availabilities_checkboxes):
                 self.__availabilities_checkboxes[index].setChecked(True)
-                if self.__availability_is_in_use(
+                
+                self.__availabilities_checkboxes[index].setDisabled(self.__availability_is_in_use(
                     availability, delivery_man, computed_tours
-                ):
-                    self.__availabilities_checkboxes[index].setDisabled(True)
+                ))
 
     def __availability_is_in_use(
         self,
