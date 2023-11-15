@@ -2,6 +2,7 @@ import itertools
 from typing import List
 
 import networkx as nx
+from src.config import Config
 
 from src.models.map import Map, Segment
 from src.models.tour import (
@@ -132,7 +133,7 @@ class TourComputingService(Singleton):
             permuted_points = list(permuted_points)
             permuted_points = [warehouse_id] + permuted_points
             cycle_length = 0
-            current_time = 8 * 60  # Starting time at the warehouse (8 a.m.)
+            current_time = Config.INITIAL_DEPART_TIME
 
             times = []
 
@@ -154,16 +155,16 @@ class TourComputingService(Singleton):
 
                 if arrival_time < time_window:
                     # Courier arrives before the time window, wait until it starts
-                    current_time = time_window + 5  # Add 5 minutes for delivery
-                elif arrival_time <= time_window + 60:
+                    current_time = time_window + Config.DELIVERY_TIME  # Add 5 minutes for delivery
+                elif arrival_time <= time_window + Config.TIME_WINDOW_SIZE:
                     # Courier arrives within the time window
-                    current_time = arrival_time + 5  # Add 5 minutes for delivery
+                    current_time = arrival_time + Config.DELIVERY_TIME  # Add 5 minutes for delivery
                 else:
                     # Courier arrives after the time window, this tuple is invalid
                     is_valid_tuple = False
                     break
 
-                times.append(current_time)
+                times.append(current_time - Config.DELIVERY_TIME)
 
             if not is_valid_tuple:
                 continue
