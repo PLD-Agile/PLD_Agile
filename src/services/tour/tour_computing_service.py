@@ -1,9 +1,9 @@
+import concurrent.futures
 import itertools
+import multiprocessing
 from typing import List, Optional
 
 import networkx as nx
-import multiprocessing
-import concurrent.futures
 
 from src.config import Config
 from src.models.map import Map, Segment
@@ -70,8 +70,14 @@ class TourComputingService(Singleton):
             )
 
         return graph
-    
-    def compute_shorted_path_graph_multiprocessing(self, graph: nx.Graph, shortest_path_graph: nx.DiGraph,source_deliveries: List[DeliveryRequest], target_deliveries: List[DeliveryRequest])-> nx.DiGraph:
+
+    def compute_shorted_path_graph_multiprocessing(
+        self,
+        graph: nx.Graph,
+        shortest_path_graph: nx.DiGraph,
+        source_deliveries: List[DeliveryRequest],
+        target_deliveries: List[DeliveryRequest],
+    ) -> nx.DiGraph:
         for source in source_deliveries:
             for target in target_deliveries:
                 if source != target:
@@ -118,21 +124,39 @@ class TourComputingService(Singleton):
             )
 
         max_cpu_count = multiprocessing.cpu_count()
-        if(max_cpu_count>len(deliveries)):
+        if max_cpu_count > len(deliveries):
             chunks = [deliveries]
         else:
-            chunk_size = len(deliveries)//max_cpu_count
-            chunks = [deliveries[i:i + chunk_size] for i in range(0, len(deliveries), chunk_size)]
+            chunk_size = len(deliveries) // max_cpu_count
+            chunks = [
+                deliveries[i : i + chunk_size]
+                for i in range(0, len(deliveries), chunk_size)
+            ]
 
-        with concurrent.futures.ProcessPoolExecutor(max_workers=max_cpu_count) as executor:
-            futures = [executor.submit(self.compute_shorted_path_graph_multiprocessing, graph, G, chunk, deliveries) for chunk in chunks]
-            results = [future.result() for future in concurrent.futures.as_completed(futures)]
+        with concurrent.futures.ProcessPoolExecutor(
+            max_workers=max_cpu_count
+        ) as executor:
+            futures = [
+                executor.submit(
+                    self.compute_shorted_path_graph_multiprocessing,
+                    graph,
+                    G,
+                    chunk,
+                    deliveries,
+                )
+                for chunk in chunks
+            ]
+            results = [
+                future.result() for future in concurrent.futures.as_completed(futures)
+            ]
 
         shortest_path_graph = nx.DiGraph()
-        #Merge all partial results
+        # Merge all partial results
         for partial_shortest_path_graph in results:
-            shortest_path_graph = nx.compose(shortest_path_graph, partial_shortest_path_graph)
-        
+            shortest_path_graph = nx.compose(
+                shortest_path_graph, partial_shortest_path_graph
+            )
+
         return shortest_path_graph
 
     def solve_tsp(self, shortest_path_graph: nx.Graph) -> TourComputingResult:
