@@ -2,6 +2,8 @@ import itertools
 from typing import List, Optional
 
 import networkx as nx
+import multiprocessing
+import concurrent.futures
 
 from src.config import Config
 from src.models.map import Map, Segment
@@ -68,6 +70,33 @@ class TourComputingService(Singleton):
             )
 
         return graph
+    
+    def compute_shorted_path_graph_multiprocessing(self, graph: nx.Graph, shortest_path_graph: nx.DiGraph,source_deliveries: List[DeliveryRequest], target_deliveries: List[DeliveryRequest])-> nx.DiGraph:
+        for source in source_deliveries:
+            for target in target_deliveries:
+                if source != target:
+                    # add time windows constraints
+                    if (
+                        target.time_window + 1 <= source.time_window
+                        and target != target_deliveries[0]
+                    ):
+                        continue
+                    try:
+                        shortest_path_length, shortest_path = nx.single_source_dijkstra(
+                            graph,
+                            source.location.segment.origin.id,
+                            target.location.segment.origin.id,
+                            weight="length",
+                        )
+                    except nx.NetworkXNoPath:
+                        continue
+                    shortest_path_graph.add_edge(
+                        source.location.segment.origin.id,
+                        target.location.segment.origin.id,
+                        length=shortest_path_length,
+                        path=shortest_path,
+                    )
+        return shortest_path_graph
 
     def compute_shortest_path_graph(
         self, graph: nx.Graph, deliveries: List[DeliveryRequest]
@@ -88,33 +117,23 @@ class TourComputingService(Singleton):
                 delivery.location.segment.origin.id, timewindow=delivery.time_window
             )
 
-        # Compute the shortest path distances and paths between delivery locations
-        for source in deliveries:
-            for target in deliveries:
-                if source != target:
-                    # add time windows constraints
-                    if (
-                        target.time_window + 1 <= source.time_window
-                        and target != deliveries[0]
-                    ):
-                        continue
-                    try:
-                        shortest_path_length, shortest_path = nx.single_source_dijkstra(
-                            graph,
-                            source.location.segment.origin.id,
-                            target.location.segment.origin.id,
-                            weight="length",
-                        )
-                    except nx.NetworkXNoPath:
-                        continue
-                    G.add_edge(
-                        source.location.segment.origin.id,
-                        target.location.segment.origin.id,
-                        length=shortest_path_length,
-                        path=shortest_path,
-                    )
+        max_cpu_count = multiprocessing.cpu_count()
+        if(max_cpu_count>len(deliveries)):
+            chunks = [deliveries]
+        else:
+            chunk_size = len(deliveries)//max_cpu_count
+            chunks = [deliveries[i:i + chunk_size] for i in range(0, len(deliveries), chunk_size)]
 
-        return G
+        with concurrent.futures.ProcessPoolExecutor(max_workers=max_cpu_count) as executor:
+            futures = [executor.submit(self.compute_shorted_path_graph_multiprocessing, graph, G, chunk, deliveries) for chunk in chunks]
+            results = [future.result() for future in concurrent.futures.as_completed(futures)]
+
+        shortest_path_graph = nx.DiGraph()
+        #Merge all partial results
+        for partial_shortest_path_graph in results:
+            shortest_path_graph = nx.compose(shortest_path_graph, partial_shortest_path_graph)
+        
+        return shortest_path_graph
 
     def solve_tsp(self, shortest_path_graph: nx.Graph) -> TourComputingResult:
         """Solves the Traveling Salesman Problem (TSP) for a given graph of delivery points and returns the shortest route.
