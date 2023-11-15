@@ -6,6 +6,7 @@ from src.services.command.commands.update_delivery_request_time_window_command i
     UpdateDeliveryRequestTimeWindowCommand,
 )
 from src.services.delivery_man.delivery_man_service import DeliveryManService
+from src.services.tour.tour_service import TourService
 
 
 class ToursTableColumnItemTime(QWidget):
@@ -27,7 +28,12 @@ class ToursTableColumnItemTime(QWidget):
             )
         )
 
+        is_computing_subscription = TourService.instance().is_computing.subscribe(
+            self.__handle_is_computing
+        )
+
         self.destroyed.connect(lambda: delivery_man_subscription.dispose())
+        self.destroyed.connect(lambda: is_computing_subscription.dispose())
 
     def __build(self):
         self.__build_time_control()
@@ -83,3 +89,9 @@ class ToursTableColumnItemTime(QWidget):
                 time_window=time_window,
             )
         )
+
+    def __handle_is_computing(self, is_computing: bool):
+        try:
+            self.setEnabled(not is_computing)
+        except:
+            pass

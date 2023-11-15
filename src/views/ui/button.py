@@ -33,7 +33,9 @@ class Button(QPushButton):
     ):
         if icon:
             super().__init__(
-                icon=qta.icon(f"fa5s.{icon}", color="white", color_disabled="#40FFFFFF") if isinstance(icon, str) else icon,
+                icon=qta.icon(f"fa5s.{icon}", color="white", color_disabled="#40FFFFFF")
+                if isinstance(icon, str)
+                else icon,
                 text=text,
                 parent=parent,
             )

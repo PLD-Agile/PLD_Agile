@@ -1,7 +1,7 @@
 import math
 from typing import Dict, List, Literal, Optional, Tuple
 
-from PyQt6.QtCore import QLineF, QPointF, QRectF, Qt
+from PyQt6.QtCore import QEvent, QLineF, QPointF, QRectF, Qt
 from PyQt6.QtGui import (
     QBrush,
     QColor,
@@ -81,6 +81,7 @@ class MapView(QGraphicsView):
     __marker_size: Optional[int] = None
     __map_annotations: MapAnnotationCollection = MapAnnotationCollection()
     __ready: BehaviorSubject[bool] = BehaviorSubject(False)
+    __is_computing: bool = False
 
     def __init__(self, parent: Optional[QWidget] = None) -> None:
         super().__init__(parent)
@@ -93,6 +94,7 @@ class MapView(QGraphicsView):
             self.__on_update_delivery_locations
         )
         TourService.instance().computed_tours.subscribe(self.__on_update_computed_tours)
+        TourService.instance().is_computing.subscribe(self.__handle_is_computing)
 
     @property
     def ready(self) -> Observable[bool]:
@@ -218,6 +220,8 @@ class MapView(QGraphicsView):
         Send the position of the click to the on_map_click subject
         """
         if not self.__scene:
+            return
+        if self.__is_computing:
             return
 
         position = self.mapToScene(event.pos())
@@ -493,5 +497,30 @@ class MapView(QGraphicsView):
         self.setFrameShape(QFrame.Shape.NoFrame)
         self.setDragMode(QGraphicsView.DragMode.ScrollHandDrag)
         self.setCursor(Qt.CursorShape.CrossCursor)
+        self.viewport().setCursor(Qt.CursorShape.CrossCursor)
 
         Theme.set_background_color(self, "white")
+
+    def __handle_is_computing(self, is_computing: bool) -> None:
+        self.__is_computing = is_computing
+        self.__update_cursor()
+
+    def enterEvent(self, event: QEvent | None) -> None:
+        self.__update_cursor()
+        return super().enterEvent(event)
+
+    def mouseMoveEvent(self, event: QEvent | None) -> None:
+        self.__update_cursor()
+        super().mouseMoveEvent(event)
+
+    def __update_cursor(self) -> None:
+        self.setCursor(
+            Qt.CursorShape.WaitCursor
+            if self.__is_computing
+            else Qt.CursorShape.CrossCursor
+        )
+        self.viewport().setCursor(
+            Qt.CursorShape.WaitCursor
+            if self.__is_computing
+            else Qt.CursorShape.CrossCursor
+        )
