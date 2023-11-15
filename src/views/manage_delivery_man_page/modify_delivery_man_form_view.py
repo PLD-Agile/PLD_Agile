@@ -1,4 +1,4 @@
-from typing import Dict, List
+from typing import Dict, List, Optional
 
 from PyQt6.QtCore import Qt
 from PyQt6.QtWidgets import (
@@ -11,35 +11,51 @@ from PyQt6.QtWidgets import (
     QMessageBox,
     QVBoxLayout,
 )
+from reactivex import combine_latest
+from reactivex.subject import BehaviorSubject
 
-from models.delivery_man.delivery_man import DeliveryMan
 from src.controllers.navigator.page import Page
+from src.models.delivery_man.delivery_man import DeliveryMan
+from src.models.tour import ComputedDelivery, DeliveryRequest, Tour, TourID
 from src.services.delivery_man.delivery_man_service import DeliveryManService
-from src.views.ui import Button, Text, TextSize
+from src.services.tour.tour_service import TourService
+from src.views.ui import Button, Callout, Text, TextSize
 
 
 class ModifyDeliveryManFormView(Page):
     __delivery_man_control: QComboBox
     __name_input: QLineEdit
     __availabilities_checkboxes: List[QCheckBox]
+    __selected_value: BehaviorSubject[Optional[DeliveryMan]]
 
     def __init__(self):
         super().__init__()
 
+        self.__selected_value = BehaviorSubject(None)
+
         # Define components to be used in this screen
         layout = QVBoxLayout()
         title_label = Text("Modify a deliveryman", TextSize.H2)
-        modify_button = Button("Modify")
 
+        actions_layout = QHBoxLayout()
+        actions_layout.setAlignment(Qt.AlignmentFlag.AlignRight)
+
+        modify_button = Button("Modify")
         modify_button.clicked.connect(self.__modify_delivery_man)
+
+        actions_layout.addWidget(modify_button)
 
         # Add components in the screen
         layout.setAlignment(Qt.AlignmentFlag.AlignTop)
         layout.addWidget(title_label)
         layout.addLayout(self.__build_delivery_man_combobox())
         layout.addLayout(self.__build_delivery_man_inputs())
-
-        layout.addWidget(modify_button)
+        layout.addWidget(
+            Callout(
+                "S'il y a des livraisons sur des plages horaires, vous ne pourrez pas les modifier."
+            )
+        )
+        layout.addLayout(actions_layout)
 
         self.setLayout(layout)
 
@@ -47,9 +63,14 @@ class ModifyDeliveryManFormView(Page):
             self.__update_delivery_man_combobox
         )
 
+        combine_latest(
+            self.__selected_value,
+            TourService.instance().computed_tours,
+        ).subscribe(lambda res: self.__update_delivery_man_inputs(res[0], res[1]))
+
     def __build_delivery_man_combobox(self) -> QLayout:
-        delivery_man_combobox_layout = QVBoxLayout()
-        delivery_man_label = QLabel("Delivery man")
+        delivery_man_combobox_layout = QHBoxLayout()
+        delivery_man_label = Text("Delivery man", TextSize.label)
         self.__delivery_man_control = QComboBox()
 
         # Add components in the screen
@@ -60,7 +81,7 @@ class ModifyDeliveryManFormView(Page):
         delivery_man_combobox_layout.setAlignment(Qt.AlignmentFlag.AlignTop)
 
         self.__delivery_man_control.currentIndexChanged.connect(
-            lambda: self.__update_delivery_man_inputs(
+            lambda: self.__selected_value.on_next(
                 self.__delivery_man_control.currentData()
             )
         )
@@ -68,17 +89,14 @@ class ModifyDeliveryManFormView(Page):
         return delivery_man_combobox_layout
 
     def __build_delivery_man_inputs(self) -> QLayout:
-        input_layout = QHBoxLayout()
-        name_layout = QVBoxLayout()
-        availabilities_layout = QVBoxLayout()
-        availabilities_label = QLabel("Availabilities")
-        name_label = QLabel("Name")
+        input_layout = QVBoxLayout()
+        name_layout = QHBoxLayout()
+        availabilities_layout = QHBoxLayout()
+
+        availabilities_label = Text("Availabilities", TextSize.label)
+        name_label = Text("Name", TextSize.label)
         self.__name_input = QLineEdit()
         self.__availabilities_checkboxes = [QCheckBox(f"{i} am") for i in range(8, 12)]
-
-        input_layout = QHBoxLayout()
-        name_layout = QVBoxLayout()
-        availabilities_layout = QVBoxLayout()
 
         # Add components in the screen
         name_layout.addWidget(name_label)
@@ -137,21 +155,56 @@ class ModifyDeliveryManFormView(Page):
         self.__delivery_man_control.clear()
 
         for delivery_man in delivery_men.values():
-            self.__delivery_man_control.addItem(delivery_man.name, delivery_man)
+            self.__delivery_man_control.addItem(
+                delivery_man.name, userData=delivery_man
+            )
 
         new_index = max(self.__delivery_man_control.findData(current_value), 0)
 
         self.__delivery_man_control.setCurrentIndex(new_index)
 
-    def __update_delivery_man_inputs(self, delivery_man: DeliveryMan) -> None:
-        if delivery_man is not None:
-            self.__name_input.setText(delivery_man.name)
-            # Uncheck all checkboxes
-            for checkbox in self.__availabilities_checkboxes:
-                checkbox.setChecked(False)
+    def __update_delivery_man_inputs(
+        self, delivery_man: Optional[DeliveryMan], computed_tours: Dict[TourID, Tour]
+    ) -> None:
+        if not delivery_man:
+            return
 
-            # Check checkboxes based on delivery man's availabilities
-            for availability in delivery_man.availabilities:
-                index = availability - 8
-                if 0 <= index < len(self.__availabilities_checkboxes):
-                    self.__availabilities_checkboxes[index].setChecked(True)
+        self.__name_input.setText(delivery_man.name)
+        # Uncheck all checkboxes
+
+        for checkbox in self.__availabilities_checkboxes:
+            checkbox.setChecked(False)
+
+        # Check checkboxes based on delivery man's availabilities
+        for availability in delivery_man.availabilities:
+            index = availability - 8
+
+            if 0 <= index < len(self.__availabilities_checkboxes):
+                self.__availabilities_checkboxes[index].setChecked(True)
+                if self.__availability_is_in_use(
+                    availability, delivery_man, computed_tours
+                ):
+                    self.__availabilities_checkboxes[index].setDisabled(True)
+
+    def __availability_is_in_use(
+        self,
+        availability: int,
+        delivery_man: DeliveryMan,
+        computed_tours: Dict[TourID, Tour],
+    ) -> bool:
+        return delivery_man.id in computed_tours and next(
+            (
+                True
+                for delivery in computed_tours[delivery_man.id].deliveries.values()
+                if (
+                    delivery.time.hour == availability
+                    if isinstance(delivery, ComputedDelivery)
+                    else (
+                        delivery == availability
+                        if isinstance(delivery, DeliveryRequest)
+                        else False
+                    )
+                )
+            ),
+            False,
+        )

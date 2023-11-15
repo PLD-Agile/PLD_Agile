@@ -98,7 +98,6 @@ class DeliveryManService(Singleton):
 
         name = delivery_man_info.get("name")
         availabilities = delivery_man_info.get("availabilities")
-        speed = delivery_man_info.get("speed")
 
         if name is not None:
             delivery_man.name = name
@@ -117,7 +116,7 @@ class DeliveryManService(Singleton):
             delivery_man: A DeliveryMan instance to be deleted
         """
 
-        del self.__delivery_men.value[delivery_man.name]
+        del self.__delivery_men.value[delivery_man.id]
         self.__delivery_men.on_next(self.__delivery_men.value)
 
         return

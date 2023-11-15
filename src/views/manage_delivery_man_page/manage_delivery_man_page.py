@@ -22,19 +22,39 @@ class ManageDeliveryManPage(Page):
         # Define components to be used in this screen
         layout = QVBoxLayout()
 
-        sub_layout_widget = QWidget()
-        sub_layout = QHBoxLayout()
-        for route in ManageDeliveryManNavigationRoutes:
-            name = ManageDeliveryManNavigationNames[route.name].value
-            button = Button(name)
-            button.clicked.connect(
-                lambda _, name=route: get_manage_delivery_man_navigator().replace(name)
-            )
-            sub_layout.addWidget(button)
-        sub_layout_widget.setLayout(sub_layout)
+        button_group = ButtonGroup(
+            [
+                NavigationButton(
+                    "Liste de livreurs",
+                    ManageDeliveryManNavigationRoutes.MENU,
+                    get_manage_delivery_man_navigator(),
+                ),
+                NavigationButton(
+                    "Ajouter un livreur",
+                    ManageDeliveryManNavigationRoutes.ADD_DELIVERY_MAN_FORM,
+                    get_manage_delivery_man_navigator(),
+                ),
+                NavigationButton(
+                    "Modifier un livreur",
+                    ManageDeliveryManNavigationRoutes.MODIFY_DELIVERY_MAN_FORM,
+                    get_manage_delivery_man_navigator(),
+                ),
+            ]
+        )
+
+        # sub_layout_widget = QWidget()
+        # sub_layout = QHBoxLayout()
+        # for route in ManageDeliveryManNavigationRoutes:
+        #     name = ManageDeliveryManNavigationNames[route.name].value
+        #     button = Button(name)
+        #     button.clicked.connect(
+        #         lambda _, name=route: get_manage_delivery_man_navigator().replace(name)
+        #     )
+        #     sub_layout.addWidget(button)
+        # sub_layout_widget.setLayout(sub_layout)
 
         # Add components in the screen
-        layout.addWidget(sub_layout_widget)
+        layout.addWidget(button_group)
         layout.addWidget(get_manage_delivery_man_navigator().get_router_outlet())
 
         self.setLayout(layout)
