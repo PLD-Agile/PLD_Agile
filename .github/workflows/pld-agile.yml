@@ -45,12 +45,22 @@ jobs:
           python -m pip install pipenv
           pipenv install --dev
       - name: Run tests
-        run: .venv/bin/python -m pytest --cov-report=xml --cov-report=term --cov=src src/
-      - name: Archive build
+        run: .venv/bin/python -m pytest --cov-report=xml --cov-report=html --cov-report=term --cov=src --html=testing_report.html --self-contained-html src/
+      - name: XML Coverage
         uses: actions/upload-artifact@v3
         with:
-          name: pld-agile-coverage
+          name: pld-agile-coverage-xml
           path: coverage.xml
+      - name: HTML Coverage
+        uses: actions/upload-artifact@v3
+        with:
+          name: pld-agile-coverage-html
+          path: htmlcov/*
+      - name: HTML Testing report
+        uses: actions/upload-artifact@v3
+        with:
+          name: pld-agile-testing-report
+          path: testing_report.html
 
 
   build_linux:

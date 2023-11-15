@@ -1,6 +1,10 @@
 # Custom .tour files
 *.tour
 
+# Report
+testing_report.html
+*.css
+
 # Byte-compiled / optimized / DLL files
 __pycache__/
 *.py[cod]
