@@ -7,6 +7,7 @@ from reactivex.subject import BehaviorSubject
 
 from src.models.map import Position
 from src.models.tour import (
+    ComputedDelivery,
     ComputedTour,
     Delivery,
     DeliveryID,
@@ -51,8 +52,6 @@ class TourService(Singleton):
         self.__tour_requests = BehaviorSubject({})
         self.__computed_tours = BehaviorSubject({})
         self.__selected_delivery = BehaviorSubject(None)
-
-        self.__tour_requests.subscribe(lambda _: self.compute_tours())
 
     @property
     def tour_requests(self) -> Observable[Dict[TourID, TourRequest]]:
@@ -118,6 +117,8 @@ class TourService(Singleton):
 
         self.__tour_requests.on_next(self.__tour_requests.value)
 
+        self.compute_tours()
+
         return delivery_request
 
     def remove_delivery_request(
@@ -142,13 +143,15 @@ class TourService(Singleton):
 
         del tour_request.deliveries[delivery_request_id]
 
-        if len(tour_request.deliveries) == 0:
-            del self.__tour_requests.value[tour_request.id]
+        # if len(tour_request.deliveries) == 0:
+        #     del self.__tour_requests.value[tour_request.id]
 
         self.__tour_requests.on_next(self.__tour_requests.value)
 
         if self.__selected_delivery.value == tour_request:
             self.__selected_delivery.on_next(None)
+
+        self.compute_tours()
 
         return delivery_request
 
@@ -165,6 +168,8 @@ class TourService(Singleton):
         delivery_request.time_window = time_window
 
         self.__tour_requests.on_next(self.__tour_requests.value)
+
+        self.compute_tours()
 
         return previous_time_window
 
@@ -185,10 +190,12 @@ class TourService(Singleton):
             delivery_request_id
         ] = delivery_request
 
-        if len(tour_request.deliveries) == 0:
-            del self.__tour_requests.value[tour_request.id]
+        # if len(tour_request.deliveries) == 0:
+        #     del self.__tour_requests.value[tour_request.id]
 
         self.__tour_requests.on_next(self.__tour_requests.value)
+
+        self.compute_tours()
 
         return previous_delivery_man_id
 
@@ -204,9 +211,10 @@ class TourService(Singleton):
 
         for id, tour_request in self.__tour_requests.value.items():
             try:
-                tours_intersection_ids[
-                    id
-                ] = TourComputingService.instance().compute_tour(tour_request, map)
+                if len(tour_request.deliveries) > 0:
+                    tours_intersection_ids[
+                        id
+                    ] = TourComputingService.instance().compute_tour(tour_request, map)
             except Exception as e:
                 tours_intersection_ids[id] = []
 
@@ -253,7 +261,41 @@ class TourService(Singleton):
         Args:
             path (str): Path to the file
         """
-        self.__computed_tours.on_next(TourSavingService.instance().load_tours(path))
+        loaded_tours = TourSavingService.instance().load_tours(path)
+
+        for tour in loaded_tours.values():
+            updated_deliveries = {}
+
+            for delivery in tour.deliveries.values():
+                updated_delivery = ComputedDelivery(
+                    location=DeliveryLocation(
+                        segment=MapService.instance()
+                        .get_map()
+                        .segments[delivery.location.segment.origin.id][
+                            delivery.location.segment.destination.id
+                        ],
+                        positionOnSegment=0,
+                    ),
+                    time=delivery.time,
+                )
+                updated_deliveries[updated_delivery.id] = updated_delivery
+
+            tour.deliveries = updated_deliveries
+
+        self.__tour_requests.on_next({})
+        self.__computed_tours.on_next({})
+
+        DeliveryManService.instance().overwrite(
+            {tour.delivery_man.id: tour.delivery_man for tour in loaded_tours.values()}
+        )
+
+        self.__tour_requests.on_next(
+            {
+                id: TourRequest.create_from_computed(tour)
+                for id, tour in loaded_tours.items()
+            }
+        )
+        self.__computed_tours.on_next(loaded_tours)
 
     def __get_or_create_tour_request(self, tour_id: TourID) -> Tour:
         tour_request = self.__tour_requests.value.get(tour_id)

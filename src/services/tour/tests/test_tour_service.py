@@ -112,7 +112,10 @@ class TestTourService:
 
         self.service.remove_delivery_request(delivery_request.id, self.delivery_man.id)
 
-        assert len(self.service.tour_requests.value) == 0
+        assert (
+            len(self.service.tour_requests.value.get(self.delivery_man.id).deliveries)
+            == 0
+        )
 
     def test_should_update_delivery_request_time_window(self):
         NEW_TIME_WINDOW = 10

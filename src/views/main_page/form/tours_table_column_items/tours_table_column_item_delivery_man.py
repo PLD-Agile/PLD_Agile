@@ -47,7 +47,10 @@ class ToursTableColumnItemDeliveryMan(QWidget):
         self.__delivery_men_control = QComboBox()
 
     def __update_delivery_men_control_items(self, delivery_men: Dict[int, DeliveryMan]):
-        self.__delivery_men_control.clear()
+        try:
+            self.__delivery_men_control.clear()
+        except:
+            return
 
         try:
             self.__delivery_men_control.currentIndexChanged.disconnect()

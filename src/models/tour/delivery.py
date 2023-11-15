@@ -37,6 +37,23 @@ class DeliveryRequest(Delivery):
     For example, time_window=8 means that the time window if from 8h to 9h.
     """
 
+    @staticmethod
+    def create_from_computed(
+        computed_delivery: "ComputedDelivery",
+    ) -> "DeliveryRequest":
+        """Creates an instance of DeliveryRequest from a ComputedDelivery.
+
+        Args:
+            computed_delivery (ComputedDelivery): Computed delivery to create the delivery request from
+
+        Returns:
+            DeliveryRequest: Created instance
+        """
+        return DeliveryRequest(
+            location=computed_delivery.location,
+            time_window=computed_delivery.time.hour,
+        )
+
 
 @dataclass
 class ComputedDelivery(Delivery):
