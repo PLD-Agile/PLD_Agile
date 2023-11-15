@@ -158,8 +158,10 @@ class TourComputingService(Singleton):
             )
 
         return shortest_path_graph
-    
-    def solve_tsp_multiprocessing(self, permutations_chunk, warehouse_id, shortest_path_graph: nx.DiGraph):
+
+    def solve_tsp_multiprocessing(
+        self, permutations_chunk, warehouse_id, shortest_path_graph: nx.DiGraph
+    ):
         shortest_cycle_length = float("inf")
         shortest_cycle: List[DeliveriesComputingResult] = []
         for permuted_points in permutations_chunk:
@@ -218,7 +220,7 @@ class TourComputingService(Singleton):
             if cycle_length < shortest_cycle_length:
                 shortest_cycle_length = cycle_length
                 shortest_cycle = list(zip(permuted_points, [0] + times))
-            
+
             return shortest_cycle, shortest_cycle_length
 
     def solve_tsp(self, shortest_path_graph: nx.Graph) -> TourComputingResult:
@@ -248,7 +250,7 @@ class TourComputingService(Singleton):
                 permutations[i : i + chunk_size]
                 for i in range(0, len(permutations), chunk_size)
             ]
-        
+
         with concurrent.futures.ProcessPoolExecutor(
             max_workers=max_cpu_count
         ) as executor:
@@ -257,7 +259,7 @@ class TourComputingService(Singleton):
                     self.solve_tsp_multiprocessing,
                     chunk,
                     warehouse_id,
-                    shortest_path_graph
+                    shortest_path_graph,
                 )
                 for chunk in chunks
             ]
