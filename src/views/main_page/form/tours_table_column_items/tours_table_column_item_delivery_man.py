@@ -32,7 +32,12 @@ class ToursTableColumnItemDeliveryMan(QWidget):
             )
         )
 
+        is_computing_subscription = TourService.instance().is_computing.subscribe(
+            self.__handle_is_computing
+        )
+
         self.destroyed.connect(delivery_man_subscription.dispose)
+        self.destroyed.connect(is_computing_subscription.dispose)
 
     def __build(self):
         self.__build_delivery_men_control()
@@ -82,3 +87,9 @@ class ToursTableColumnItemDeliveryMan(QWidget):
                 delivery_man_id=delivery_man_id,
             )
         )
+
+    def __handle_is_computing(self, is_computing: bool):
+        try:
+            self.setEnabled(not is_computing)
+        except:
+            pass

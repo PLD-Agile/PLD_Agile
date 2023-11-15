@@ -105,6 +105,7 @@ class ModifyDeliveryManFormView(Page):
         availabilities_layout.addWidget(availabilities_label)
 
         for checkbox in self.__availabilities_checkboxes:
+            checkbox.setStyleSheet("color: #CCFFFFFF;")
             availabilities_layout.addWidget(checkbox)
 
         input_layout.addLayout(name_layout)
@@ -181,10 +182,12 @@ class ModifyDeliveryManFormView(Page):
 
             if 0 <= index < len(self.__availabilities_checkboxes):
                 self.__availabilities_checkboxes[index].setChecked(True)
-                if self.__availability_is_in_use(
-                    availability, delivery_man, computed_tours
-                ):
-                    self.__availabilities_checkboxes[index].setDisabled(True)
+
+                self.__availabilities_checkboxes[index].setDisabled(
+                    self.__availability_is_in_use(
+                        availability, delivery_man, computed_tours
+                    )
+                )
 
     def __availability_is_in_use(
         self,
