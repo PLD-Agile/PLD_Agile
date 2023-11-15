@@ -105,6 +105,7 @@ class ModifyDeliveryManFormView(Page):
         availabilities_layout.addWidget(availabilities_label)
 
         for checkbox in self.__availabilities_checkboxes:
+            checkbox.setStyleSheet("color: #CCFFFFFF;")
             availabilities_layout.addWidget(checkbox)
 
         input_layout.addLayout(name_layout)
