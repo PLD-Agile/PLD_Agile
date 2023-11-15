@@ -4,7 +4,7 @@
 <meta charset="utf-8">
 <meta name="viewport" content="width=device-width, initial-scale=1, minimum-scale=1" />
 <meta name="generator" content="pdoc 0.10.0" />
-<title>src.models.tour API documentation</title>
+<title>src.models.tour.computing API documentation</title>
 <meta name="description" content="" />
 <link rel="preload stylesheet" as="style" href="https://cdnjs.cloudflare.com/ajax/libs/10up-sanitize.css/11.0.1/sanitize.min.css" integrity="sha256-PK9q560IAAa6WVRRh76LtCaI8pjTJ2z11v0miyNNjrs=" crossorigin>
 <link rel="preload stylesheet" as="style" href="https://cdnjs.cloudflare.com/ajax/libs/10up-sanitize.css/11.0.1/typography.min.css" integrity="sha256-7l/o7C8jubJiy74VsKTidCy1yBkRtiUGbVkYBylBqUg=" crossorigin>
@@ -19,60 +19,83 @@
 <main>
 <article id="content">
 <header>
-<h1 class="title">Module <code>src.models.tour</code></h1>
+<h1 class="title">Module <code>src.models.tour.computing</code></h1>
 </header>
 <section id="section-intro">
 <details class="source">
 <summary>
 <span>Expand source code</span>
 </summary>
-<pre><code class="python">from src.models.tour.computing import DeliveriesComputingResult, TourComputingResult
-from src.models.tour.delivery import (
-    ComputedDelivery,
-    Delivery,
-    DeliveryID,
-    DeliveryRequest,
-)
-from src.models.tour.delivery_location import DeliveryLocation
-from src.models.tour.tour import (
-    ComputedTour,
-    NonComputedTour,
-    Tour,
-    TourID,
-    TourRequest,
-)</code></pre>
+<pre><code class="python">from dataclasses import dataclass
+from typing import List, Tuple
+
+DeliveriesComputingResult = Tuple[int, float]
+&#34;&#34;&#34;Represent a delivery&#39;s intersection ID with its time in minutes
+&#34;&#34;&#34;
+
+
+@dataclass
+class TourComputingResult:
+    &#34;&#34;&#34;Class representing the result of a tour computing.&#34;&#34;&#34;
+
+    route: List[int]
+    &#34;&#34;&#34;List of intersection IDs composing the route
+    &#34;&#34;&#34;
+    deliveries: List[DeliveriesComputingResult]
+    &#34;&#34;&#34;List of delivery&#39;s intersection IDs with their time in minutes
+    &#34;&#34;&#34;</code></pre>
 </details>
 </section>
 <section>
-<h2 class="section-title" id="header-submodules">Sub-modules</h2>
+</section>
+<section>
+<h2 class="section-title" id="header-variables">Global variables</h2>
 <dl>
-<dt><code class="name"><a title="src.models.tour.computing" href="computing.html">src.models.tour.computing</a></code></dt>
+<dt id="src.models.tour.computing.DeliveriesComputingResult"><code class="name">var <span class="ident">DeliveriesComputingResult</span></code></dt>
 <dd>
-<div class="desc"></div>
-</dd>
-<dt><code class="name"><a title="src.models.tour.delivery" href="delivery.html">src.models.tour.delivery</a></code></dt>
-<dd>
-<div class="desc"></div>
-</dd>
-<dt><code class="name"><a title="src.models.tour.delivery_location" href="delivery_location.html">src.models.tour.delivery_location</a></code></dt>
-<dd>
-<div class="desc"></div>
-</dd>
-<dt><code class="name"><a title="src.models.tour.tests" href="tests/index.html">src.models.tour.tests</a></code></dt>
-<dd>
-<div class="desc"></div>
-</dd>
-<dt><code class="name"><a title="src.models.tour.tour" href="tour.html">src.models.tour.tour</a></code></dt>
-<dd>
-<div class="desc"></div>
+<div class="desc"><p>Represent a delivery's intersection ID with its time in minutes</p></div>
 </dd>
 </dl>
 </section>
 <section>
 </section>
 <section>
-</section>
-<section>
+<h2 class="section-title" id="header-classes">Classes</h2>
+<dl>
+<dt id="src.models.tour.computing.TourComputingResult"><code class="flex name class">
+<span>class <span class="ident">TourComputingResult</span></span>
+<span>(</span><span>route: List[int], deliveries: List[Tuple[int, float]])</span>
+</code></dt>
+<dd>
+<div class="desc"><p>Class representing the result of a tour computing.</p></div>
+<details class="source">
+<summary>
+<span>Expand source code</span>
+</summary>
+<pre><code class="python">@dataclass
+class TourComputingResult:
+    &#34;&#34;&#34;Class representing the result of a tour computing.&#34;&#34;&#34;
+
+    route: List[int]
+    &#34;&#34;&#34;List of intersection IDs composing the route
+    &#34;&#34;&#34;
+    deliveries: List[DeliveriesComputingResult]
+    &#34;&#34;&#34;List of delivery&#39;s intersection IDs with their time in minutes
+    &#34;&#34;&#34;</code></pre>
+</details>
+<h3>Class variables</h3>
+<dl>
+<dt id="src.models.tour.computing.TourComputingResult.deliveries"><code class="name">var <span class="ident">deliveries</span> : List[Tuple[int, float]]</code></dt>
+<dd>
+<div class="desc"><p>List of delivery's intersection IDs with their time in minutes</p></div>
+</dd>
+<dt id="src.models.tour.computing.TourComputingResult.route"><code class="name">var <span class="ident">route</span> : List[int]</code></dt>
+<dd>
+<div class="desc"><p>List of intersection IDs composing the route</p></div>
+</dd>
+</dl>
+</dd>
+</dl>
 </section>
 </article>
 <nav id="sidebar">
@@ -83,16 +106,23 @@ from src.models.tour.tour import (
 <ul id="index">
 <li><h3>Super-module</h3>
 <ul>
-<li><code><a title="src.models" href="../index.html">src.models</a></code></li>
+<li><code><a title="src.models.tour" href="index.html">src.models.tour</a></code></li>
 </ul>
 </li>
-<li><h3><a href="#header-submodules">Sub-modules</a></h3>
+<li><h3><a href="#header-variables">Global variables</a></h3>
+<ul class="">
+<li><code><a title="src.models.tour.computing.DeliveriesComputingResult" href="#src.models.tour.computing.DeliveriesComputingResult">DeliveriesComputingResult</a></code></li>
+</ul>
+</li>
+<li><h3><a href="#header-classes">Classes</a></h3>
 <ul>
-<li><code><a title="src.models.tour.computing" href="computing.html">src.models.tour.computing</a></code></li>
-<li><code><a title="src.models.tour.delivery" href="delivery.html">src.models.tour.delivery</a></code></li>
-<li><code><a title="src.models.tour.delivery_location" href="delivery_location.html">src.models.tour.delivery_location</a></code></li>
-<li><code><a title="src.models.tour.tests" href="tests/index.html">src.models.tour.tests</a></code></li>
-<li><code><a title="src.models.tour.tour" href="tour.html">src.models.tour.tour</a></code></li>
+<li>
+<h4><code><a title="src.models.tour.computing.TourComputingResult" href="#src.models.tour.computing.TourComputingResult">TourComputingResult</a></code></h4>
+<ul class="">
+<li><code><a title="src.models.tour.computing.TourComputingResult.deliveries" href="#src.models.tour.computing.TourComputingResult.deliveries">deliveries</a></code></li>
+<li><code><a title="src.models.tour.computing.TourComputingResult.route" href="#src.models.tour.computing.TourComputingResult.route">route</a></code></li>
+</ul>
+</li>
 </ul>
 </li>
 </ul>

@@ -112,7 +112,7 @@ class TourComputingService(Singleton):
         return G
 
     def solve_tsp(self, shortest_path_graph: nx.Graph) -> TourComputingResult:
-      """Solves the Traveling Salesman Problem (TSP) for a given graph of delivery points and returns the shortest route.
+        """Solves the Traveling Salesman Problem (TSP) for a given graph of delivery points and returns the shortest route.
 
         Args:
             shortest_path_graph (nx.Graph): A graph representing the shortest path between delivery points.
