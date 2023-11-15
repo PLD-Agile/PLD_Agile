@@ -96,6 +96,9 @@ class DeliveryManService(Singleton):
 
         delivery_man = self.__delivery_men.value[delivery_man.id]
 
+        if delivery_man is None:
+            raise DeliveryManError            
+
         name = delivery_man_info.get("name")
         availabilities = delivery_man_info.get("availabilities")
 
