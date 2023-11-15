@@ -14,12 +14,12 @@ from PyQt6.QtWidgets import (
 from reactivex import combine_latest
 from reactivex.subject import BehaviorSubject
 
-from src.models.delivery_man.delivery_man import DeliveryMan
 from src.controllers.navigator.page import Page
+from src.models.delivery_man.delivery_man import DeliveryMan
 from src.models.tour import ComputedDelivery, DeliveryRequest, Tour, TourID
 from src.services.delivery_man.delivery_man_service import DeliveryManService
 from src.services.tour.tour_service import TourService
-from src.views.ui import Button, Text, TextSize, Callout
+from src.views.ui import Button, Callout, Text, TextSize
 
 
 class ModifyDeliveryManFormView(Page):
@@ -32,17 +32,17 @@ class ModifyDeliveryManFormView(Page):
         super().__init__()
 
         self.__selected_value = BehaviorSubject(None)
-        
+
         # Define components to be used in this screen
         layout = QVBoxLayout()
         title_label = Text("Modify a deliveryman", TextSize.H2)
-        
+
         actions_layout = QHBoxLayout()
         actions_layout.setAlignment(Qt.AlignmentFlag.AlignRight)
-        
+
         modify_button = Button("Modify")
         modify_button.clicked.connect(self.__modify_delivery_man)
-        
+
         actions_layout.addWidget(modify_button)
 
         # Add components in the screen
@@ -50,7 +50,11 @@ class ModifyDeliveryManFormView(Page):
         layout.addWidget(title_label)
         layout.addLayout(self.__build_delivery_man_combobox())
         layout.addLayout(self.__build_delivery_man_inputs())
-        layout.addWidget(Callout('S\'il y a des livraisons sur des plages horaires, vous ne pourrez pas les modifier.'))
+        layout.addWidget(
+            Callout(
+                "S'il y a des livraisons sur des plages horaires, vous ne pourrez pas les modifier."
+            )
+        )
         layout.addLayout(actions_layout)
 
         self.setLayout(layout)
@@ -77,7 +81,9 @@ class ModifyDeliveryManFormView(Page):
         delivery_man_combobox_layout.setAlignment(Qt.AlignmentFlag.AlignTop)
 
         self.__delivery_man_control.currentIndexChanged.connect(
-            lambda: self.__selected_value.on_next(self.__delivery_man_control.currentData())
+            lambda: self.__selected_value.on_next(
+                self.__delivery_man_control.currentData()
+            )
         )
 
         return delivery_man_combobox_layout
@@ -86,7 +92,7 @@ class ModifyDeliveryManFormView(Page):
         input_layout = QVBoxLayout()
         name_layout = QHBoxLayout()
         availabilities_layout = QHBoxLayout()
-        
+
         availabilities_label = Text("Availabilities", TextSize.label)
         name_label = Text("Name", TextSize.label)
         self.__name_input = QLineEdit()
@@ -162,19 +168,18 @@ class ModifyDeliveryManFormView(Page):
     ) -> None:
         if not delivery_man:
             return
-        
+
         self.__name_input.setText(delivery_man.name)
         # Uncheck all checkboxes
-        
+
         for checkbox in self.__availabilities_checkboxes:
             checkbox.setChecked(False)
-            
+
         # Check checkboxes based on delivery man's availabilities
         for availability in delivery_man.availabilities:
             index = availability - 8
-            
+
             if 0 <= index < len(self.__availabilities_checkboxes):
-                
                 self.__availabilities_checkboxes[index].setChecked(True)
                 if self.__availability_is_in_use(
                     availability, delivery_man, computed_tours

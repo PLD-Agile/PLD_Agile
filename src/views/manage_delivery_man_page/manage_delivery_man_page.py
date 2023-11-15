@@ -21,12 +21,26 @@ class ManageDeliveryManPage(Page):
 
         # Define components to be used in this screen
         layout = QVBoxLayout()
-        
-        button_group = ButtonGroup([
-            NavigationButton('Liste de livreurs', ManageDeliveryManNavigationRoutes.MENU, get_manage_delivery_man_navigator()),
-            NavigationButton('Ajouter un livreur', ManageDeliveryManNavigationRoutes.ADD_DELIVERY_MAN_FORM, get_manage_delivery_man_navigator()),
-            NavigationButton('Modifier un livreur', ManageDeliveryManNavigationRoutes.MODIFY_DELIVERY_MAN_FORM, get_manage_delivery_man_navigator()),
-        ])
+
+        button_group = ButtonGroup(
+            [
+                NavigationButton(
+                    "Liste de livreurs",
+                    ManageDeliveryManNavigationRoutes.MENU,
+                    get_manage_delivery_man_navigator(),
+                ),
+                NavigationButton(
+                    "Ajouter un livreur",
+                    ManageDeliveryManNavigationRoutes.ADD_DELIVERY_MAN_FORM,
+                    get_manage_delivery_man_navigator(),
+                ),
+                NavigationButton(
+                    "Modifier un livreur",
+                    ManageDeliveryManNavigationRoutes.MODIFY_DELIVERY_MAN_FORM,
+                    get_manage_delivery_man_navigator(),
+                ),
+            ]
+        )
 
         # sub_layout_widget = QWidget()
         # sub_layout = QHBoxLayout()
