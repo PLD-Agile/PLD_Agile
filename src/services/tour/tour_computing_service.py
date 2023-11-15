@@ -158,24 +158,11 @@ class TourComputingService(Singleton):
             )
 
         return shortest_path_graph
-
-    def solve_tsp(self, shortest_path_graph: nx.Graph) -> TourComputingResult:
-        """Solves the Traveling Salesman Problem (TSP) for a given graph of delivery points and returns the shortest route.
-
-        Args:
-            shortest_path_graph (nx.Graph): A graph representing the shortest path between delivery points.
-
-        Returns:
-            TourComputingResult: The result of the computed Tour.
-        """
+    
+    def solve_tsp_multiprocessing(self, permutations_chunk, warehouse_id, shortest_path_graph: nx.DiGraph):
         shortest_cycle_length = float("inf")
         shortest_cycle: List[DeliveriesComputingResult] = []
-        route = []
-
-        # Generate all permutations of delivery points to find the shortest cycle
-        delivery_points = list(shortest_path_graph.nodes())
-        warehouse_id = delivery_points.pop(0)
-        for permuted_points in itertools.permutations(delivery_points):
+        for permuted_points in permutations_chunk:
             is_valid_tuple = True
             permuted_points = list(permuted_points)
             permuted_points = [warehouse_id] + permuted_points
@@ -231,6 +218,59 @@ class TourComputingService(Singleton):
             if cycle_length < shortest_cycle_length:
                 shortest_cycle_length = cycle_length
                 shortest_cycle = list(zip(permuted_points, [0] + times))
+            
+            return shortest_cycle, shortest_cycle_length
+
+    def solve_tsp(self, shortest_path_graph: nx.Graph) -> TourComputingResult:
+        """Solves the Traveling Salesman Problem (TSP) for a given graph of delivery points and returns the shortest route.
+
+        Args:
+            shortest_path_graph (nx.Graph): A graph representing the shortest path between delivery points.
+
+        Returns:
+            TourComputingResult: The result of the computed Tour.
+        """
+        shortest_cycle_length = float("inf")
+        shortest_cycle: List[DeliveriesComputingResult] = []
+        route = []
+        # Generate all permutations of delivery points to find the shortest cycle
+        delivery_points = list(shortest_path_graph.nodes())
+        warehouse_id = delivery_points.pop(0)
+        permutations = itertools.permutations(delivery_points)
+        permutations = list(permutations)
+
+        max_cpu_count = multiprocessing.cpu_count()
+        if max_cpu_count > len(permutations):
+            chunks = [permutations]
+        else:
+            chunk_size = len(permutations) // max_cpu_count
+            chunks = [
+                permutations[i : i + chunk_size]
+                for i in range(0, len(permutations), chunk_size)
+            ]
+        
+        with concurrent.futures.ProcessPoolExecutor(
+            max_workers=max_cpu_count
+        ) as executor:
+            futures = [
+                executor.submit(
+                    self.solve_tsp_multiprocessing,
+                    chunk,
+                    warehouse_id,
+                    shortest_path_graph
+                )
+                for chunk in chunks
+            ]
+            results = [
+                future.result() for future in concurrent.futures.as_completed(futures)
+            ]
+
+            for result in results:
+                if result == None:
+                    continue
+                if result[1] < shortest_cycle_length:
+                    shortest_cycle_length = result[1]
+                    shortest_cycle = result[0]
 
         # Compute the actual route from the shortest cycle
         if shortest_cycle == []:
