@@ -1,6 +1,6 @@
 from PyQt6.QtWidgets import QComboBox, QHBoxLayout, QWidget
 
-from src.models.tour import ComputedDelivery, Delivery, Tour, DeliveryRequest
+from src.models.tour import ComputedDelivery, Delivery, DeliveryRequest, Tour
 from src.services.command.command_service import CommandService
 from src.services.command.commands.update_delivery_request_time_window_command import (
     UpdateDeliveryRequestTimeWindowCommand,
@@ -62,7 +62,10 @@ class ToursTableColumnItemTime(QWidget):
                 self.__time_control.addItem(
                     f"{availability}:00 - {availability + 1}:00", userData=availability
                 )
-                if isinstance(self.__delivery, DeliveryRequest) and self.__delivery.time_window == availability:
+                if (
+                    isinstance(self.__delivery, DeliveryRequest)
+                    and self.__delivery.time_window == availability
+                ):
                     self.__time_control.setCurrentIndex(i)
 
         self.__time_control.currentIndexChanged.connect(
