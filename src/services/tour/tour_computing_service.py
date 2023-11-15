@@ -1,10 +1,10 @@
 import concurrent.futures
 import itertools
 import multiprocessing
+import platform
 from typing import List, Optional
 
 import networkx as nx
-import platform
 
 from src.config import Config
 from src.models.map import Map, Segment
@@ -35,11 +35,11 @@ class TourComputingService(Singleton):
         )
 
         os_name = platform.system()
-        if(os_name == "Linux"):
+        if os_name == "Linux":
             max_deliveries_brut_force = 8
         else:
             max_deliveries_brut_force = 6
-        
+
         if os_name == "Linux":
             shortest_path_graph = self.compute_shortest_path_graph_parallel(
                 map_graph, [warehouse] + list(tour_request.deliveries.values())
@@ -49,7 +49,6 @@ class TourComputingService(Singleton):
                 map_graph, [warehouse] + list(tour_request.deliveries.values())
             )
 
-        
         if len(tour_request.deliveries) <= max_deliveries_brut_force:
             if os_name == "Linux":
                 tsp_result = self.solve_tsp_parallel(shortest_path_graph)
@@ -430,6 +429,7 @@ class TourComputingService(Singleton):
             else:
                 return False
         return True
+
     def compute_shortest_path_graph(
         self, graph: nx.Graph, deliveries: List[DeliveryRequest]
     ) -> nx.DiGraph:
@@ -572,4 +572,3 @@ class TourComputingService(Singleton):
             route=route,
             deliveries=shortest_cycle[1:],
         )
-
