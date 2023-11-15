@@ -81,7 +81,7 @@ jobs:
           python -m pip install pipenv
           pipenv install --dev
       - name: Generate docs
-        run: .venv/bin/python -m pdoc3 --html --output-dir docs src
+        run: .venv/bin/python -m pdoc --html --output-dir docs src
       - name: Upload generate docs
         uses: actions/upload-artifact@v3
         with:
