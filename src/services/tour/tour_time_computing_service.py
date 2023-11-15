@@ -36,7 +36,7 @@ class TourTimeComputingService(Singleton):
         }
         computed_deliveries: Dict[DeliveryID, ComputedDelivery] = {}
 
-        for delivery_id, time_in_minutes in computation_result.deliveries[1:]:
+        for delivery_id, time_in_minutes in computation_result.deliveries:
             computed_delivery = ComputedDelivery.create_from_request(
                 delivery_requests[delivery_id],
                 time=self.__convert_minutes_to_time(time_in_minutes),
