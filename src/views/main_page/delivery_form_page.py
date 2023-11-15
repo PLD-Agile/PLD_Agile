@@ -9,6 +9,7 @@ from PyQt6.QtWidgets import (
     QMessageBox,
     QVBoxLayout,
     QWidget,
+    QFileDialog,
 )
 
 from src.controllers.navigator.page import Page
@@ -237,10 +238,18 @@ class DeliveryFormPage(Page):
                 self.__errors_container.addWidget(error_widget)
 
     def __save_tour(self):
-        TourService.instance().save_tours("test.tour")
+        file_name, _ = QFileDialog.getSaveFileName(
+            self, "Enregistrer des tours", "Mes tours.tour", "Tour files (*.tour)"
+        )
+        if file_name:
+            TourService.instance().save_tours(file_name)
 
     def __load_tour(self):
-        TourService.instance().load_tours("test.tour")
+        file_name, _ = QFileDialog.getOpenFileName(
+            self, "Ouvrir des tours", "${HOME}", "Tour files (*.tour)"
+        )
+        if file_name:
+            TourService.instance().load_tours(file_name)
 
     def __show_popup(self, title, message):
         popup = QMessageBox()
