@@ -26,10 +26,12 @@
 <summary>
 <span>Expand source code</span>
 </summary>
-<pre><code class="python">from src.models.map.position import Position
+<pre><code class="python">import unittest
+
+from src.models.map.position import Position
 
 
-class TestPosition:
+class TestPosition(unittest.TestCase):
     &#34;&#34;&#34;Tests class for Position.&#34;&#34;&#34;
 
     def test_should_create(self):
@@ -77,14 +79,18 @@ class TestPosition:
 <dl>
 <dt id="src.models.map.tests.test_position.TestPosition"><code class="flex name class">
 <span>class <span class="ident">TestPosition</span></span>
+<span>(</span><span>methodName='runTest')</span>
 </code></dt>
 <dd>
-<div class="desc"><p>Tests class for Position.</p></div>
+<div class="desc"><p>Tests class for Position.</p>
+<p>Create an instance of the class that will use the named test
+method when executed. Raises a ValueError if the instance does
+not have a method with the specified name.</p></div>
 <details class="source">
 <summary>
 <span>Expand source code</span>
 </summary>
-<pre><code class="python">class TestPosition:
+<pre><code class="python">class TestPosition(unittest.TestCase):
     &#34;&#34;&#34;Tests class for Position.&#34;&#34;&#34;
 
     def test_should_create(self):
@@ -120,6 +126,10 @@ class TestPosition:
         assert Position(1, 1).min(Position(2, 2)) == Position(1, 1)
         assert Position(1, 1).min(Position(2, 2), Position(3, 3)) == Position(1, 1)</code></pre>
 </details>
+<h3>Ancestors</h3>
+<ul class="hlist">
+<li>unittest.case.TestCase</li>
+</ul>
 <h3>Methods</h3>
 <dl>
 <dt id="src.models.map.tests.test_position.TestPosition.test_should_create"><code class="name flex">

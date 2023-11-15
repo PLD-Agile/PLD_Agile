@@ -26,11 +26,13 @@
 <summary>
 <span>Expand source code</span>
 </summary>
-<pre><code class="python">from src.models.map.map_size import MapSize
+<pre><code class="python">import unittest
+
+from src.models.map.map_size import MapSize
 from src.models.map.position import Position
 
 
-class TestMapSize:
+class TestMapSize(unittest.TestCase):
     &#34;&#34;&#34;Tests class for MapSize.&#34;&#34;&#34;
 
     def test_should_create(self):
@@ -98,14 +100,18 @@ class TestMapSize:
 <dl>
 <dt id="src.models.map.tests.test_map_size.TestMapSize"><code class="flex name class">
 <span>class <span class="ident">TestMapSize</span></span>
+<span>(</span><span>methodName='runTest')</span>
 </code></dt>
 <dd>
-<div class="desc"><p>Tests class for MapSize.</p></div>
+<div class="desc"><p>Tests class for MapSize.</p>
+<p>Create an instance of the class that will use the named test
+method when executed. Raises a ValueError if the instance does
+not have a method with the specified name.</p></div>
 <details class="source">
 <summary>
 <span>Expand source code</span>
 </summary>
-<pre><code class="python">class TestMapSize:
+<pre><code class="python">class TestMapSize(unittest.TestCase):
     &#34;&#34;&#34;Tests class for MapSize.&#34;&#34;&#34;
 
     def test_should_create(self):
@@ -161,6 +167,10 @@ class TestMapSize:
         assert MapSize(Position(0, 0), Position(2, 2)).height == 2
         assert MapSize(Position(0, 0), Position(3, 3)).height == 3</code></pre>
 </details>
+<h3>Ancestors</h3>
+<ul class="hlist">
+<li>unittest.case.TestCase</li>
+</ul>
 <h3>Methods</h3>
 <dl>
 <dt id="src.models.map.tests.test_map_size.TestMapSize.test_should_calculate_area"><code class="name flex">

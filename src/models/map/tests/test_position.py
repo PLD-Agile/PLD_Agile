@@ -1,7 +1,9 @@
+import unittest
+
 from src.models.map.position import Position
 
 
-class TestPosition:
+class TestPosition(unittest.TestCase):
     """Tests class for Position."""
 
     def test_should_create(self):

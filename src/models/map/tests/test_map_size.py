@@ -1,8 +1,10 @@
+import unittest
+
 from src.models.map.map_size import MapSize
 from src.models.map.position import Position
 
 
-class TestMapSize:
+class TestMapSize(unittest.TestCase):
     """Tests class for MapSize."""
 
     def test_should_create(self):
